@@ -8,13 +8,11 @@ data_DATA = \
 	noxca.cnf
 
 pkgsysconf_DATA = \
-	log4cxx.xml \
 	noxca.key.insecure \
 	noxca.cert \
 	nox.xml
 
 EXTRA_DIST = \
-	log4cxx.xml \
 	noxca.cnf \
 	nox.xml
 
