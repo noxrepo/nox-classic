@@ -15,16 +15,7 @@
  * You should have received a copy of the GNU General Public License
  * along with NOX.  If not, see <http://www.gnu.org/licenses/>.
  */
-/* use SWIG defined integer types instead */
-/*
-typedef unsigned char      uint8_t;
-typedef unsigned short     uint16_t;
-typedef unsigned int       uint32_t;
-typedef unsigned long long uint64_t;
 
-typedef int                int32_t;
-typedef long long          int64_t;
-*/
 %include "inttypes.i"
 
 void exit(int);
