@@ -92,6 +92,7 @@ public:
     int send_stats_request(ofp_stats_types type);
     int send_echo_request();
     int send_echo_reply(const ofp_header* request);
+    int send_barrier_request();
     int send_add_snat(uint16_t port, 
                     uint32_t ip_addr_start, uint32_t ip_addr_end,
                     uint16_t tcp_start, uint16_t tcp_end,

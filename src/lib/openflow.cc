@@ -648,6 +648,22 @@ int Openflow_connection::send_echo_reply(const struct ofp_header *rq)
     return send_openflow(reply, false);
 }
 
+
+/* Sends an OFPT_BARRIER_REQUEST message.
+ *
+ * Does not block: returns EAGAIN if the message cannot be immediately accepted
+ * for transmission. */
+int Openflow_connection::send_barrier_request()
+{
+    ofp_header obr;
+    obr.type = OFPT_BARRIER_REQUEST;
+    obr.version = OFP_VERSION;
+    obr.length = htons(sizeof obr);
+    obr.xid = 0;
+    return send_openflow(&obr, false);
+}
+
+
 /* Sends a delete SNAT configuration message.
  *
  * Does not block: returns EAGAIN if the messages cannot be immediately
