@@ -45,6 +45,8 @@
 #include "ofmp-config-update.hh"
 #include "ofmp-config-update-ack.hh"
 #include "ofmp-resources-update.hh"
+#include "barrier-reply.hh"
+#include "openflow.hh"
 #include "vlog.hh"
 
 using namespace vigil;
@@ -401,6 +403,17 @@ handle_vendor(boost::shared_ptr<Openflow_connection> oconn,
 }
 
 Event*
+handle_barrier_reply(boost::shared_ptr<Openflow_connection> oconn,
+		     const ofp_header* oh, std::auto_ptr<Buffer> buf)
+{
+    datapathid datapath_id = oconn->get_datapath_id();
+    lg.dbg("received barrier reply from %s",
+            datapath_id.string().c_str());
+    return new Barrier_reply_event(datapath_id, oh, buf);
+}
+
+
+Event*
 handle_echo_request(boost::shared_ptr<Openflow_connection> oconn,
                     const ofp_header* oh, std::auto_ptr<Buffer> packet)
 {
@@ -476,6 +489,8 @@ openflow_packet_to_event(boost::shared_ptr<Openflow_connection> oconn, std::auto
         return handle_packet(handle_features_reply, oconn, oh, p);
     case OFPT_STATS_REPLY:
         return handle_packet(handle_stats_reply, oconn, oh, p);
+    case OFPT_BARRIER_REPLY:
+        return handle_barrier_reply(oconn, oh, p);
     case OFPT_ECHO_REQUEST:
         return handle_echo_request(oconn, oh, p);
     case OFPT_VENDOR:
