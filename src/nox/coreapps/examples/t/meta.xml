@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<components:components xmlns:components="http://www.noxrepo.org/components.xsd">
+  <component>
+    <name>test_example</name>
+    <python>nox.coreapps.examples.t.test_example</python>
+  </component>
+</components:components>

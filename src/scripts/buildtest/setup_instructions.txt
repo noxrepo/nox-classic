@@ -1,0 +1,188 @@
+=======================
+===== Quick Start =====
+=======================
+Feeling a bit lucky?  With up-to-date nox:
+
+$NOX_BASE = [...]
+$USER_NAME = [...]
+
+apt-get install python-matplotlib python-matplotlib-doc
+mkdir /var/www/buildtest/$USER_NAME/archive -p
+ln -s /tmp/build/$USER_NAME /var/www/buildtest/$USER_NAME/results 
+cd $NOX_BASE/asena/nox/scripts/buildtest/
+cp images/pass.jpg images/fail.jpg results.css /var/www/buildtest/$USER_NAME/
+cp images/collapsed.jpg /var/www/buildtest/$USER_NAME/archive/
+cp images/results_bgimage.jpg /var/www/buildtest/$USER_NAME/bgimage.jpg
+cp images/archive_bgimage.jpg /var/www/buildtest/$USER_NAME/archive/bgimage.jpg
+
+
+**
+   (If apt has no      deb http://anakonda.altervista.org/debian packages/
+    python-matplotlib: deb-src http://anakonda.altervista.org/debian sources/)
+
+------------------------------------------------------------
+
+=====================
+====== Details ======
+=====================
+
+
+Directory Trees:
+=======================================================
+====== Source (.../asena/nox/scripts/buildtest/) ======
+=======================================================
+./
+  archive.py
+ *builder.py
+  graph.py
+  info.py
+  performance.py
+  result.py
+  summary.py
+  utilities.py
+ *self_test.py
+  results.css
+  results_explained.html
+ >setup_instructions.txt
+
+ /images/
+         archive_bgimage.jpg
+         collapsed.jpg
+         fail.jpg
+         pass.jpg
+         results_bgimage.jpg
+
+===================================================
+======= Web Directory (/var/www/buildtest/) =======
+===================================================
+./[username]/
+             results.css
+             bgimage.jpg
+             fail.jpg
+             pass.jpg
+
+            /results/ {*symlink* -> /tmp/build/[username]}
+            /archive/
+                     index.html
+                     bgimage.jpg
+                     collapsed.jpg
+                     archive.pkl
+                     performance.pkl
+
+                    /[timestamp]/
+                    /[timestamp]/
+                    /    ...    /
+                    /[timestamp]/
+                                 index.html
+                                 (clone_nox.log)
+                                 (clone_openflow.log)
+
+                                /(clone)/
+                                /default/
+                          and   /ndebug/
+                          and   /ndebug_twisted/
+                          and   /twisted/
+                          all have:      (fetch.log)
+                                         (boot.log)
+                                         configure.log
+                                         make.log
+                                         oxide_pgen.log
+                                         (oxide_test.log)
+
+
+**
+==Variable values==
+[username] examples:  root, joeuser, julius, cesear, (text)
+[timestamp] examples: 2008_04_01_141204, 2001_09_11_072532, (YYYY_MM_DD_HHMMSS)
+
+==Conditional objects==
+           (boot.log):  configure file did not exist, boot.sh is used to create it
+          (fetch.log):  option '--get-fetch' used to update repository
+     (oxide_test.log):  created in configurations including twisted
+             (clone)\
+     (clone_nox.log) :  option '--commited' used to create a repository clone
+(clone_openflow.log)/
+
+=============================================
+======= Build Directory (/tmp/build/) =======
+=============================================
+./
+ /[username]/
+            /default/
+      and   /ndebug/
+      and   /ndebug_twisted/
+      and   /twisted/
+      all have:      configure.log
+                     make.log
+                     oxide_pgen.log
+                     {additional files}
+
+                    /{additional directories}/
+                    /src/
+                        /{additional directories}/
+                        /tests/
+
+
+**
+==Additional files==
+config.h
+config.log
+config.status
+libtool
+Makefile
+stamp-h1
+
+==Additional directories==
+In base:
+doc/
+
+In src:
+ctlpath/
+include/
+lib/
+openflow/
+utilities/
+
+------------------------------------------------------------
+
+File Placement:
+
+  builder.py
+    Either place in ".../nox/src/scripts/buildtest/" or pass ".../nox/" dir
+    using command line option '-src-dir='.  If no argument is supplied,
+    it defaults to using its great-grandparent directory (../../..)
+
+  fail.jpg, pass.jpg, results.css
+    Non-essential, but easier on the eyes in general, and supplies most
+    information in the archives.  Place in the user build directory,
+    probably "/var/www/buildtest/[username]" (this should be moved to
+    bas
+
+  results_bgimage.jpg, archive_bgimage.jpg
+    Each result page takes a background image "bgimage.jpg" from its parent's
+    directory, rename each into the appropriate folder: /buildtest/ or
+    /buildtest/archive/, archive pages take it from their current
+    directory.  (e.g.: cp ./archive_bgimage.jpg [...]/archive/bgimage.jpg)
+
+  collapsed.jpg
+    The archives page has a javascript which hides repeated failures
+    inside an ellipsis image, clicking on it will restore them to view.
+    Place this file in "/var/www/buildtest/[username]/archive/".
+
+  librarian.php
+    Place this file in "/var/www/librarian/".
+
+  results_explained.html
+    An explaination of the various portions of the results webpages,
+    optionally place it in "var/www/buildtest/"
+
+  setup_instructions.txt
+    This file.  Leave it in the ".../scripts/buildtest/" directory.
+
+-------------------------------------------------------------
+
+Note:
+
+  For archiving to work, you must create some directories manually
+  (since /var/www/ is usually owned by root), and change permissions.
+  This currently includes most of the web structure.

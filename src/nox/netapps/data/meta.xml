@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<components:components xmlns:components="http://www.noxrepo.org/components.xsd">
+
+  <component>
+    <name>datatypes</name>
+    <library>datatypes</library>
+  </component>
+
+  <component>
+    <name>pydatatypes</name>
+    <dependency><name>datatypes</name></dependency>
+    <python>nox.netapps.data.datatypes_impl</python>
+  </component>
+
+  <component>
+    <name>data_cache</name>
+    <library>datacache</library>
+    <dependency><name>datatypes</name></dependency>
+  </component>
+
+  <component>
+    <name>pydatacache</name>
+    <dependency><name>data_cache</name></dependency>
+    <python>nox.netapps.data.datacache_impl</python>
+  </component>
+
+</components:components>

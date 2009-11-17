@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<components:components xmlns:components="http://www.noxrepo.org/components.xsd">
+
+  <component>
+    <name>webserver</name>
+    <dependency>
+      <name>datamanager</name>
+    </dependency>
+    <python>nox.webapps.webserver.webserver</python>
+  </component>
+
+  <component>
+    <name>webauth</name>
+    <dependency>
+      <name>webserver</name>
+    </dependency>
+    <python>nox.webapps.webserver.webauth</python>
+  </component>
+
+  <component>
+    <name>dummywebpage</name>
+    <dependency>
+      <name>webserver</name>
+    </dependency>
+    <python>nox.webapps.webserver.dummywebpage</python>
+  </component>
+
+</components:components>

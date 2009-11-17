@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<components:components xmlns:components="http://www.noxrepo.org/components.xsd">
+  <component>
+    <name>python</name>
+    <library>pyrt</library>
+  </component>
+  <component>
+    <name>componentws</name>
+    <dependency>
+      <name>webservice</name>
+    </dependency>
+    <dependency>
+      <name>pycswitchstats</name>
+    </dependency>
+    <dependency>
+      <name>python</name>
+    </dependency>
+    <python>nox.coreapps.pyrt.componentws</python>
+  </component>
+</components:components>

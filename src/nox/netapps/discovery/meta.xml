@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<components:components xmlns:components="http://www.noxrepo.org/components.xsd">
+  <component>
+    <name>discovery</name>
+    <dependency>
+      <name>link event</name>
+    </dependency>
+    <dependency>
+      <name>pybindings_storage</name>
+    </dependency>
+    <dependency>
+      <name>pyuser_event_log</name>
+    </dependency>
+    <python>nox.netapps.discovery.discovery</python>
+  </component>
+  <component>
+    <name>link event</name>
+    <library>link_event</library>
+  </component>
+  <component>
+    <name>discoveryws</name>
+    <dependency>
+      <name>discovery</name>
+    </dependency>
+    <dependency>
+      <name>switchstats</name>
+    </dependency>
+    <dependency>
+      <name>webservice</name>
+    </dependency>
+    <python>nox.netapps.discovery.discoveryws</python>
+  </component>
+</components:components>

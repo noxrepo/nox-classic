@@ -1,0 +1,24 @@
+NOX Network Control Platform v0.2.0
+-----------------------------------
+Copyright (C) 2008 Nicira Networks
+
+Welcome to the NOX network control platform.   This distribution
+includes all the software you need to build, install, and deploy NOX in
+your network, as well as source code and tools to allow you to develop
+your own NOX applications.
+
+This version of NOX is a developers' release.  It is intended to provide
+a programmatic platform for controlling one or more OpenFlow switches.
+NOX can be extended both in C++ or Python and provides an abstracted
+interface to OpenFlow.  This distribution contains a set of example
+applications and some built in libraries which provide useful network
+functions such as host tracking and routing.
+
+For detailed installation, development and use instructions, refer to
+the NOX manual in docs/manual/build/html.
+
+*Note*
+
+NOX relies on OpenFlow as the communication protocol for controlling
+switches.  This build supports Openflow v0x89 experimental.
+

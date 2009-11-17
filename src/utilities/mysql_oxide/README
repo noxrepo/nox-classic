@@ -1,0 +1,47 @@
+mysql-oxide README
+
+mysql-oxide is a hacked-together framework for testing python-based 
+analysis apps against a large amount of packet data stored archived
+by NOX in the FLOW_SETUP table of the data-warehouse.  
+
+In order to run, mysql-oxide requires a "fake environment" that points to
+some dummy libraries, as well as real applications.  You can create this
+environment in any directory (e.g., utilities/mysql-oxide) using the 
+'make_mysql_oxide_dir.sh' script.  The only parameter that should be
+give to this script is the non-relative path to the asena/nox/src
+directory.  For example: 
+
+./make_mysql_oxide_dir.sh /home/danwent/asena/nox/src
+
+This creats a 'nox' directory in the current directory that largely
+mirrors the asena/nox/src/nox directory, though with a couple key
+python files replaced by dummy files.  This directory is made with 
+symbolic links, so be careful about changing anything inside of it.  
+
+Then, from the same directory where you ran the above script, run:
+
+python2.5 mysql_oxide.py <module name> <class> 
+
+For example
+
+python2.5 mysql_oxide.py nox.apps.pyapps.ttlbind ttlbind
+
+This will cycle through the FLOW_SETUP table of the data warehouse
+and feed each packet recorded there to your application.  mysql_oxide
+then calls the timer_callback() method on your application before 
+exiting, to let the app print out results. 
+
+This assumes that your data warehouse has data in the FLOW_SETUP table.
+If not, use the standard import.py tool along with sql dumps that
+can be found at /usr/local/var/nox/export on the machine 'badwater'.  
+
+Note: the default settings assume that the packet_in callback takes an
+extra time parameter.  The easiest way to do this is to add a 'time' 
+parameter to your packet_in callback with a default value.  For example:
+
+def packet_in_callback(self, dpid, inport, reason, len, bufid, packet, time = 0) :
+
+You can also change the number of packet fed to your app by adding 
+"LIMIT X" (where X is the number of packets) to the query string used
+by mysql_oxide.  This is helpful for debugging applications.  
+

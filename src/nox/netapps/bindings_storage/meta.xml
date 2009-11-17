@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<components:components xmlns:components="http://www.noxrepo.org/components.xsd">
+  <component>
+    <name>bindings_storage</name>
+    <library>bindings_storage</library>
+    <dependency><name>storage-backend</name></dependency>
+    <dependency><name>datatypes</name></dependency>
+    <dependency><name>data_cache</name></dependency>
+  </component>
+  <component>
+    <name>pybindings_storage</name>
+    <dependency>
+      <name>bindings_storage</name>
+    </dependency>
+    <python>nox.netapps.bindings_storage.pybindings_storage</python>
+  </component>  
+  <component>
+    <name>bs_memleak_test</name>
+    <library>bs_memleak_test</library>
+    <dependency><name>bindings_storage</name></dependency>
+    <dependency><name>storage backend</name></dependency>
+  </component>  
+  <component>
+    <name>py_bs_memleak_test</name>
+    <dependency><name>pybindings_storage</name></dependency>
+    <dependency><name>pystorage</name></dependency>
+    <python>nox.netapps.bindings_storage.py_bs_memleak_test</python>
+  </component>  
+  <component>
+    <name>bind_stuff_test</name>
+    <dependency><name>pybindings_storage</name></dependency>
+    <python>nox.netapps.bindings_storage.bind_stuff_test</python>
+  </component>  
+  <component>
+    <name>bindingsws</name>
+    <dependency><name>pybindings_storage</name></dependency>
+    <dependency><name>bindings_directory</name></dependency>
+    <python>nox.netapps.bindings_storage.bindingsws</python>
+  </component>  
+  <component>
+    <name>bindings_directory</name>
+    <dependency><name>pybindings_storage</name></dependency>
+    <dependency><name>pystorage</name></dependency>
+    <python>nox.netapps.bindings_storage.bindings_directory</python>
+  </component>  
+</components:components>

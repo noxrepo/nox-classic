@@ -1,0 +1,41 @@
+                    NICIRA ACADEMIC RESEARCH LICENSE
+
+Preamble
+--------
+
+This license applies to all content in the enclosing software
+distribution for which copyright is owned by Nicira Networks.  Content
+owned by others within the distribution is clearly marked, by
+including the owner's copyright and license information.
+
+This restrictive license is a stopgap measure.  We intend to release
+future versions of NOX under a more liberal license.  If this license
+is too restrictive for you to accomplish your goals, please contact us
+at contact@nicira.com.
+
+License
+-------
+
+Copyright (c) 2007, 2008 Nicira Networks, Inc.
+
+Any person who obtains any original or modified version of this
+software and associated documentation files (the "Software") is
+granted a limited and nonexclusive right to use, copy, and modify the
+Software, but only as long as such person is a student, faculty
+member, or staff member of an educational institution, and provided
+that such use, copies and/or modifications are for non-commercial
+academic research purposes only, and further subject to the conditions
+below.  To the extent not explicitly granted by this license, Nicira
+Networks reserves all intellectual property rights in the Software,
+including any and all copyright and patent rights thereto.
+
+The above copyright notice and this permission notice shall be
+included in all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.

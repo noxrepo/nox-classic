@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<components:components xmlns:components="http://www.noxrepo.org/components.xsd">
+  <component>
+    <name>test_packet</name>
+    <python>nox.coreapps.coretests.test_packet</python>
+  </component>
+  <component>
+    <name>test_mod</name>
+    <python>nox.coreapps.coretests.test_mod</python>
+  </component>
+  <component>
+    <name>test_basic_callback</name>
+    <python>nox.coreapps.coretests.test_basic_callback</python>
+  </component>
+  <component>
+    <name>test_ssl</name>
+    <library>ssl_test</library>
+  </component>
+  <component>
+    <name>test_async</name>
+    <library>async_test</library>
+  </component>
+</components:components>

@@ -1,0 +1,32 @@
+body {background-color: white; background-repeat: no-repeat}
+
+b.fail {color: red}
+b.pass {color: green}
+
+td {margin-right: 3em}
+h3 {font-size: 1em}
+
+h4.fail {color: red; border-bottom: thin;}
+h4.pass {color: green; border-bottom: thin;}
+
+li.fail {color: red; list-style-image:url("./fail.jpg"); font-weight: bold}
+li.pass {color: gray; list-style-image:url("./pass.jpg")}
+
+a.pass {color: #55F}
+a.fail {color: #F22}
+
+tt {color: #777}
+
+input {font-size: 10}
+
+div.ellipsis
+{
+    display: none;
+    text-indent: 1em
+}
+div.collapsed
+{
+    display: block;
+    text-indent: 1em
+}
+

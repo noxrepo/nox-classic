@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<nox:nox xmlns:nox="http://www.noxrepo.org/nox.xsd">
+  <events>
+    <event name="Bootstrap_complete_event">
+      <filter>role_config_manager</filter>
+      <filter>sepl_enforcer</filter>
+    </event>
+
+    <event name="Datapath_join_event">
+      <filter>authenticator</filter>
+    </event>
+
+    <event name="Datapath_leave_event">
+      <filter>noop</filter>
+    </event>
+
+    <event name="Packet_in_event">
+      <filter>authenticator</filter>
+      <filter>dwh</filter>
+      <filter>noop</filter>
+      <filter>counter</filter>
+      <filter>packetdump</filter>
+      <filter>ctlflood</filter>
+      <filter>switch</filter>
+    </event>
+
+    <event name="Flow_in_event">
+      <filter>sepl_enforcer</filter>
+      <filter>routing</filter>
+      <filter>sample_routing</filter>
+      <filter>normal_routing</filter>
+      <filter>flow_cache</filter> 
+    </event>
+
+    <event name="Link_event">
+      <filter>authenticator</filter>
+    </event>
+
+    <event name="Flow_mod_event">
+      <filter>dwh</filter>
+    </event>
+
+    <event name="Flow_expired_event">
+      <filter>dwh</filter>
+    </event>
+
+  </events>
+</nox:nox>

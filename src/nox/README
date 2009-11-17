@@ -1,0 +1,7 @@
+Drectory: nox/src/nox
+
+Base directory for apps and utility libraries for apps.  This directory
+should only contain the following files:
+
+- Any infrastrcture needed to setup the app runtime on load
+- Build files common to apps and libs 

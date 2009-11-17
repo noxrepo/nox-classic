@@ -1,0 +1,100 @@
+<html>
+
+<head>
+<title>Build Results Explained</title>
+<!-- Refresh at 3 for debugging -->
+<!-- did :set textwidth=200 -->
+<meta http-equiv="Refresh" content="30; url=http://leadville.nicira.com/buildtest/results_explained.html">
+
+<!-- Can do most of the stuff in css -->
+<style type="text/css">
+body {background-color: white; font-size:.8em}
+
+b.fail {color: red}
+b.pass {color: green}
+
+h3 {font-size: 1em}
+
+h4.fail {color: red; border-bottom: thin;}
+h4.pass {color: green; border-bottom: thin;}
+
+li.fail {color: red; list-style-image:url("./fail.jpg")}
+li.pass {color: gray; list-style-image:url("./pass.jpg")}
+
+a.pass {color: #55F}
+a.fail {color: #F22}
+
+tt {color: #777}
+
+p {border: outset}
+</style>
+</head>
+
+
+<body>
+<p>(This page automatically refreshes every 30 seconds)</p>
+
+<p>The top of the page will show the result of execution, either passing:
+<small><h1>Check-In Results: <b class="pass">PASS</b></h1></small>
+Or failing:
+<small><h1>Check-In Results: <b class="fail">FAIL</b></h1></small>
+</p>
+
+<p>Additionally, some information about the call is displayed:
+<small>
+<table><tr>
+<td><p><small><h3>User: <tt>awesome</tt></h3> (user who called the function)</small></p>
+<p><small><h3>Time: <tt>Thu Mar  6 13:34:53 2008</tt></h3> (time/date of execution)</small></p>
+<p><small><h3>Options: <tt>ndebug, twisted</tt></h3> (configuration options)</small></p></td>
+<td><p><small><h3>Nox: <tt>/opt/nox/</tt></h3> (nox base directory used)</small></p>
+<p><small><h3>Build: <tt>/tmp/build_awesome/</tt></h3> (where the build was performed)</small></p>
+<p><small><h3>Commands: <tt>--src-dir=/opt/nox/, --force, --git-fetch, --web-update</tt></h3> (command-line options)</small></p>
+</td></tr></table>
+</small></p>
+
+<p>The summary lists the total results, sections are arbitarily divided into setup (things that happen before any configurations) and an additional section for each of the configuration modes, sections pass if and only if the entire segment was successful.
+<h2>Summary: <b class="pass"><small>(5/5 Sections)</small></b>/<b class="pass"><small>(18/18 Commands)</small></b><tt>(558.81s)</tt></h2>
+
+<ol>
+<p>For each section it displays the title, commands successful / commands total, and the amount of time taken</p>
+<li class="pass"><b class="pass">setup (2/2)</b>:<tt>(1.18s)</tt><ul>
+<p>Then for each command, the name and time are displayed, along with a link to the 'logfile' which contains all stdout/stderr for that execution.  The exact command which was executed, as well as the directory from which the command was called, are found in the logfile, which are symbolically linked to by './logs/'</p>
+<li class="pass">Fetch <a class="pass" href="logs/build_awesome/fetch.log">logs/build_awesome/fetch.log</a> <tt>(0.09s)</tt></li>
+<li class="pass">Rebase <a class="pass" href="logs/build_awesome/rebase.log">logs/build_awesome/rebase.log</a> <tt>(0.04s)</tt></li>
+</ul></li>
+
+<p>Should a test fail (simulated), this will be indicated by a change in the section font and status-image ...</p>
+<li class="fail"><b class="faill">default (3/4)</b>:<tt>(142.03s)</tt><ul>
+<li class="pass">Make Configure <a class="pass" href="logs/default/make_configure.log">logs/default/make_configure.log</a> <tt>(11.91s)</tt></li>
+<li class="pass">Make <a class="pass" href="logs/default/make.log">logs/default/make.log</a> <tt>(108.14s)</tt></li>
+<p>As well as in the command that failed.  If necessary, additional error messages from 'builder.py' can be incorporated into this, but for now, the logs themselves usually provide sufficient information (in this case, the log file is fine, as this failure is simulated)</p>
+<li class="fail">Make Controller <a class="fail" href="logs/default/make_controller.log">logs/default/make_controller.log</a> <tt>(1.49s)</tt></li>
+<li class="pass">Make Tests <a class="pass" href="logs/default/make_tests.log">logs/default/make_tests.log</a> <tt>(20.49s)</tt></li>
+</ul></li>
+
+<li class="pass"><b class="pass">ndebug (4/4)</b>:<tt>(93.10s)</tt><ul>
+<li class="pass">Make Configure <a class="pass" href="logs/ndebug/make_configure.log">logs/ndebug/make_configure.log</a> <tt>(11.93s)</tt></li>
+<li class="pass">Make <a class="pass" href="logs/ndebug/make.log">logs/ndebug/make.log</a> <tt>(65.83s)</tt></li>
+<li class="pass">Make Controller <a class="pass" href="logs/ndebug/make_controller.log">logs/ndebug/make_controller.log</a> <tt>(1.17s)</tt></li>
+<li class="pass">Make Tests <a class="pass" href="logs/ndebug/make_tests.log">logs/ndebug/make_tests.log</a> <tt>(14.16s)</tt></li>
+</ul></li>
+
+<li class="pass"><b class="pass">twisted (4/4)</b>:<tt>(192.11s)</tt><ul>
+<li class="pass">Make Configure <a class="pass" href="logs/twisted/make_configure.log">logs/twisted/make_configure.log</a> <tt>(12.14s)</tt></li>
+<li class="pass">Make <a class="pass" href="logs/twisted/make.log">logs/twisted/make.log</a> <tt>(133.30s)</tt></li>
+<li class="pass">Make Controller <a class="pass" href="logs/twisted/make_controller.log">logs/twisted/make_controller.log</a> <tt>(25.38s)</tt></li>
+<li class="pass">Make Tests <a class="pass" href="logs/twisted/make_tests.log">logs/twisted/make_tests.log</a> <tt>(21.30s)</tt></li>
+</ul></li>
+
+<li class="pass"><b class="pass">ndebug_twisted (4/4)</b>:<tt>(131.57s)</tt><ul>
+<li class="pass">Make Configure <a class="pass" href="logs/ndebug_twisted/make_configure.log">logs/ndebug_twisted/make_configure.log</a> <tt>(12.35s)</tt></li>
+<li class="pass">Make <a class="pass" href="logs/ndebug_twisted/make.log">logs/ndebug_twisted/make.log</a> <tt>(82.12s)</tt></li>
+<li class="pass">Make Controller <a class="pass" href="logs/ndebug_twisted/make_controller.log">logs/ndebug_twisted/make_controller.log</a> <tt>(22.51s)</tt></li>
+<li class="pass">Make Tests <a class="pass" href="logs/ndebug_twisted/make_tests.log">logs/ndebug_twisted/make_tests.log</a> <tt>(14.59s)</tt></li>
+</ul></li>
+
+</ol>
+<p>Direct additional questions / comments to Reid or Martin</p>
+<p>Created Thursday, March 6th, 2008, by Reid</p>
+
+</body>
