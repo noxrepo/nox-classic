@@ -169,12 +169,12 @@ function nox_test_assert_file_contains() {
 
     failed=n
 #    for re in "$@"; do
-    while read re; do
+    while read -r re; do
         if ! grep -q "$re" "$file"; then
-            nox_test_fail "$filename matches regexp: $re"
+            nox_test_fail "$filename Failed to matche regexp: "$re""
             failed=y
         else
-            nox_test_pass "$filename matches regexp: $re"
+            nox_test_pass "$filename matches regexp: "$re""
         fi
     done
     if [ "$failed" = "y" ]; then
