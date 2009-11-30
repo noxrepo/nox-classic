@@ -40,7 +40,7 @@ def read_input():
 #example data = [[19,100....]] ===> key= body[0][1][2] = 100
 #example data = [{"uid": 10,...},{}} ==> key= body.uid = 10
 def parse_output(key,value,list= []):
-    if type(value).__name__ in ['int','str','unicode', 'NoneType' , 'bool']:
+    if type(value).__name__ in ['int','str','unicode','NoneType','bool','float']:
          list.append((key,repr(value)))
     elif type(value).__name__ == 'list':
         cnt = 0
