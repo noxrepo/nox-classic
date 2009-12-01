@@ -74,6 +74,7 @@ def print_response(response):
 
 def response_is_valid(response):
         contentType = response.getContentType()
+        print_response(response)
         #check the output to the status returned
         assert response.status == httplib.OK, \
             'Request error %d (%s) : %s' % \
@@ -81,7 +82,6 @@ def response_is_valid(response):
         assert contentType == "application/json", \
             "Unexpected content type: %s : %s" % \
             (contentType, response.getBody())
-        print_response(response)
         return True
 
 def ws_cmdGet(wsc,cmd):
