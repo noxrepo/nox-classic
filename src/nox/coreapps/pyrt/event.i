@@ -93,13 +93,13 @@ private:
     Switch_mgr_leave_event();
 };
 
-struct Flow_expired_event
+struct Flow_removed_event
     : public Event
 {
     static const std::string static_get_name();
 
 private:
-    Flow_expired_event();
+    Flow_removed_event();
 };
 
 struct Flow_mod_event

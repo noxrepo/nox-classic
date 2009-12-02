@@ -25,8 +25,8 @@ event.hh					\
 expr.hh						\
 fault.hh					\
 flow-event.hh					\
-flow-expired.hh					\
 flow-mod-event.hh				\
+flow-removed.hh					\
 flow-stats-in.hh \
 flow.hh						\
 fnv_hash.hh					\

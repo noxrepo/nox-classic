@@ -65,6 +65,7 @@ public:
         ofm->match.wildcards = htonl(0);
         ofm->match.in_port = htons(flow.in_port);
         ofm->match.dl_vlan = flow.dl_vlan;
+        ofm->match.dl_vlan_pcp = flow.dl_vlan_pcp;
         memcpy(ofm->match.dl_src, flow.dl_src.octet, sizeof ofm->match.dl_src);
         memcpy(ofm->match.dl_dst, flow.dl_dst.octet, sizeof ofm->match.dl_dst);
         ofm->match.dl_type = flow.dl_type;
@@ -78,7 +79,8 @@ public:
         ofm->idle_timeout = htons(5);
         ofm->hard_timeout = htons(5);
         ofm->priority = htons(OFP_DEFAULT_PRIORITY);
-        ofm->reserved = htons(0);
+        ofm->flags = htons(0);
+        ofm->reserved = htonl(0);
         ofp_action_output& action = *((ofp_action_output*)ofm->actions);
         memset(&action, 0, sizeof(ofp_action_output));
         action.type = htons(OFPAT_OUTPUT);

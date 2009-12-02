@@ -62,6 +62,7 @@ using namespace vigil::applications;
     #              'dl_src': 0x002320ed7e64,
     #              'dl_dst': 0x002320ed7e65,
     #              'dl_vlan': 0x234,
+    #              'dl_vlan_pcp': 7,
     #              'dl_type': 0x0800,
     #              'nw_proto': 17,
     #              'nw_src': 0x525400123502,

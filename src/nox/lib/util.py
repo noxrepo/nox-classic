@@ -258,6 +258,12 @@ def set_match(attrs):
     else:
         wildcards = wildcards | openflow.OFPFW_DL_VLAN
 
+    if attrs.has_key(core.DL_VLAN_PCP):
+        m.dl_vlan_pcp = attrs[core.DL_VLAN_PCP]
+        num_entries += 1
+    else:
+        wildcards = wildcards | openflow.OFPFW_DL_VLAN_PCP
+
     if attrs.has_key(core.DL_SRC):
         v = convert_to_eaddr(attrs[core.DL_SRC])
         if v == None:
@@ -364,9 +370,11 @@ def extract_flow(ethernet):
 
     if isinstance(p, vlan):
         attrs[core.DL_VLAN] = p.id
+        attrs[core.DL_VLAN_PCP] = p.pcp
         p = p.next
     else:
         attrs[core.DL_VLAN] = 0xffff # XXX should be written OFP_VLAN_NONE
+        attrs[core.DL_VLAN_PCP] = 0
 
     if isinstance(p, ipv4):
         attrs[core.NW_SRC] = p.srcip

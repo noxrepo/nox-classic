@@ -43,7 +43,7 @@ def testVlan():
     nox_test_assert(vlanh, 'vlan parse')
     nox_test_assert(eth.type       == ethernet.VLAN_TYPE)
     nox_test_assert(vlanh.eth_type == ethernet.ARP_TYPE)
-    nox_test_assert(vlanh.tos      == 6)
+    nox_test_assert(vlanh.pcp      == 6)
     nox_test_assert(vlanh.cfi      == 0)
     nox_test_assert(vlanh.id       == 570)
 

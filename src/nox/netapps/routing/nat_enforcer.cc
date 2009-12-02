@@ -136,6 +136,9 @@ get_field<Flow_expr, NAT_data>(uint32_t field, const NAT_data& data,
     case Flow_expr::DLVLAN:
         value = data.flow->dl_vlan;
         return true;
+    case Flow_expr::DLVLANPCP:
+        value = data.flow->dl_vlan_pcp;
+        return true;
     case Flow_expr::DLSRC:
         v = data.flow->dl_src.hb_long();
         value = ((uint32_t) v) ^ (v >> 32);
@@ -238,6 +241,11 @@ matches(uint32_t rule_id, const Flow_expr& expr, const NAT_data& data)
         switch (t) {
         case Flow_expr::DLVLAN:
             if (((uint32_t)(iter->val) == flow.dl_vlan) == bad_result) {
+                return false;
+            }
+            break;
+        case Flow_expr::DLVLANPCP:
+            if (((uint32_t)(iter->val) == flow.dl_vlan_pcp) == bad_result) {
                 return false;
             }
             break;

@@ -47,6 +47,9 @@ get_field<Packet_expr, Flow>(uint32_t field, const Flow& flow,
     case Packet_expr::DL_VLAN:
         value = flow.dl_vlan;
         return true;
+    case Packet_expr::DL_VLAN_PCP:
+        value = flow.dl_vlan_pcp;
+        return true;
     case Packet_expr::DL_TYPE:
         value = flow.dl_type;
         return true;
@@ -103,6 +106,9 @@ Packet_expr::get_field(uint32_t field, uint32_t& value) const
     case DL_VLAN:
         value = dl_vlan;
         return true;
+    case DL_VLAN_PCP:
+        value = dl_vlan_pcp;
+        return true;
     case DL_TYPE:
         value = dl_proto;
         return true;
@@ -151,6 +157,9 @@ Packet_expr::set_field(Expr_field field, const uint32_t value[MAX_FIELD_LEN])
         break;
     case DL_VLAN:
         dl_vlan = value[0];
+        break;
+    case DL_VLAN_PCP:
+        dl_vlan_pcp = value[0];
         break;
     case DL_TYPE:
         dl_proto = value[0];
@@ -216,6 +225,8 @@ matches(uint32_t rule_id, const Packet_expr& expr, const Flow& flow)
              || expr.ap_src == flow.in_port)
             && ((expr.wildcards & Cnode<Packet_expr, void*>::MASKS[Packet_expr::DL_VLAN])
                 || expr.dl_vlan == flow.dl_vlan)
+            && ((expr.wildcards & Cnode<Packet_expr, void*>::MASKS[Packet_expr::DL_VLAN_PCP])
+                || expr.dl_vlan_pcp == flow.dl_vlan_pcp)
             && ((expr.wildcards & Cnode<Packet_expr, void*>::MASKS[Packet_expr::DL_TYPE])
                 || expr.dl_proto == flow.dl_type)
             && ((expr.wildcards & Cnode<Packet_expr, void*>::MASKS[Packet_expr::DL_SRC])
@@ -247,6 +258,8 @@ matches(uint32_t rule_id, const Packet_expr& expr, const Packet_expr& to_match)
                 || expr.ap_dst == to_match.ap_dst)
             && ((to_match.wildcards & Cnode<Packet_expr, void*>::MASKS[Packet_expr::DL_VLAN])
                 || expr.dl_vlan == to_match.dl_vlan)
+            && ((to_match.wildcards & Cnode<Packet_expr, void*>::MASKS[Packet_expr::DL_VLAN_PCP])
+                || expr.dl_vlan_pcp == to_match.dl_vlan_pcp)
             && ((to_match.wildcards & Cnode<Packet_expr, void*>::MASKS[Packet_expr::DL_TYPE])
                 || expr.dl_proto == to_match.dl_proto)
             && ((to_match.wildcards & Cnode<Packet_expr, void*>::MASKS[Packet_expr::DL_SRC])
@@ -297,6 +310,9 @@ Packet_expr::to_string(uint32_t field) const
             break;
         case DL_VLAN:
             sprintf(str,"dlvlan=%hu,", dl_vlan);
+            break;
+        case DL_VLAN_PCP:
+            sprintf(str,"dlvlanpcp=%hu,", dl_vlan_pcp);
             break;
         case DL_TYPE:
             sprintf(str,"dlproto=%hu,", dl_proto);

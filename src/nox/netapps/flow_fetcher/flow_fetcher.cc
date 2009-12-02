@@ -193,7 +193,8 @@ Flow_fetcher_app::start_fetch(datapathid dpid,
     /* Copy the user-provided ofp_flow_stats_request, zeroing the pad
      * bytes just in case the caller failed to do so. */
     ofp_flow_stats_request fsr = request;
-    fsr.match.pad = 0;
+    memset(&fsr.match.pad1, 0, sizeof fsr.match.pad1);
+    memset(&fsr.match.pad2, 0, sizeof fsr.match.pad2);
     memset(&fsr.pad, 0, sizeof fsr.pad);
     memcpy(b.put(sizeof request), &request, sizeof request);
 

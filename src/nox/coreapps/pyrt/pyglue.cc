@@ -169,6 +169,12 @@ from_python(PyObject *pymatch)
         match.wildcards &= htonl(~OFPFW_DL_VLAN);
     }
 
+    PyObject* dl_vlan_pcp = PyDict_GetItemString(pymatch, "dl_vlan_pcp");
+    if (dl_vlan_pcp) {
+        match.dl_vlan_pcp = from_python<uint8_t>(dl_vlan_pcp);
+        match.wildcards &= htonl(~OFPFW_DL_VLAN_PCP);
+    }
+
     PyObject* dl_type = PyDict_GetItemString(pymatch, "dl_type");
     if (dl_type) {
         match.dl_type = htons(from_python<uint16_t>(dl_type));
@@ -523,6 +529,9 @@ to_python(const ofp_match& m)
     if (!(wildcards & OFPFW_DL_VLAN)) {
         pyglue_setdict_string(dict, "dl_vlan", to_python(ntohs(m.dl_vlan)));
     }
+    if (!(wildcards & OFPFW_DL_VLAN_PCP)) {
+        pyglue_setdict_string(dict, "dl_vlan_pcp", to_python(ntohs(m.dl_vlan_pcp)));
+    }
     if (!(wildcards & OFPFW_DL_TYPE)) {
         pyglue_setdict_string(dict, "dl_type", to_python(ntohs(m.dl_type)));
     }
@@ -646,6 +655,7 @@ to_python(const Flow& flow)
 
 //     pyglue_setdict_string(dict, "in_port", to_python(ntohs(flow.in_port)));
 //     pyglue_setdict_string(dict, "dl_vlan", to_python(ntohs(flow.dl_vlan)));
+//     pyglue_setdict_string(dict, "dl_vlan_pcp", to_python(ntohs(flow.dl_vlan_pcp)));
 //     pyglue_setdict_string(dict, "dl_src", to_python(flow.dl_src));
 //     pyglue_setdict_string(dict, "dl_dst", to_python(flow.dl_dst));
 //     pyglue_setdict_string(dict, "dl_type", to_python(ntohs(flow.dl_type)));

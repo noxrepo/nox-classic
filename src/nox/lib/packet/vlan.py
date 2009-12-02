@@ -21,7 +21,7 @@
 #    0                   1                   2                   3   
 #    0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 
 #   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-#   | TOS  |C|       VLANID         |       Encapsualted protocol   |
+#   | PCP  |C|       VLANID         |       Encapsualted protocol   |
 #   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
 #
 #======================================================================
@@ -59,7 +59,7 @@ class vlan(packet_base):
         else:    
             ethernet.type_parsers[ethernet.VLAN_TYPE] = vlan
 
-        self.tos      = 0 
+        self.pcp      = 0 
         self.cfi      = 0 
         self.id       = 0
         self.eth_type = 0 
@@ -70,7 +70,7 @@ class vlan(packet_base):
             self.parse()
 
     def __str__(self): 
-        s = ''.join(('(vlanid='+str(self.id)+")["+ethtype_to_str(self.eth_type)+']'))
+        s = ''.join(('(vlanid='+str(self.id)+':pcp='+str(self.pcp)+")["+ethtype_to_str(self.eth_type)+']'))
         if self.next == None:
             return s
         return ''.join((s, str(self.next)))
@@ -81,12 +81,12 @@ class vlan(packet_base):
             print '(vlan parse) warning VLAN packet data too short to parse header: data len %u' % dlen
             return 
 
-        (tosid, self.eth_type) = struct.unpack("!HH", \
+        (pcpid, self.eth_type) = struct.unpack("!HH", \
                 self.arr[:vlan.MIN_LEN])
 
-        self.tos = tosid >> 13
-        self.c   = tosid  & 0x1000
-        self.id  = tosid  & 0x0fff
+        self.pcp = pcpid >> 13
+        self.c   = pcpid  & 0x1000
+        self.id  = pcpid  & 0x0fff
 
         self.parsed = True
 
@@ -94,8 +94,8 @@ class vlan(packet_base):
             self.next = ethernet.type_parsers[self.eth_type](arr=self.arr[vlan.MIN_LEN:],prev=self)
 
     def hdr(self):
-        tosid  = self.tos << 13
-        tosid |= self.c   << 12
-        tosid |= self.id
-        buf = struct.pack("!HH", tosid, self.eth_type)
+        pcpid  = self.pcp << 13
+        pcpid |= self.c   << 12
+        pcpid |= self.id
+        buf = struct.pack("!HH", pcpid, self.eth_type)
         return buf

@@ -201,6 +201,6 @@ struct nx_flow_end {
     uint64_t packet_count;    
     uint64_t byte_count;
 };
-OFP_ASSERT(sizeof(struct nx_flow_end) == 104);
+OFP_ASSERT(sizeof(struct nx_flow_end) == 108);
 
 #endif /* openflow/nicira-ext.h */

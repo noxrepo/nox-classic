@@ -38,8 +38,8 @@
 #include "desc-stats-in.hh"
 #include "table-stats-in.hh"
 #include "port-stats-in.hh"
-#include "flow-expired.hh"
 #include "flow-mod-event.hh"
+#include "flow-removed.hh"
 #include "packet-in.hh"
 #include "port-status.hh"
 #include "pyevent.hh"
@@ -259,15 +259,15 @@ static void convert_bootstrap_complete(const Event&e, PyObject* proxy) {
     ((Event*)SWIG_Python_GetSwigThis(proxy)->ptr)->operator=(e);
 }
 
-static void convert_flow_expired(const Event& e, PyObject* proxy) {
-    const Flow_expired_event& fee = dynamic_cast<const Flow_expired_event&>(e);
+static void convert_flow_removed(const Event& e, PyObject* proxy) {
+    const Flow_removed_event& fre = dynamic_cast<const Flow_removed_event&>(e);
 
-    pyglue_setattr_string(proxy, "duration", to_python(fee.duration));
-    pyglue_setattr_string(proxy, "byte_count", to_python(fee.byte_count));
-    pyglue_setattr_string(proxy, "packet_count", to_python(fee.packet_count));
-    pyglue_setattr_string(proxy, "datapath_id", to_python(fee.datapath_id));
-    assert(fee.get_flow());
-    pyglue_setattr_string(proxy, "flow", to_python(*fee.get_flow()));
+    pyglue_setattr_string(proxy, "duration", to_python(fre.duration));
+    pyglue_setattr_string(proxy, "byte_count", to_python(fre.byte_count));
+    pyglue_setattr_string(proxy, "packet_count", to_python(fre.packet_count));
+    pyglue_setattr_string(proxy, "datapath_id", to_python(fre.datapath_id));
+    assert(fre.get_flow());
+    pyglue_setattr_string(proxy, "flow", to_python(*fre.get_flow()));
 
     ((Event*)SWIG_Python_GetSwigThis(proxy)->ptr)->operator=(e);
 }   
@@ -440,8 +440,8 @@ PyRt::PyRt(const Context* c,
                              &convert_switch_mgr_join);
     register_event_converter(Switch_mgr_leave_event::static_get_name(), 
                              &convert_switch_mgr_leave);
-    register_event_converter(Flow_expired_event::static_get_name(), 
-                             &convert_flow_expired);
+    register_event_converter(Flow_removed_event::static_get_name(), 
+                             &convert_flow_removed);
     register_event_converter(Flow_mod_event::static_get_name(), 
                              &convert_flow_mod);
     register_event_converter(Packet_in_event::static_get_name(), 

@@ -22,7 +22,7 @@
 #include "datapath-leave.hh"
 #include "desc-stats-in.hh"
 #include "echo-request.hh"
-#include "flow-expired.hh"
+#include "flow-removed.hh"
 #include "flow-mod-event.hh"
 #include "packet-in.hh"
 #include "port-stats-in.hh"

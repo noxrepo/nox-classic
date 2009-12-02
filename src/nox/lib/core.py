@@ -35,6 +35,7 @@ AP_DST     = "ap_dst"
 DL_SRC     = "dl_src"
 DL_DST     = "dl_dst"
 DL_VLAN    = "dl_vlan"
+DL_VLAN_PCP = "dl_vlan_pcp"
 DL_TYPE    = "dl_type"
 NW_SRC     = "nw_src"
 NW_SRC_N_WILD = "nw_src_n_wild"
@@ -323,6 +324,7 @@ class Component:
     # DL_SRC     = "dl_src"
     # DL_DST     = "dl_dst"
     # DL_VLAN    = "dl_vlan"
+    # DL_VLAN_PCP = "dl_vlan_pcp"
     # DL_TYPE    = "dl_type"
     # NW_SRC     = "nw_src"
     # NW_DST     = "nw_dst"
@@ -394,8 +396,8 @@ class Component:
         self.register_handler(Packet_in_event.static_get_name(),
                               gen_packet_in_cb(handler))
 
-    def register_for_flow_expired(self, handler):
-        self.register_handler(Flow_expired_event.static_get_name(),
+    def register_for_flow_removed(self, handler):
+        self.register_handler(Flow_removed_event.static_get_name(),
                               handler)
 
     def register_for_flow_mod(self, handler):
@@ -579,6 +581,9 @@ class Component:
             elif key == DL_VLAN:
                 field = Packet_expr.DL_VLAN
                 val = htons(val)
+            elif key == DL_VLAN_PCP:
+                field = Packet_expr.DL_VLAN_PCP
+                val = val
             elif key == DL_TYPE:
                 field = Packet_expr.DL_TYPE
                 val = htons(val)

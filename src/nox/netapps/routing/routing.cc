@@ -570,9 +570,11 @@ Routing_module::init_openflow(uint16_t actions_len)
     ofm->header.xid = 0;
 
     ofm->match.wildcards = 0;
-    ofm->match.pad = 0;
+    memset(&ofm->match.pad1, 0, sizeof(ofm->match.pad1));
+    memset(&ofm->match.pad2, 0, sizeof(ofm->match.pad2));
     ofm->command = htons(OFPFC_ADD);
     ofm->priority = htons(OFP_DEFAULT_PRIORITY);
+    ofm->flags = 0;
     ofm->reserved = 0;
 }
 
@@ -612,6 +614,7 @@ Routing_module::set_openflow(const Flow& flow, uint32_t buffer_id, uint16_t time
     memcpy(match.dl_src, flow.dl_src.octet, ethernetaddr::LEN);
     memcpy(match.dl_dst, flow.dl_dst.octet, ethernetaddr::LEN);
     match.dl_vlan = flow.dl_vlan;
+    match.dl_vlan_pcp = flow.dl_vlan_pcp;
     match.dl_type = flow.dl_type;
     match.nw_src = flow.nw_src;
     match.nw_dst = flow.nw_dst;

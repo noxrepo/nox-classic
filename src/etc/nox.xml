@@ -40,7 +40,7 @@
       <filter>dwh</filter>
     </event>
 
-    <event name="Flow_expired_event">
+    <event name="Flow_removed_event">
       <filter>dwh</filter>
     </event>
 

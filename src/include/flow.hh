@@ -29,6 +29,7 @@ class Buffer;
 struct Flow {
     uint16_t in_port;       /* Input switch port. */
     uint16_t dl_vlan;       /* Input VLAN. */
+    uint16_t dl_vlan_pcp;   /* Input VLAN priority. */
     ethernetaddr dl_src;    /* Ethernet source address. */
     ethernetaddr dl_dst;    /* Ethernet destination address. */
     uint16_t dl_type;       /* Ethernet frame type. */

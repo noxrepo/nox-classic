@@ -71,6 +71,7 @@ public:
         GROUPSRC,
         GROUPDST,
         DLVLAN,
+        DLVLANPCP,
         DLSRC,
         DLDST,
         DLTYPE,

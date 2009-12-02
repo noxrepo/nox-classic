@@ -44,8 +44,8 @@
 #include "port-stats-in.hh"
 
 #include "echo-request.hh"
-#include "flow-expired.hh"
 #include "flow-mod-event.hh"
+#include "flow-removed.hh"
 #include "packet-in.hh"
 #include "port-status.hh"
 #include "pycomponent.hh"
@@ -269,6 +269,7 @@ PyContext::send_flow_command(uint64_t datapath_id,
     ofm->buffer_id = htonl(buffer_id);
     ofm->out_port = htons(OFPP_NONE);
     ofm->priority = htons(priority);
+    ofm->flags = htons(0);
     ofm->reserved = htonl(0);
 
     if (actions.size() > 0) {

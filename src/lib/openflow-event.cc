@@ -41,7 +41,7 @@
 #include "table-stats-in.hh"
 #include "port-stats-in.hh"
 #include "error-event.hh"
-#include "flow-expired.hh"
+#include "flow-removed.hh"
 #include "ofmp-config-update.hh"
 #include "ofmp-config-update-ack.hh"
 #include "ofmp-resources-update.hh"
@@ -72,14 +72,14 @@ handle_packet_in(boost::shared_ptr<Openflow_connection> oconn,
 }
 
 Event*
-handle_flow_expired(boost::shared_ptr<Openflow_connection> oconn,
-                    const ofp_flow_expired *ofe, std::auto_ptr<Buffer> buf)
+handle_flow_removed(boost::shared_ptr<Openflow_connection> oconn,
+                    const ofp_flow_removed *ofr, std::auto_ptr<Buffer> buf)
 {
     datapathid datapath_id = oconn->get_datapath_id();
 
     lg.dbg("received flow expired event from %s",
            datapath_id.string().c_str());
-    return new Flow_expired_event(datapath_id, ofe, buf);
+    return new Flow_removed_event(datapath_id, ofr, buf);
 }
 
 Event*
@@ -468,8 +468,8 @@ openflow_packet_to_event(boost::shared_ptr<Openflow_connection> oconn, std::auto
     switch (oh->type) {
     case OFPT_PACKET_IN:
         return handle_packet(handle_packet_in, oconn, oh, p);
-    case OFPT_FLOW_EXPIRED:
-        return handle_packet(handle_flow_expired, oconn, oh, p);
+    case OFPT_FLOW_REMOVED:
+        return handle_packet(handle_flow_removed, oconn, oh, p);
     case OFPT_PORT_STATUS:
         return handle_packet(handle_port_status, oconn, oh, p);
     case OFPT_FEATURES_REPLY:

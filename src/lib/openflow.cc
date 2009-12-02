@@ -593,7 +593,7 @@ int Openflow_connection::send_switch_config() {
     osc.header.version = OFP_VERSION;
     osc.header.length = htons(sizeof osc);
     osc.header.xid = 0;
-    osc.flags =  0; /* turn on expirations with htons(OFPC_SEND_FLOW_EXP); */
+    osc.flags =  0;
     osc.miss_send_len = htons(OFP_DEFAULT_MISS_SEND_LEN);
 
     return send_openflow(&osc.header, false);

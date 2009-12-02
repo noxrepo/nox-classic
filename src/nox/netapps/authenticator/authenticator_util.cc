@@ -83,6 +83,7 @@ Authenticator::Authenticator(const container::Context* c,
     ofm->out_port = htons(OFPP_NONE);
     ofm->buffer_id = htonl(UINT32_MAX);
     ofm->priority = htons(OFP_DEFAULT_PRIORITY);
+    ofm->flags = 0;
     ofm->reserved = 0;
 }
 

@@ -55,7 +55,7 @@ class VlanTestCase(unittest.NoxTestCase):
         self.failUnless(vlanh)
         self.failUnless(eth.type       == ethernet.VLAN_TYPE)
         self.failUnless(vlanh.eth_type == ethernet.ARP_TYPE)
-        self.failUnless(vlanh.tos      == 6)
+        self.failUnless(vlanh.pcp      == 6)
         self.failUnless(vlanh.cfi      == 0)
         self.failUnless(vlanh.id       == 570)
 

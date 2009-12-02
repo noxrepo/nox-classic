@@ -48,6 +48,7 @@ Normal_routing::Normal_routing(const container::Context *c, const xercesc::DOMNo
     ofm->hard_timeout = htons(OFP_FLOW_PERMANENT);
     ofm->priority = htons(OFP_DEFAULT_PRIORITY);
     ofm->out_port = htons(OFPP_NONE);
+    ofm->flags = 0;
     ofm->reserved = 0;
 
     ofp_action_output *action = (ofp_action_output*) (ofm->actions);
@@ -92,6 +93,7 @@ Normal_routing::handle_flow_in(const Event& e)
         memcpy(match.dl_src, flow.dl_src.octet, ethernetaddr::LEN);
         memcpy(match.dl_dst, flow.dl_dst.octet, ethernetaddr::LEN);
         match.dl_vlan = flow.dl_vlan;
+        match.dl_vlan_pcp = flow.dl_vlan_pcp;
         match.dl_type = flow.dl_type;
         match.nw_src = flow.nw_src;
         match.nw_dst = flow.nw_dst;

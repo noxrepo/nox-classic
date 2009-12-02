@@ -21,7 +21,7 @@
 #include "datapath-leave.hh"
 #include "error-event.hh"
 #include "bootstrap-complete.hh"
-#include "flow-expired.hh"
+#include "flow-removed.hh"
 #include "flow-mod-event.hh"
 #include "packet-in.hh"
 #include "port-status.hh"
@@ -93,7 +93,7 @@ EventDispatcherComponent::EventDispatcherComponent(const Context* c,
     register_event<Datapath_join_event>();
     register_event<Datapath_leave_event>();
     register_event<Error_event>();
-    register_event<Flow_expired_event>();
+    register_event<Flow_removed_event>();
     register_event<Flow_mod_event>();
     register_event<Packet_in_event>();
     register_event<Port_status_event>();

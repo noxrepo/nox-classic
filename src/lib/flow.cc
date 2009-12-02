@@ -87,7 +87,7 @@ pull_vlan(Buffer& b)
 
 Flow::Flow(uint16_t in_port_, const Buffer& buffer)
     : in_port(in_port_),
-      dl_vlan(), dl_src(), dl_dst(), dl_type(0),
+      dl_vlan(), dl_vlan_pcp(0), dl_src(), dl_dst(), dl_type(0),
       nw_src(0), nw_dst(0), nw_proto(0),
       tp_src(0), tp_dst(0)
 {
@@ -185,9 +185,9 @@ Flow::to_string() const
 {
     char buffer[128];
     snprintf(buffer, sizeof buffer,
-	     "port%04x:vlan%04x mac"EA_FMT"->"EA_FMT" "
+	     "port%04x:vlan%04x:pcp:%d mac"EA_FMT"->"EA_FMT" "
 	     "proto%04x ip%u.%u.%u.%u->%u.%u.%u.%u port%d->%d",
-	     ntohs(in_port), ntohs(dl_vlan),
+	     ntohs(in_port), ntohs(dl_vlan), dl_vlan_pcp,
 		 EA_ARGS(&dl_src), EA_ARGS(&dl_dst),
 	     ntohs(dl_type),
 	     ((unsigned char *)&nw_src)[0],
@@ -216,6 +216,7 @@ Flow::hash_code() const
     MD5_Init(&ctx);
 	MD5_Update(&ctx, &in_port, sizeof(in_port));
 	MD5_Update(&ctx, &dl_vlan, sizeof(dl_vlan));
+	MD5_Update(&ctx, &dl_vlan_pcp, sizeof(dl_vlan_pcp));
 	MD5_Update(&ctx, &dl_src, sizeof(dl_src.octet));
 	MD5_Update(&ctx, &dl_dst, sizeof(dl_dst.octet));
 	MD5_Update(&ctx, &dl_type, sizeof(dl_type));
