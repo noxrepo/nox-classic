@@ -88,7 +88,7 @@ pull_vlan(Buffer& b)
 Flow::Flow(uint16_t in_port_, const Buffer& buffer)
     : in_port(in_port_),
       dl_vlan(), dl_vlan_pcp(0), dl_src(), dl_dst(), dl_type(0),
-      nw_src(0), nw_dst(0), nw_proto(0),
+      nw_src(0), nw_dst(0), nw_proto(0), nw_tos(0),
       tp_src(0), tp_dst(0)
 {
     dl_vlan = htons(OFP_VLAN_NONE);
@@ -135,6 +135,7 @@ Flow::Flow(uint16_t in_port_, const Buffer& buffer)
                 nw_src = ip->ip_src;
                 nw_dst = ip->ip_dst;
                 nw_proto = ip->ip_proto;
+                nw_tos = ip->ip_tos;
                 if (!ip_::is_fragment(ip->ip_frag_off)) {
                     if (nw_proto == ip_::proto::TCP) {
                         const tcp_header *tcp = pull_tcp(b);
@@ -223,6 +224,7 @@ Flow::hash_code() const
 	MD5_Update(&ctx, &nw_src, sizeof(nw_src));
 	MD5_Update(&ctx, &nw_dst, sizeof(nw_dst));
 	MD5_Update(&ctx, &nw_proto, sizeof(nw_proto));
+	MD5_Update(&ctx, &nw_tos, sizeof(nw_tos));
 	MD5_Update(&ctx, &tp_src, sizeof(tp_src));
 	MD5_Update(&ctx, &tp_dst, sizeof(tp_dst));
     MD5_Final(md, &ctx);

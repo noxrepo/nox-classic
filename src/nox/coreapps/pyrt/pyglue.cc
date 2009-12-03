@@ -215,6 +215,12 @@ from_python(PyObject *pymatch)
         }
     }
 
+    PyObject* nw_tos = PyDict_GetItemString(pymatch, "nw_tos");
+    if (nw_tos) {
+        match.nw_tos = from_python<uint8_t>(nw_tos);
+        match.wildcards &= htonl(~OFPFW_NW_TOS);
+    }
+
     PyObject* nw_proto = PyDict_GetItemString(pymatch, "nw_proto");
     if (nw_proto) {
         match.nw_proto = from_python<uint8_t>(nw_proto);
@@ -463,7 +469,7 @@ to_python(const ofp_flow_mod& m)
                           to_python(ntohs(m.hard_timeout)));
     pyglue_setdict_string(dict, "buffer_id", to_python(ntohl(m.buffer_id)));
     pyglue_setdict_string(dict, "priority", to_python(ntohs(m.priority)));
-    pyglue_setdict_string(dict, "cookie", to_python(ntohl(m.cookie)));
+    pyglue_setdict_string(dict, "cookie", to_python(ntohll(m.cookie)));
     /* XXX actions */
     return dict;
 }
@@ -545,6 +551,9 @@ to_python(const ofp_match& m)
     if (nw_dst_n_wild < 32) {
         pyglue_setdict_string(dict, "nw_dst", to_python(ntohl(m.nw_dst)));
         pyglue_setdict_string(dict, "nw_dst_n_wild", to_python(nw_dst_n_wild));
+    }
+    if (!(wildcards & OFPFW_NW_TOS)) {
+        pyglue_setdict_string(dict, "nw_tos", to_python(m.nw_tos));
     }
     if (!(wildcards & OFPFW_NW_PROTO)) {
         pyglue_setdict_string(dict, "nw_proto", to_python(m.nw_proto));

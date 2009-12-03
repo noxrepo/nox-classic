@@ -94,7 +94,7 @@ Flow_removed_event::Flow_removed_event(datapathid datapath_id_,
     : Event(static_get_name()), Ofp_msg_event(&ofr->header, buf),
       datapath_id(datapath_id_)
 {
-    cookie  = ntohl(ofr->cookie);
+    cookie  = ntohll(ofr->cookie);
     duration_sec  = ntohl(ofr->duration_sec);
     duration_nsec = ntohl(ofr->duration_nsec);
     idle_timeout  = ntohs(ofr->idle_timeout);

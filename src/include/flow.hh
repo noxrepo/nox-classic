@@ -35,6 +35,7 @@ struct Flow {
     uint16_t dl_type;       /* Ethernet frame type. */
     uint32_t nw_src;        /* IP source address. */
     uint32_t nw_dst;        /* IP destination address. */
+    uint8_t nw_tos;         /* IP ToS (actually DSCP field, 6 bits). */
     uint8_t nw_proto;       /* IP protocol. */
     uint16_t tp_src;        /* TCP/UDP source port. */
     uint16_t tp_dst;        /* TCP/UDP destination port. */
@@ -44,10 +45,11 @@ struct Flow {
     Flow(uint16_t in_port_, uint16_t dl_vlan_, 
             ethernetaddr dl_src_, ethernetaddr dl_dst_, uint16_t dl_type_, 
             uint32_t nw_src_, uint32_t nw_dst_, uint8_t nw_proto_,
-            uint16_t tp_src_, uint16_t tp_dst_) :
+            uint16_t tp_src_, uint16_t tp_dst_, uint8_t nw_tos_=0) :
         in_port(in_port_), dl_vlan(dl_vlan_), 
         dl_src(dl_src_), dl_dst(dl_dst_), dl_type(dl_type_),
-        nw_src(nw_src_), nw_dst(nw_dst_), nw_proto(nw_proto_),
+        nw_src(nw_src_), nw_dst(nw_dst_), 
+	nw_tos(nw_tos_), nw_proto(nw_proto_),
         tp_src(tp_src_), tp_dst(tp_dst_) { }
     static bool matches(const Flow&, const Flow&);
     const std::string to_string() const;

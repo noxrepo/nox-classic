@@ -618,6 +618,7 @@ Routing_module::set_openflow(const Flow& flow, uint32_t buffer_id, uint16_t time
     match.dl_type = flow.dl_type;
     match.nw_src = flow.nw_src;
     match.nw_dst = flow.nw_dst;
+    match.nw_tos = flow.nw_tos;
     match.nw_proto = flow.nw_proto;
     match.tp_src = flow.tp_src;
     match.tp_dst = flow.tp_dst;
