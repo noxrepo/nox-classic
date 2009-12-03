@@ -463,7 +463,7 @@ to_python(const ofp_flow_mod& m)
                           to_python(ntohs(m.hard_timeout)));
     pyglue_setdict_string(dict, "buffer_id", to_python(ntohl(m.buffer_id)));
     pyglue_setdict_string(dict, "priority", to_python(ntohs(m.priority)));
-    pyglue_setdict_string(dict, "reserved", to_python(ntohl(m.reserved)));
+    pyglue_setdict_string(dict, "cookie", to_python(ntohl(m.cookie)));
     /* XXX actions */
     return dict;
 }
@@ -478,7 +478,8 @@ to_python(const ofp_flow_stats& fs)
     }
     pyglue_setdict_string(dict, "table_id", to_python(fs.table_id));
     pyglue_setdict_string(dict, "match", to_python(fs.match));
-    pyglue_setdict_string(dict, "duration", to_python(ntohl(fs.duration)));
+    pyglue_setdict_string(dict, "duration_sec", to_python(ntohl(fs.duration_sec)));
+    pyglue_setdict_string(dict, "duration_nsec", to_python(ntohl(fs.duration_nsec)));
     pyglue_setdict_string(dict, "priority", to_python(ntohs(fs.priority)));
     pyglue_setdict_string(dict, "idle_timeout",
                           to_python(ntohs(fs.idle_timeout)));

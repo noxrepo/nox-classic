@@ -572,10 +572,10 @@ Routing_module::init_openflow(uint16_t actions_len)
     ofm->match.wildcards = 0;
     memset(&ofm->match.pad1, 0, sizeof(ofm->match.pad1));
     memset(&ofm->match.pad2, 0, sizeof(ofm->match.pad2));
+    ofm->cookie = 0;
     ofm->command = htons(OFPFC_ADD);
     ofm->priority = htons(OFP_DEFAULT_PRIORITY);
     ofm->flags = 0;
-    ofm->reserved = 0;
 }
 
 void

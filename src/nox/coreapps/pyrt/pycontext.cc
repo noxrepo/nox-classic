@@ -249,10 +249,11 @@ PyContext::send_openflow_buffer(uint64_t datapath_id,
 void
 PyContext::send_flow_command(uint64_t datapath_id,
                              ofp_flow_mod_command command,
-                             const ofp_match& match, uint16_t idle_timeout,
-                             uint16_t hard_timeout,
+                             const ofp_match& match, 
+			     uint16_t idle_timeout, uint16_t hard_timeout,
                              const Nonowning_buffer& actions,
-                             uint32_t buffer_id, uint16_t priority) {
+                             uint32_t buffer_id, 
+			     uint16_t priority , uint64_t cookie) {
     ofp_flow_mod* ofm = NULL;
     size_t size = sizeof *ofm + actions.size();
     boost::shared_array<uint8_t> raw_of(new uint8_t[size]);
@@ -263,6 +264,7 @@ PyContext::send_flow_command(uint64_t datapath_id,
     ofm->header.length = htons(size);
     ofm->header.xid = htonl(0);
     ofm->match = match;
+    ofm->cookie = cookie;
     ofm->command = htons(command);
     ofm->idle_timeout = htons(idle_timeout);
     ofm->hard_timeout = htons(hard_timeout);
@@ -270,7 +272,6 @@ PyContext::send_flow_command(uint64_t datapath_id,
     ofm->out_port = htons(OFPP_NONE);
     ofm->priority = htons(priority);
     ofm->flags = htons(0);
-    ofm->reserved = htonl(0);
 
     if (actions.size() > 0) {
         ::memcpy(ofm->actions, actions.data(), actions.size());

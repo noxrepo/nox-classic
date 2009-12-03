@@ -262,7 +262,9 @@ static void convert_bootstrap_complete(const Event&e, PyObject* proxy) {
 static void convert_flow_removed(const Event& e, PyObject* proxy) {
     const Flow_removed_event& fre = dynamic_cast<const Flow_removed_event&>(e);
 
-    pyglue_setattr_string(proxy, "duration", to_python(fre.duration));
+    pyglue_setattr_string(proxy, "cookie", to_python(fre.cookie));
+    pyglue_setattr_string(proxy, "duration_sec", to_python(fre.duration_sec));
+    pyglue_setattr_string(proxy, "duration_nsec", to_python(fre.duration_nsec));
     pyglue_setattr_string(proxy, "byte_count", to_python(fre.byte_count));
     pyglue_setattr_string(proxy, "packet_count", to_python(fre.packet_count));
     pyglue_setattr_string(proxy, "datapath_id", to_python(fre.datapath_id));

@@ -117,10 +117,11 @@ public:
      *
      */
     void send_flow_command(uint64_t datapath_id, ofp_flow_mod_command command, 
-                           const ofp_match& match, uint16_t idle_timeout,
-                           uint16_t hard_timeout, const Nonowning_buffer&,
-                           uint32_t buffer_id,
-                           uint16_t priority=OFP_DEFAULT_PRIORITY);
+                           const ofp_match& match, 
+			   uint16_t idle_timeout, uint16_t hard_timeout, 
+			   const Nonowning_buffer&, uint32_t buffer_id,
+                           uint16_t priority=OFP_DEFAULT_PRIORITY,
+			   uint64_t cookie=0);
 
     int close_openflow_connection(uint64_t datapathid);
 

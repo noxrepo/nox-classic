@@ -44,11 +44,15 @@ struct Flow_removed_event
       boost::noncopyable
 {
     Flow_removed_event(datapathid datapath_id_, 
-                       uint32_t duration_, uint16_t idle_timeout_,
-                       uint64_t packet_count_, uint64_t byte_count_)
+                       uint32_t duration_sec_, uint32_t duration_nsec_,
+		       uint16_t idle_timeout_,
+                       uint64_t packet_count_, uint64_t byte_count_,
+		       uint64_t cookie_)
         : Event(static_get_name()), datapath_id(datapath_id_), 
-          duration(duration_), idle_timeout(idle_timeout_),
-          packet_count(packet_count_), byte_count(byte_count_) { }
+          duration_sec(duration_sec_), duration_nsec(duration_nsec_),
+	  idle_timeout(idle_timeout_),
+          packet_count(packet_count_), byte_count(byte_count_),
+          cookie(cookie_) { }
 
 
     Flow_removed_event(const datapathid datapath_id_, 
@@ -60,12 +64,15 @@ struct Flow_removed_event
 
     //! ID of switch sending the Flow Removed message 
     datapathid datapath_id;
-    //! Duration of the flow in seconds 
-    uint32_t duration;
+    //! Duration of the flow in seconds and nanoseconds
+    uint32_t duration_sec;
+    uint32_t duration_nsec;
     //! Idle timeout from original flow mod.
     uint16_t idle_timeout;
     uint64_t packet_count;
     uint64_t byte_count;
+    //Opaque cookie
+    uint64_t cookie;
 
     const ofp_match* get_flow() const {
         return &get_flow_removed()->match;
@@ -87,10 +94,12 @@ Flow_removed_event::Flow_removed_event(datapathid datapath_id_,
     : Event(static_get_name()), Ofp_msg_event(&ofr->header, buf),
       datapath_id(datapath_id_)
 {
-    duration     = ntohl(ofr->duration);
-    idle_timeout = ntohs(ofr->idle_timeout);
-    packet_count = ntohll(ofr->packet_count);
-    byte_count   = ntohll(ofr->byte_count);
+    cookie  = ntohl(ofr->cookie);
+    duration_sec  = ntohl(ofr->duration_sec);
+    duration_nsec = ntohl(ofr->duration_nsec);
+    idle_timeout  = ntohs(ofr->idle_timeout);
+    packet_count  = ntohll(ofr->packet_count);
+    byte_count    = ntohll(ofr->byte_count);
 }
 
 } // namespace vigil

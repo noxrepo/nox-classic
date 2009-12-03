@@ -43,13 +43,13 @@ Normal_routing::Normal_routing(const container::Context *c, const xercesc::DOMNo
     ofm->header.length = htons(size);
     ofm->header.xid = 0;
     ofm->match.wildcards = 0;
+    ofm->cookie = 0;
     ofm->command = htons(OFPFC_ADD);
     ofm->idle_timeout = htons(FLOW_TIMEOUT);
     ofm->hard_timeout = htons(OFP_FLOW_PERMANENT);
     ofm->priority = htons(OFP_DEFAULT_PRIORITY);
     ofm->out_port = htons(OFPP_NONE);
     ofm->flags = 0;
-    ofm->reserved = 0;
 
     ofp_action_output *action = (ofp_action_output*) (ofm->actions);
     action->type = htons(OFPAT_OUTPUT);

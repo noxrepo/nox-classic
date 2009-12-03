@@ -77,6 +77,7 @@ Authenticator::Authenticator(const container::Context* c,
     ofm->header.type = OFPT_FLOW_MOD;
     ofm->header.length = htons(sizeof *ofm);
     ofm->header.xid = 0;
+    ofm->cookie = 0;
     ofm->command = htons(OFPFC_DELETE);
     ofm->idle_timeout = htons(OFP_FLOW_PERMANENT);
     ofm->hard_timeout = htons(OFP_FLOW_PERMANENT);
@@ -84,7 +85,6 @@ Authenticator::Authenticator(const container::Context* c,
     ofm->buffer_id = htonl(UINT32_MAX);
     ofm->priority = htons(OFP_DEFAULT_PRIORITY);
     ofm->flags = 0;
-    ofm->reserved = 0;
 }
 
 void

@@ -1243,6 +1243,7 @@ void Handshake_fsm::register_switch() {
         ofm->header.type   = OFPT_FLOW_MOD;
         ofm->header.length = htons(size);
         ofm->match.wildcards = htonl(0xffffffff);
+	ofm->cookie = htonl(0);
         ofm->command = htons(OFPFC_DELETE);
         ofm->buffer_id    = htonl(0);
         ofm->idle_timeout = htons(0);
@@ -1250,7 +1251,6 @@ void Handshake_fsm::register_switch() {
         ofm->priority     = htons(0);
         ofm->out_port     = htons(OFPP_NONE);
         ofm->flags        = htons(0);
-        ofm->reserved     = htonl(0);
         /* XXX OK to do non-blocking send?  We do so with all other
          * commands on switch join */
         if ( send_openflow_command(dpid, &ofm->header, false) == EAGAIN) {

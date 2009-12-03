@@ -74,13 +74,13 @@ public:
         ofm->match.nw_proto = flow.nw_proto;
         ofm->match.tp_src = flow.tp_src;
         ofm->match.tp_dst = flow.tp_dst;
+        ofm->cookie = htonl(0);
         ofm->command = htons(OFPFC_ADD);
         ofm->buffer_id = htonl(buffer_id);
         ofm->idle_timeout = htons(5);
         ofm->hard_timeout = htons(5);
         ofm->priority = htons(OFP_DEFAULT_PRIORITY);
         ofm->flags = htons(0);
-        ofm->reserved = htonl(0);
         ofp_action_output& action = *((ofp_action_output*)ofm->actions);
         memset(&action, 0, sizeof(ofp_action_output));
         action.type = htons(OFPAT_OUTPUT);
