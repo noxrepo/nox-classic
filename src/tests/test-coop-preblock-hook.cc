@@ -20,6 +20,7 @@
 
 #include "threads/cooperative.hh"
 #include <boost/bind.hpp>
+#include <cstdio>
 
 using namespace vigil;
 

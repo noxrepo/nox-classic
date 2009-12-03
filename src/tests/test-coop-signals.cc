@@ -21,6 +21,7 @@
 #include <signal.h>
 #include "threads/cooperative.hh"
 #include "threads/impl.hh"
+#include <cstdio>
 
 using namespace vigil;
 
