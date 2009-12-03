@@ -157,6 +157,7 @@ def gen_ds_in_cb(handler):
         stats['mfr_desc'] = event.mfr_desc
         stats['hw_desc'] = event.hw_desc
         stats['sw_desc'] = event.sw_desc
+        stats['dp_desc'] = event.dp_desc
         stats['serial_num'] = event.serial_num
         ret = f.cb(event.datapath_id, stats)
         if ret == None:

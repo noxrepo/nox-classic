@@ -49,6 +49,7 @@ struct Desc_stats_in_event
     std::string mfr_desc;
     std::string hw_desc;
     std::string sw_desc;
+    std::string dp_desc;
     std::string serial_num;
 
     Desc_stats_in_event(const Desc_stats_in_event&);
@@ -68,6 +69,7 @@ Desc_stats_in_event::Desc_stats_in_event(const datapathid& dpid,
     mfr_desc   = ods->mfr_desc;
     hw_desc    = ods->hw_desc;
     sw_desc    = ods->sw_desc;
+    dp_desc    = ods->dp_desc;
     serial_num = ods->serial_num;
 }
 

@@ -231,6 +231,7 @@ static void convert_desc_stats_in(const Event& e, PyObject* proxy) {
     pyglue_setattr_string(proxy, "mfr_desc", to_python(dsi.mfr_desc));
     pyglue_setattr_string(proxy, "hw_desc", to_python(dsi.hw_desc));
     pyglue_setattr_string(proxy, "sw_desc", to_python(dsi.sw_desc));
+    pyglue_setattr_string(proxy, "dp_desc", to_python(dsi.dp_desc));
     pyglue_setattr_string(proxy, "serial_num", to_python(dsi.serial_num));
 
     ((Event*)SWIG_Python_GetSwigThis(proxy)->ptr)->operator=(e);
