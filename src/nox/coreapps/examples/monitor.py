@@ -22,7 +22,7 @@
 
 from nox.lib.core     import *
 from nox.coreapps.pyrt.pycomponent import Table_stats_in_event, Aggregate_stats_in_event
-from nox.lib.openflow import OFPST_TABLE,  OFPST_PORT, ofp_match
+from nox.lib.openflow import OFPST_TABLE,  OFPST_PORT, ofp_match, OFPP_NONE
 from nox.lib.packet.packet_utils import longlong_to_octstr
 
 MONITOR_TABLE_PERIOD     = 3
@@ -45,7 +45,7 @@ class Monitor(Component):
         self.post_callback(MONITOR_TABLE_PERIOD, lambda : self.table_timer(dpid))
 
     def port_timer(self, dpid):
-        self.ctxt.send_port_stats_request(dpid)
+        self.ctxt.send_port_stats_request(dpid, OFPP_NONE)
         self.post_callback(MONITOR_PORT_PERIOD, lambda : self.port_timer(dpid))
 
     # For each new datapath that joins, create a timer loop that monitors

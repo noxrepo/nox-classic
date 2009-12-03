@@ -356,9 +356,12 @@ PyContext::send_table_stats_request(uint64_t datapath_id)
 }
 
 void
-PyContext::send_port_stats_request(uint64_t datapath_id)
+PyContext::send_port_stats_request(uint64_t datapath_id, uint16_t port)
 {
-    send_stats_request(datapath_id, OFPST_PORT, 0, 0);
+    ofp_port_stats_request psr;
+    psr.port_no = htons(port);
+    send_stats_request(datapath_id, OFPST_PORT, (const
+    uint8_t*)&psr, sizeof(struct ofp_port_stats_request));
 }
 
 void

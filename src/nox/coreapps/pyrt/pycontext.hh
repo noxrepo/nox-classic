@@ -144,7 +144,7 @@ public:
             const uint8_t* data, size_t data_size );
 
     void send_table_stats_request(uint64_t datapath_id);
-    void send_port_stats_request(uint64_t datapath_id);
+    void send_port_stats_request(uint64_t datapath_id, uint16_t port);
     void send_desc_stats_request(uint64_t datapath_id);
     int send_port_mod(uint64_t datapath_id, uint16_t port_no, 
                       ethernetaddr addr, uint32_t mask, uint32_t config);
