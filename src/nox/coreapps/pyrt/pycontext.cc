@@ -56,6 +56,7 @@
 #include "shutdown-event.hh"
 #include "threads/cooperative.hh"
 #include "vlog.hh"
+#include "openflow-default.hh"
 
 
 using namespace std;
@@ -271,7 +272,7 @@ PyContext::send_flow_command(uint64_t datapath_id,
     ofm->buffer_id = htonl(buffer_id);
     ofm->out_port = htons(OFPP_NONE);
     ofm->priority = htons(priority);
-    ofm->flags = htons(0);
+    ofm->flags = htons(ofd_flow_mod_flags());
 
     if (actions.size() > 0) {
         ::memcpy(ofm->actions, actions.data(), actions.size());

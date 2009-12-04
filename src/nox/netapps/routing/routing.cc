@@ -16,6 +16,7 @@
  * along with NOX.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "routing.hh"
+#include "openflow-default.hh"
 
 #include <boost/bind.hpp>
 #include <inttypes.h>
@@ -575,7 +576,7 @@ Routing_module::init_openflow(uint16_t actions_len)
     ofm->cookie = 0;
     ofm->command = htons(OFPFC_ADD);
     ofm->priority = htons(OFP_DEFAULT_PRIORITY);
-    ofm->flags = 0;
+    ofm->flags = htons(ofd_flow_mod_flags());
 }
 
 void

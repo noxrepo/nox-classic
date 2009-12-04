@@ -23,6 +23,7 @@
 #include <stdexcept>
 #include <stdint.h>
 
+#include "openflow-default.hh"
 #include "assert.hh"
 #include "component.hh"
 #include "flow.hh"
@@ -183,7 +184,7 @@ Switch::handle(const Event& e)
         ofm->idle_timeout = htons(5);
         ofm->hard_timeout = htons(OFP_FLOW_PERMANENT);
         ofm->priority = htons(OFP_DEFAULT_PRIORITY);
-        ofm->flags = htons(0);
+        ofm->flags = htons(ofd_flow_mod_flags());
         ofp_action_output& action = *((ofp_action_output*)ofm->actions);
         memset(&action, 0, sizeof(ofp_action_output));
         action.type = htons(OFPAT_OUTPUT);

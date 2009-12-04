@@ -25,6 +25,7 @@
 #include "netinet++/ethernet.hh"
 #include "port-status.hh"
 #include "switch_event.hh"
+#include "openflow-default.hh"
 
 #define TIMER_INTERVAL         30
 #define DEFAULT_IDLE_TIMEOUT   300     // 5 min idle timeout
@@ -84,7 +85,7 @@ Authenticator::Authenticator(const container::Context* c,
     ofm->out_port = htons(OFPP_NONE);
     ofm->buffer_id = htonl(UINT32_MAX);
     ofm->priority = htons(OFP_DEFAULT_PRIORITY);
-    ofm->flags = 0;
+    ofm->flags = htons(ofd_flow_mod_flags());
 }
 
 void
