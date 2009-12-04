@@ -36,6 +36,7 @@ namespace vigil
   using namespace vigil::container;
 
   /** \brief simple_cc_app
+   * \ingroup noxcomponents
    * 
    * @author
    * @date

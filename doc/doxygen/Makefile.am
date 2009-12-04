@@ -15,7 +15,7 @@ help:
 	@echo "Please use \`make <target>' where <target> is one of"
 	@echo "  html      to make HTML files"
 	@echo "  latex     to make LaTeX files, you can set PAPER=a4 or PAPER=letter"
-	@echo "For both target, you can set"
+	@echo "For both targets, you can set"
 	@echo "  EXTRACT_ALL=YES/NO to extract all/documented functions"
 	@echo "  EXTRACT_PRIVATE=YES/NO to extract private functions or not"
 	@echo "  EXTRACT_STATIC=YES/NO to extract static functions"

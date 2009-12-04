@@ -4,21 +4,31 @@ import os.path
 import sys
 import getopt
 import commands
+## \ingroup utility
+# @class nox_new_c_app
+# nox-new-c-app.py utility creates a new C/C++ component in NOX.
+# It is to be run in coreapps, netapps, or webapps.
+# Additional description is found in \ref new-c-component.
+#
+# Run nox-new-c-app.py --help for usage guide.
+#
+# @author ykk
+# @date December 2009
 
-#Run command
+##Run command
 def run(cmd, dryrun=False, verbose=False):
     if (verbose):
         print cmd
     if (not dryrun):
         print commands.getoutput(cmd)
 
-#Check file exists
+##Check file exists
 def check_file(filename):
     if (not os.path.isfile(filename)):
         print filename+" not found!"
         sys.exit(2)
 
-#Print usage guide
+##Print usage guide
 def usage():
     """Display usage
     """
@@ -30,9 +40,9 @@ def usage():
     print "-v/--verbose\n\tVerbose"
 
 #Parse options and arguments
-##Dry-run
+##Dry-run or not
 dryrun=False
-##Verbose
+##Verbose or not
 verbose=False
 try:
     opts, args = getopt.getopt(sys.argv[1:], "hdv",
@@ -125,3 +135,4 @@ run("sed -e 's:#add "+apppath+" component here:"+\
 run("mv "+configfile+".tmp "+configfile,
     dryrun, verbose)
 print "Please rerun ./boot.sh and ./configure"
+
