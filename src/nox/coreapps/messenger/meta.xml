@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<components:components xmlns:components="http://www.noxrepo.org/components.xsd">
+  <!-- C++ component -->
+
+  <component>
+    <name>messenger_core</name>
+    <library>messenger_core</library>
+  </component>
+
+  <component>
+    <name>messenger</name>
+    <library>messenger</library>
+    <dependency><name>messenger_core</name></dependency>
+    <dependency><name>msgpacket</name></dependency>
+  </component>
+
+  <component>
+    <name>msgpacket</name>
+    <library>msgpacket</library>
+  </component>
+
+  <!-- Python component -->
+
+
+</components:components>

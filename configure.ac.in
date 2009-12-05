@@ -58,7 +58,7 @@ dnl Add your module here to have it grouped into a package
 
 ACI_PACKAGE([coreapps],[core application set],
                [testharness coretests pyrt simple_c_app simple_c_py_app 
-		hub switch examples
+		hub switch examples messenger
 		#add coreapps component here
 		],
                [yes])
