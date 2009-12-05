@@ -7,6 +7,7 @@
 /** \page Howto Basic Howto's in NOX
  * <UL>
  * <LI> \ref new-c-component </LI>
+ * <LI> \ref new-event </LI>
  * </UL>
  *
  * <HR>
@@ -27,4 +28,22 @@
  * new C/C++ component (executing step 1 to 3).  The script takes in the new
  * component's name, and has to be run in coreapps, netapps or webapps.
  *
+ * <HR>
+ *
+ * \section new-event Creating new event 
+ * @author ykk
+ * @date December 2009
+ *
+ * To create a new event, the following is required:
+ * <OL>
+ * <LI>Create definition of event, inheriting from the Event class.
+ *     The get_static_name function must be redefine (else parent event
+ *     will be said to be missing).</LI>
+ * <LI>Call register_event in configure function of a component
+ *     register the event.</LI>
+ * </OL>
+ * Something to note is that it is preferably add the event 
+ * to src/etc/nox.xml.  However, the event must have at least one
+ * subscription.
+ * 
  */
