@@ -255,11 +255,18 @@ Conn::do_poll()
     std::auto_ptr<Buffer> b(oconn->recv_openflow(error, false));
     switch (error) {
     case 0: {
-        datapathid dp_id = oconn->get_datapath_id();
+        std::auto_ptr<Buffer> msgB(new Array_buffer(b.get()->size()));
+        memcpy(msgB.get()->data(), b.get()->data(), b.get()->size());
+
         std::auto_ptr<Event> event(openflow_packet_to_event(oconn, b));
         if (event.get()) {
             event_dispatcher.dispatch(*event);
         }
+
+        event.reset(openflow_msg_to_event(oconn, msgB));
+	if (event.get())
+	    event_dispatcher.dispatch(*event);
+
         return true;
     }
 

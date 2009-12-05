@@ -37,6 +37,7 @@
 #include "switch-mgr-join.hh"
 #include "switch-mgr-leave.hh"
 #include "barrier-reply.hh"
+#include "openflow-msg-in.hh"
 
 #include "nox.hh"
 #include "vlog.hh"
@@ -111,6 +112,7 @@ EventDispatcherComponent::EventDispatcherComponent(const Context* c,
     register_event<Switch_mgr_join_event>();
     register_event<Switch_mgr_leave_event>();
     register_event<Barrier_reply_event>();
+    register_event<Openflow_msg_event>();
 }
 
 Component*

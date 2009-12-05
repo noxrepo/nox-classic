@@ -46,6 +46,7 @@
 #include "ofmp-config-update-ack.hh"
 #include "ofmp-resources-update.hh"
 #include "barrier-reply.hh"
+#include "openflow-msg-in.hh"
 #include "openflow.hh"
 #include "vlog.hh"
 
@@ -462,6 +463,26 @@ handle_packet(Event* (*handler)(boost::shared_ptr<Openflow_connection> oconn,
 } // null namespace
 
 namespace vigil {
+
+Event*
+openflow_msg_to_event(boost::shared_ptr<Openflow_connection> oconn, 
+		      std::auto_ptr<Buffer> p)
+{
+    if (p->size() < sizeof(struct ofp_header)) 
+    {
+      lg.warn("openflow packet missing header");
+      return NULL;
+    }
+
+    const ofp_header* oh = &p->at<ofp_header>(0);
+    if (oh->version != OFP_VERSION) 
+    {
+      lg.warn("bad openflow version %"PRIu8, oh->version);
+      return NULL;
+    }
+
+    return new Openflow_msg_event(oconn->get_datapath_id(), oh, p);
+}
 
 Event*
 openflow_packet_to_event(boost::shared_ptr<Openflow_connection> oconn, std::auto_ptr<Buffer> p)
