@@ -33,9 +33,24 @@
 #include "vlog.hh"
 #include "openssl/md5.h"
 
+#include <inttypes.h>
+#include <netinet/in.h>
+#include <string.h>
+#include <config.h>
+#include <sys/types.h>
+
 namespace vigil {
 
 static Vlog_module log("flow");
+
+static const struct arp_eth_header* 
+pull_arp(Buffer& b)
+{
+    if (b.size() > ARP_ETH_HEADER_LEN) {
+        return reinterpret_cast<const arp_eth_header*>(b.try_pull(ARP_ETH_HEADER_LEN));
+    }
+    return 0;
+}
 
 static const ip_header *
 pull_ip(Buffer& b)
@@ -170,7 +185,16 @@ Flow::Flow(uint16_t in_port_, const Buffer& buffer)
                     }
                 }
             }
-        }
+        } else if (dl_type == htons(ETH_TYPE_ARP)) {
+	    const arp_eth_header *arp = pull_arp(b);
+	    if (arp) {
+	         if (arp->ar_pro == htons(ARP_PRO_IP)  && arp->ar_pln == IP_ADDR_LEN) {
+		      nw_src = arp->ar_spa;
+		      nw_dst = arp->ar_tpa;
+		 }
+		 nw_proto = ntohs(arp->ar_op) && 0xff;
+	    }
+	}
     }
 
 end:
