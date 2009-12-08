@@ -27,13 +27,20 @@ namespace vigil {
 
 struct vlan
 {
+    /* Constants are in host byte order */
     static const int VID_MASK = 0xfff; 
+    static const uint16_t PCP_MASK = 0xe000; 
+    static const int PCP_SHIFT = 13;  /* PCP is at [15:13] */
 
+    /* Stored in network byte order */
     unsigned short tci;
     unsigned short encapsulated_proto;
 
+    /* Parameters and return values are in host byte order */
     uint16_t id() const;
     void     set_id(uint16_t id);
+    uint8_t  pcp() const;
+    void     set_pcp(uint8_t pcp);
 
     uint16_t proto() const;
 
@@ -52,9 +59,24 @@ vlan::id() const
 
 //-----------------------------------------------------------------------------
 inline
+uint8_t 
+vlan::pcp() const
+{ return ( (ntohs(tci) & PCP_MASK) >> PCP_SHIFT); }
+//-----------------------------------------------------------------------------
+
+//-----------------------------------------------------------------------------
+inline
+void
+vlan::set_pcp(uint16_t pcp)
+{ tci = (tci & ~htons(PCP_MASK)) |
+        htons((((uint16_t)pcp) << PCP_SHIFT) & PCP_MASK); }
+//-----------------------------------------------------------------------------
+
+//-----------------------------------------------------------------------------
+inline
 void
 vlan::set_id(uint16_t id)
-{ tci = htons(id & VID_MASK); }
+{ tci = (tci & ~htons(VID_MASK)) | htons(id & VID_MASK); }
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------

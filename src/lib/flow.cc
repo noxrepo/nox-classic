@@ -139,6 +139,8 @@ Flow::Flow(uint16_t in_port_, const Buffer& buffer)
             if (vh) {
                 dl_type = vh->vlan_next_type;
                 dl_vlan = vh->vlan_tci & htons(VLAN_VID);
+                dl_vlan_pcp = (vh->vlan_tci & htons(VLAN_PCP_MASK)) >> 
+                    VLAN_PCP_SHIFT;
             }
         }
         memcpy(dl_src.octet, eth->eth_src, ETH_ADDR_LEN);

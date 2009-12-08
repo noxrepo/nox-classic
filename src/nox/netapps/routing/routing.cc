@@ -658,7 +658,9 @@ Routing_module::modify_match(const Buffer& actions)
         switch (ntohs(action->type)) {
         case OFPAT_OUTPUT:
         case OFPAT_VENDOR:
+            break;
         case OFPAT_SET_VLAN_PCP:
+            match.dl_vlan_pcp = ((ofp_action_vlan_pcp*)action)->vlan_pcp;
             break;
         case OFPAT_SET_VLAN_VID:
             match.dl_vlan = ((ofp_action_vlan_vid*)action)->vlan_vid;

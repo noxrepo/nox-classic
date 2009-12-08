@@ -130,10 +130,12 @@ struct llc_snap_header {
 BOOST_STATIC_ASSERT(LLC_SNAP_HEADER_LEN == sizeof(struct llc_snap_header));
 
 #define VLAN_VID 0x0fff
+#define VLAN_PCP_MASK 0xe000
+#define VLAN_PCP_SHIFT 13
 
 #define VLAN_HEADER_LEN 4
 struct vlan_header {
-    uint16_t vlan_tci;          /* Lowest 12 bits are VLAN ID. */
+    uint16_t vlan_tci;          /* Lowest 12 bits are VLAN ID; upper 3 PCP. */
     uint16_t vlan_next_type;
 };
 BOOST_STATIC_ASSERT(VLAN_HEADER_LEN == sizeof(struct vlan_header));

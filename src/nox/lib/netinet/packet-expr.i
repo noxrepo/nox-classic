@@ -32,6 +32,7 @@ public:
         AP_SRC,
         AP_DST,
         DL_VLAN,
+        DL_VLAN_PCP,
         DL_TYPE,
         DL_SRC,
         DL_DST,
