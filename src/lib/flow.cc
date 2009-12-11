@@ -100,6 +100,30 @@ pull_vlan(Buffer& b)
     return b.try_pull<vlan_header>();
 }
 
+Flow::Flow(const ofp_match& match) 
+    : in_port(match.in_port), dl_vlan(match.dl_vlan), 
+      dl_vlan_pcp(match.dl_vlan_pcp), 
+      dl_src(), dl_dst(), dl_type(match.dl_type),
+      nw_src(match.nw_src), nw_dst(match.nw_dst), 
+      nw_proto(match.nw_proto), nw_tos(match.nw_tos),
+      tp_src(match.tp_src), tp_dst(match.tp_dst) 
+{
+    memcpy(dl_src.octet, match.dl_src, ethernetaddr::LEN);
+    memcpy(dl_dst.octet, match.dl_dst, ethernetaddr::LEN);
+}
+
+Flow::Flow(const ofp_match* match) 
+    : in_port(match->in_port), dl_vlan(match->dl_vlan), 
+      dl_vlan_pcp(match->dl_vlan_pcp), 
+      dl_src(), dl_dst(), dl_type(match->dl_type),
+      nw_src(match->nw_src), nw_dst(match->nw_dst), 
+      nw_proto(match->nw_proto), nw_tos(match->nw_tos),
+      tp_src(match->tp_src), tp_dst(match->tp_dst) 
+{
+    memcpy(dl_src.octet, match->dl_src, ethernetaddr::LEN);
+    memcpy(dl_dst.octet, match->dl_dst, ethernetaddr::LEN);
+}
+
 Flow::Flow(uint16_t in_port_, const Buffer& buffer)
     : in_port(in_port_),
       dl_vlan(), dl_vlan_pcp(0), dl_src(), dl_dst(), dl_type(0),

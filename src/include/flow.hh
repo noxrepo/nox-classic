@@ -23,6 +23,7 @@
 #include <cstring>
 #include <iosfwd>
 #include "netinet++/ethernetaddr.hh"
+#include "openflow/openflow.h"
 
 namespace vigil {
 
@@ -44,6 +45,8 @@ struct Flow {
 
     Flow() {} // for Python bindings
     Flow(uint16_t in_port_, const Buffer&);
+    Flow(const ofp_match& match);
+    Flow(const ofp_match* match);
     Flow(uint16_t in_port_, uint16_t dl_vlan_, uint8_t dl_vlan_pcp_,
             ethernetaddr dl_src_, ethernetaddr dl_dst_, uint16_t dl_type_, 
             uint32_t nw_src_, uint32_t nw_dst_, uint8_t nw_proto_,
