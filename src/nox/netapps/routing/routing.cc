@@ -609,6 +609,7 @@ Routing_module::set_openflow(const Flow& flow, uint32_t buffer_id, uint16_t time
     ofm->buffer_id = htonl(buffer_id);
     ofm->idle_timeout = htons(timeout);
     ofm->hard_timeout = htons(OFP_FLOW_PERMANENT);
+    ofm->cookie = htonll(flow.hash_code());
 
     ofp_match& match = ofm->match;
     match.in_port = flow.in_port;
