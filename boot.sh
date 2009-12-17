@@ -24,7 +24,7 @@ EOF
     esac
 done
 
-if test -e src/nox/ext/ ; then
+if test -e src/nox/ext/boot.sh ; then
     (cd src/nox/ext && ./boot.sh)
 fi
 

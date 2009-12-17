@@ -17,9 +17,11 @@
  */
 #include "pycontext.hh"
 
+#ifndef SWIG
 #ifndef SWIGPYTHON
 #include "swigpyrun.h"
 #endif // SWIGPYTHON
+#endif // SWIG
 
 #include <iostream>
 #include <vector>

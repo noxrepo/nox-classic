@@ -20,9 +20,9 @@
 #include <signal.h>
 #include <stdexcept>
 
-#ifndef SWIGPYTHON
+#ifndef SWIG
 #include "swigpyrun.h"
-#endif // SWIGPYTHON
+#endif // SWIG
 
 #include <boost/bind.hpp>
 #include <boost/filesystem.hpp>
