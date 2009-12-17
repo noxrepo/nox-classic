@@ -17,9 +17,9 @@
  */
 #include "pycomponent.hh"
 
-#ifndef SWIGPYTHON
+#ifndef SWIG
 #include "swigpyrun.h"
-#endif // SWIGPYTHON
+#endif // SWIG
 
 #include <Python.h>
 #include <cstdio>

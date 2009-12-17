@@ -33,9 +33,9 @@
 #include "pyrt.hh"
 #include "vlog.hh"
 
-#ifndef SWIGPYTHON
+#ifndef SWIG
 #include "swigpyrun.h"
-#endif // SWIGPYTHON
+#endif // SWIG
 
 using namespace std;
 

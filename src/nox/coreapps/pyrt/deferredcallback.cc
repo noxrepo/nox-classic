@@ -19,9 +19,9 @@
 
 #include "pyrt.hh"
 
-#ifndef SWIGPYTHON
+#ifndef SWIG
 #include "swigpyrun.h"
-#endif // SWIGPYTHON
+#endif // SWIG
 
 #include "vlog.hh"
 
