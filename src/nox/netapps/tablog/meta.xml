@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<components:components xmlns:components="http://www.noxrepo.org/components.xsd">
+  <component>
+    <name>tablog</name>
+    <library>tablog</library>
+    <dependency><name>messenger_core</name></dependency>
+  </component>
+</components:components>

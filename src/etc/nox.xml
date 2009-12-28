@@ -52,6 +52,7 @@
 
     <event name="Msg_event">
       <filter>messsenger</filter>
+      <filter>tablog</filter>
     </event>
 
   </events>
