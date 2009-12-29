@@ -70,7 +70,7 @@ namespace vigil
      */
     void install();
 
-    /** Get instance of simple_cc_app.
+    /** \brief Get instance of simple_cc_app.
      * @param c context
      * @param component reference to component
      */

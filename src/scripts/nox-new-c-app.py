@@ -7,7 +7,7 @@ import commands
 ## \ingroup utility
 # @class nox_new_c_app
 # nox-new-c-app.py utility creates a new C/C++ component in NOX.
-# It is to be run in coreapps, netapps, or webapps.
+# It is to be run in coreapps, netapps, webapps or one of their subdirectory. 
 # Additional description is found in \ref new-c-component.
 #
 # Run nox-new-c-app.py --help for usage guide.
@@ -76,12 +76,24 @@ for opt,arg in opts:
 #Check current directory
 currdir=os.getcwd()
 noxdir=currdir[currdir.find("src/nox/"):]
-apppath=noxdir[(noxdir.rfind("/")+1):]
-if (not (apppath in ("coreapps","netapps","webapps"))):
-    print "This script adds a new application in NOX and"
-    print "has to be run in coreapps, netapps or webapps accordingly."
-    print "You can currently in invalid directory "+currdir
-    sys.exit(2)
+appdirname=None
+appcategory=noxdir[(noxdir.rfind("/")+1):]
+newdir=False
+if (not (appcategory in ("coreapps","netapps","webapps"))):
+    appdirname = appcategory
+    noxdir = noxdir[:-(len(appdirname)+1)]
+    appcategory = noxdir[(noxdir.rfind("/")+1):]
+    if (not (appcategory in ("coreapps","netapps","webapps"))):
+        print "This script adds a new application in NOX and"
+        print "has to be run in coreapps, netapps or webapps"
+        print "or one of their subdirectories accordingly."
+        print "You can currently in invalid directory "+currdir
+        sys.exit(2)
+    else:
+        print "Creating new application"
+else:
+    newdir=True
+    print "Create new application and directory"
 
 #Check sed
 sedcmd=commands.getoutput("which sed")
@@ -90,49 +102,95 @@ if (sedcmd == ""):
     sys.exit(2)
 
 #Check configure.ac.in
-configfile="../../../configure.ac.in"
-check_file(configfile)
+configfile=None
+if (newdir):
+    configfile="../../../configure.ac.in"
+    check_file(configfile)
 
 #Check sample file
 samplefile="simple_cc_app"
 sampledir="../coreapps/simple_c_app/"
+if (appdirname != None):
+    sampledir="../"+sampledir
 check_file(sampledir+samplefile+".hh")
 check_file(sampledir+samplefile+".cc")
 check_file(sampledir+"meta.xml")
 check_file(sampledir+"Makefile.am")
 
 #Check application not existing
-appdir=appname.replace(" ","_")
-if (os.path.isdir(appdir)):
-    print appdir+" already existing!"
-    sys.exit(2)
+appname=appname.replace(" ","_")
+if (newdir):
+    appdirname=appname
+    if (os.path.isdir(appdirname)):
+        print appdirname+" already existing!"
+        sys.exit(2)
+else:
+    if (os.path.isfile(appname+".cc") or
+        os.path.isfile(appname+".hh")):
+        print appname+" already existing!"
+        sys.exit(2)
 
 #Create application
-run("mkdir "+appdir, dryrun, verbose)
-run("sed -e 's:"+samplefile+":"+appdir+":g'"+\
-    " < "+sampledir+samplefile+".hh"+\
-    " > "+appdir+"/"+appdir+".hh",
-    dryrun, verbose)
-run("sed -e 's:"+samplefile+":"+appdir+":g'"+\
-    " < "+sampledir+samplefile+".cc"+\
-    " > "+appdir+"/"+appdir+".cc",
-    dryrun, verbose)
-run("sed -e 's:"+samplefile+":"+appdir+":g'"+\
-    " -e 's:"+samplefile.replace("_"," ")+":"+appname+":g'"+\
-    " < "+sampledir+"meta.xml"+\
-    " > "+appdir+"/meta.xml",
-    dryrun, verbose)
-run("sed -e 's:"+samplefile+":"+appdir+":g'"+\
-    " -e 's:coreapps:"+apppath+":g'"+\
-    " < "+sampledir+"Makefile.am"+\
-    " > "+appdir+"/Makefile.am",
-    dryrun, verbose)
-run("sed -e 's:#add "+apppath+" component here:"+\
-    appdir+" #add "+apppath+" component here:g'"+\
-    " < "+configfile+\
-    " > "+configfile+".tmp",
-    dryrun, verbose)
-run("mv "+configfile+".tmp "+configfile,
-    dryrun, verbose)
-print "Please rerun ./boot.sh and ./configure"
+if (newdir):
+    run("mkdir "+appdirname, dryrun, verbose)
+    #meta.xml and Makefile.am
+    run("sed -e 's:"+samplefile+":"+appname+":g'"+\
+        " -e 's:"+samplefile.replace("_"," ")+":"+\
+        appname.replace("_"," ")+":g'"+\
+        " < "+sampledir+"meta.xml"+\
+        " > "+appdirname+"/meta.xml",
+        dryrun, verbose)
+    run("sed -e 's:"+samplefile+":"+appdirname+":g'"+\
+        " -e 's:coreapps:"+appcategory+":g'"+\
+        " < "+sampledir+"Makefile.am"+\
+        " > "+appdirname+"/Makefile.am",
+        dryrun, verbose)
+    run("sed -e 's:#add "+appcategory+" component here:"+\
+        appdirname+" #add "+appcategory+" component here:g'"+\
+        " < "+configfile+\
+        " > "+configfile+".tmp",
+        dryrun, verbose)
+    run("mv "+configfile+".tmp "+configfile,
+        dryrun, verbose)
+    #C and Header file
+    run("sed -e 's:"+samplefile+":"+appname+":g'"+\
+        " < "+sampledir+samplefile+".hh"+\
+        " > "+appdirname+"/"+appname+".hh",
+        dryrun, verbose)
+    run("sed -e 's:"+samplefile+":"+appname+":g'"+\
+        " < "+sampledir+samplefile+".cc"+\
+        " > "+appdirname+"/"+appname+".cc",
+        dryrun, verbose)
+else:
+    #meta.xml and Makefile.am
+    run("head -n -1 meta.xml > meta.xml.tmp", dryrun, verbose)
+    run("head -n -1 "+sampledir+"meta.xml | tail -4 | "+\
+        "sed -e 's:"+samplefile+":"+appname+":g'"+\
+        " -e 's:"+samplefile.replace("_"," ")+":"+\
+        appname.replace("_"," ")+":g'"+\
+        " >> meta.xml.tmp",
+        dryrun, verbose)
+    run("tail -1 meta.xml >> meta.xml.tmp", dryrun, verbose)
+    run("mv meta.xml.tmp meta.xml",dryrun, verbose)
+    appMake = commands.getoutput("grep "+samplefile+"_la "+sampledir+"Makefile.am")\
+              .replace("\n","\\n").replace(samplefile, appname)\
+              .replace("coreapps",appcategory)+"\\n\\n"
+    run("sed -e 's:pkglib_LTLIBRARIES =\\\\:pkglib_LTLIBRARIES =\\\\\\n\\t"+\
+        appname+".la \\\\:g'"+\
+        " -e 's:NOX_RUNTIMEFILES =:"+appMake+"NOX_RUNTIMEFILES =:g' "+\
+        " < Makefile.am"+\
+        " > Makefile.am.tmp",
+        dryrun, verbose)
+    run("mv Makefile.am.tmp Makefile.am",dryrun, verbose)
+    #C and Header file
+    run("sed -e 's:"+samplefile+":"+appname+":g'"+\
+        " < "+sampledir+samplefile+".hh"+\
+        " > "+appname+".hh",
+        dryrun, verbose)
+    run("sed -e 's:"+samplefile+":"+appname+":g'"+\
+        " < "+sampledir+samplefile+".cc"+\
+        " > "+appname+".cc",
+        dryrun, verbose)
 
+if (newdir):
+    print "Please rerun ./boot.sh and ./configure"
