@@ -74,7 +74,7 @@ pystorage_wrap.cc pystorage.py:	storage.i
 	-I$(srcdir)/../							\
 	-outdir $(builddir)/.						\
 	-o pystorage_wrap.cc						\
-	-c++ -python -module pystorage $(srcdir)/storage.i
+	-module pystorage $(srcdir)/storage.i
 pkglib_LTLIBRARIES += _pystorage.la
 _pystorage_la_CPPFLAGS =						\
 	$(AM_CPPFLAGS)							\
