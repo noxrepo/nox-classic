@@ -1149,8 +1149,9 @@ Authenticator::expire_host_locations(const timeval& curtime)
         }
 
         // expire unused address entries
+        std::vector<uint32_t> remove_keys;
         for (DLNWMap::iterator dlnwiter = dliter->second.dlnwentries.begin();
-             dlnwiter != dliter->second.dlnwentries.end();)
+             dlnwiter != dliter->second.dlnwentries.end(); ++dlnwiter)
         {
             if (!dlnwiter->second.authed
                 && (dlnwiter->second.host_netid == NULL
@@ -1184,11 +1185,14 @@ Authenticator::expire_host_locations(const timeval& curtime)
                         }
                     }
                 }
-
-                dlnwiter = dliter->second.dlnwentries.erase(dlnwiter);
-            } else {
-                ++dlnwiter;
+                remove_keys.push_back(dlnwiter->first);
             }
+        }
+
+        for (std::vector<uint32_t>::const_iterator riter = remove_keys.begin();
+             riter != remove_keys.end(); ++riter)
+        {
+            dliter->second.dlnwentries.erase(*riter);
         }
 
         if (dliter->second.dlnwentries.empty()
