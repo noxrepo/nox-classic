@@ -76,6 +76,22 @@ struct Datapath_join_event
 };
 
 inline
+Datapath_join_event::Datapath_join_event(const Datapath_join_event& dje)
+  : Event(static_get_name()), Ofp_msg_event(dje.get_ofp_msg(), dje.buf),
+    n_buffers(dje.n_buffers), n_tables(dje.n_tables),
+    capabilities(dje.capabilities), actions(dje.actions),
+    mgmt_id(dje.mgmt_id)
+{
+  datapath_id = dje.datapath_id;
+  std::vector<Port>::const_iterator i = dje.ports.begin();
+  while (i != dje.ports.end())
+  {
+    ports.push_back(Port(*i));
+    i++;
+  }
+}
+
+inline
 Datapath_join_event::Datapath_join_event(const ofp_switch_features *osf,
                                          std::auto_ptr<Buffer> buf,
                                          datapathid mgmt_id_)
