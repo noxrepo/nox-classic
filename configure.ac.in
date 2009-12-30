@@ -57,23 +57,23 @@ AC_PROG_DOXYGEN
 dnl Add your module here to have it grouped into a package
 
 ACI_PACKAGE([coreapps],[core application set],
-               [testharness coretests pyrt simple_c_app simple_c_py_app 
-		hub switch examples messenger
-		#add coreapps component here
+               [testharness coretests pyrt simple_c_app simple_c_py_app
+               	hub switch examples messenger
+               	#add coreapps component here
 		],
                [yes])
 ACI_PACKAGE([netapps],[misc network apps],
                [storage authenticator 
                	routing user_event_log tests topology discovery 
                	bindings_storage switchstats flow_fetcher data
-               	switch_management
-		#add netapps component here
+               	switch_management networkstate 
+               	#add netapps component here
 		],
                [TURN_ON_NETAPPS])
 ACI_PACKAGE([webapps],[misc ui apps],
                [webserver webservice webserviceclient
-         	miscws
-		#add webapps component here
+               	miscws
+               	#add webapps component here
 		],
                [TURN_ON_WEBAPPS])
 

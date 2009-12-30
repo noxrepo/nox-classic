@@ -7,10 +7,12 @@
     </event>
 
     <event name="Datapath_join_event">
+      <filter>datapathmem</filter>
       <filter>authenticator</filter>
     </event>
 
     <event name="Datapath_leave_event">
+      <filter>datapathmem</filter>
       <filter>noop</filter>
     </event>
 
