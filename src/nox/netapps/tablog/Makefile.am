@@ -8,11 +8,16 @@ AM_CPPFLAGS += $(PYTHON_CPPFLAGS)
 endif # PY_ENABLED 
 
 pkglib_LTLIBRARIES =\
+	rttlog.la \
 	tablog.la
 
 tablog_la_CPPFLAGS = $(AM_CPPFLAGS) -I $(top_srcdir)/src/nox -I $(top_srcdir)/src/nox/netapps/ -I $(top_srcdir)/src/nox/coreapps/
 tablog_la_SOURCES = tablog.hh tablog.cc
 tablog_la_LDFLAGS = -module -export-dynamic
+
+rttlog_la_CPPFLAGS = $(AM_CPPFLAGS) -I $(top_srcdir)/src/nox -I $(top_srcdir)/src/nox/netapps/
+rttlog_la_SOURCES = rttlog.hh rttlog.cc
+rttlog_la_LDFLAGS = -module -export-dynamic
 
 NOX_RUNTIMEFILES = meta.xml	
 

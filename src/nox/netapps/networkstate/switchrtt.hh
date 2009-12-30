@@ -71,9 +71,7 @@ namespace vigil
      * @param c context
      * @param node XML configuration (Xercesc DOMNode)
      */
-    switchrtt(const Context* c, const xercesc::DOMNode* node)
-      : Component(c)
-    {}
+    switchrtt(const Context* c, const xercesc::DOMNode* node);
     
     /** \brief Configure switchrtt.
      * 

@@ -15,7 +15,7 @@ namespace vigil
     : Component(c)
   {
     ofpack::header(of_raw, OFPT_ECHO_REQUEST,sizeof(ofp_header));
-    interval = SWITCHRTT_DEFAULT_PROBE_INTERVAL;  
+    interval = SWITCHRTT_DEFAULT_PROBE_INTERVAL;
   }
   
   void switchrtt::configure(const Configuration* c) 
@@ -53,6 +53,8 @@ namespace vigil
   
   void switchrtt::install()
   {
+    dpi = dpmem->dp_events.begin();
+    
     post(boost::bind(&switchrtt::periodic_probe, this), get_next_time());
   }
 

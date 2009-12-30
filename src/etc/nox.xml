@@ -55,5 +55,9 @@
       <filter>tablog</filter>
     </event>
 
+    <event name="Shutdown_event">
+      <filter>rttlog</filter>
+    </event>
+
   </events>
 </nox:nox>

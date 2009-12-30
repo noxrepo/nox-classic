@@ -5,4 +5,10 @@
     <library>tablog</library>
     <dependency><name>messenger_core</name></dependency>
   </component>
+  <component>
+    <name>rttlog</name>
+    <library>rttlog</library>
+    <dependency><name>switchrtt</name></dependency>
+    <dependency><name>tablog</name></dependency>
+  </component>
 </components:components>
