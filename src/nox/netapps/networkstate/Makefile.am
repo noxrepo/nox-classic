@@ -8,11 +8,16 @@ AM_CPPFLAGS += $(PYTHON_CPPFLAGS)
 endif # PY_ENABLED 
 
 pkglib_LTLIBRARIES =\
+	switchrtt.la \
 	datapathmem.la
 
 datapathmem_la_CPPFLAGS = $(AM_CPPFLAGS) -I $(top_srcdir)/src/nox -I $(top_srcdir)/src/nox/netapps/
 datapathmem_la_SOURCES = datapathmem.hh datapathmem.cc
 datapathmem_la_LDFLAGS = -module -export-dynamic
+
+switchrtt_la_CPPFLAGS = $(AM_CPPFLAGS) -I $(top_srcdir)/src/nox -I $(top_srcdir)/src/nox/netapps/
+switchrtt_la_SOURCES = switchrtt.hh switchrtt.cc
+switchrtt_la_LDFLAGS = -module -export-dynamic
 
 NOX_RUNTIMEFILES = meta.xml	
 

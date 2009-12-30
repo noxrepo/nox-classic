@@ -4,4 +4,9 @@
     <name>datapathmem</name>
     <library>datapathmem</library>
   </component>
+  <component>
+    <name>switchrtt</name>
+    <library>switchrtt</library>
+    <dependency><name>datapathmem</name></dependency>
+  </component>
 </components:components>

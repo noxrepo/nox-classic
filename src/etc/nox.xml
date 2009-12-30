@@ -16,6 +16,10 @@
       <filter>noop</filter>
     </event>
 
+    <event name="Openflow_msg_event">
+      <filter>switchrtt</filter>
+    </event>
+
     <event name="Packet_in_event">
       <filter>authenticator</filter>
       <filter>dwh</filter>
