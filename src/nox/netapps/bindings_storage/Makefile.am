@@ -45,7 +45,7 @@ NOX_RUNTIMEFILES += __init__.py \
 NOX_PYBUILDFILES = pybindings_storage.py								
 
 pybindings_storage_wrap.cc pybindings_storage.py: pybindings_storage.i bs_datastructures.i 
-	$(SWIG) $(SWIG_PYTHON_OPT) -I$(top_srcdir)/src/nox/lib/ -outdir $(builddir)/. -o pybindings_storage_wrap.cc -c++ -python -module pybindings_storage $(srcdir)/pybindings_storage.i
+	$(SWIG) $(SWIG_PYTHON_OPT) -I$(top_srcdir)/src/nox/lib/ -outdir $(builddir)/. -o pybindings_storage_wrap.cc -module pybindings_storage $(srcdir)/pybindings_storage.i
 
 pkglib_LTLIBRARIES += _pybindings_storage.la
 _pybindings_storage_la_CPPFLAGS = $(AM_CPPFLAGS) -I$(top_srcdir)/src/nox -I$(srcdir)/../ -I$(top_builddir)/src/nox/ -I$(top_srcdir)/src/nox/coreapps/

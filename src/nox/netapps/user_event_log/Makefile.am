@@ -50,7 +50,7 @@ NOX_PYBUILDFILES = pyuser_event_log.py
 	
 
 pyuser_event_log_wrap.cc pyuser_event_log.py: pyuser_event_log.i 
-	$(SWIG) $(SWIG_PYTHON_OPT) -I$(top_srcdir)/src/nox/lib/ -outdir $(builddir)/. -o pyuser_event_log_wrap.cc -c++ -python -module pyuser_event_log $(srcdir)/pyuser_event_log.i
+	$(SWIG) $(SWIG_PYTHON_OPT) -I$(top_srcdir)/src/nox/lib/ -outdir $(builddir)/. -o pyuser_event_log_wrap.cc -module pyuser_event_log $(srcdir)/pyuser_event_log.i
 
 pkglib_LTLIBRARIES += _pyuser_event_log.la
 _pyuser_event_log_la_CPPFLAGS = $(AM_CPPFLAGS) -I$(top_srcdir)/src/nox -I$(srcdir)/../ -I$(top_builddir)/src/nox/ -I$(top_srcdir)/src/nox/coreapps/

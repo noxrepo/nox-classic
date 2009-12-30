@@ -58,7 +58,7 @@ NOX_PYBUILDFILES =							\
 
 pytests_wrap.cc pytests.py: pytests.i
 	$(SWIG) $(SWIG_PYTHON_OPT) -outdir $(builddir)/. -o pytests_wrap.cc \
-	-c++ -python -module pytests $(srcdir)/pytests.i
+	-module pytests $(srcdir)/pytests.i
 pkglib_LTLIBRARIES += _pytests.la
 nodist__pytests_la_SOURCES = pytests_wrap.cc
 _pytests_la_LDFLAGS = -module
