@@ -28,7 +28,7 @@ NOX_RUNTIMEFILES += __init__.py test.py
 NOX_PYBUILDFILES = pyflow_fetcher.py 
 
 pyflow_fetcher_wrap.cc pyflow_fetcher.py: pyflow_fetcher.i 
-	$(SWIG) $(SWIG_PYTHON_OPT) -I$(top_srcdir)/src/nox/lib/ -I$(top_srcdir)/src/nox/coreapps/ -outdir $(builddir)/. -o pyflow_fetcher_wrap.cc -c++ -python -module pyflow_fetcher $(srcdir)/pyflow_fetcher.i
+	$(SWIG) $(SWIG_PYTHON_OPT) -I$(top_srcdir)/src/nox/lib/ -I$(top_srcdir)/src/nox/coreapps/ -outdir $(builddir)/. -o pyflow_fetcher_wrap.cc -module pyflow_fetcher $(srcdir)/pyflow_fetcher.i
 
 pkglib_LTLIBRARIES += _pyflow_fetcher.la
 _pyflow_fetcher_la_CPPFLAGS = $(AM_CPPFLAGS) -I$(top_srcdir)/src/nox -I$(srcdir)/../ -I$(top_builddir)/src/nox/ -I$(top_srcdir)/src/nox/coreapps
