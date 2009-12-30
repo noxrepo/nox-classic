@@ -27,6 +27,7 @@ namespace vigil {
 struct Port
 {
     Port(const ofp_phy_port *opp);
+    Port(const Port& port);
     Port() : port_no(0), speed(0), config(0), state(0), 
              curr(0), advertised(0), supported(0), peer(0) {};
 
@@ -45,6 +46,15 @@ struct Port
 
     ethernetaddr hw_addr;
 };
+
+inline
+Port::Port(const Port& port):
+    port_no(port.port_no), name(port.name), speed(port.speed),
+    config(port.config), state(port.state), curr(port.curr), 
+    advertised(port.advertised), supported(port.supported), peer(port.peer)
+{
+    hw_addr.set_octet(port.hw_addr);
+}
 
 inline
 Port::Port(const ofp_phy_port *opp) : name((char *)opp->name)
