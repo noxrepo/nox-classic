@@ -52,6 +52,7 @@ ofmp-config-update-ack.hh   \
 ofmp-config-update.hh       \
 ofmp-resources-update.hh    \
 ofp-msg-event.hh				\
+openflow-pack.hh				\
 openflow-event.hh				\
 openflow-streamops.hh				\
 openflow/openflow/nicira-ext.h			\

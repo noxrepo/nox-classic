@@ -30,6 +30,7 @@ libnoxcore_la_SOURCES = \
 	leak-checker.cc \
 	netinet++/ethernetaddr.cc \
 	openflow-event.cc \
+	openflow-pack.cc \
 	openflow.cc \
 	packetgen.cc \
 	poll-loop.cc \

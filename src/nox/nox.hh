@@ -26,6 +26,14 @@
 // full network API.
 // ------------------------------------------------------------
 
+/** \defgroup noxapi NOX API
+ *
+ * These classes and functions provides the basic APIs in NOX.
+ * These basic functionalities are supported by NOX's core,
+ * which form the basics for the functionalities added by components.
+ */
+
+
 #ifndef nox_HH__ 
 #define nox_HH__
 
