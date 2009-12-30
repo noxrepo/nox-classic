@@ -83,7 +83,7 @@ pynatenforcer_wrap_includes =	\
 	nat_enforcer.i
 
 pynatenforcer_wrap.cc pynatenforcer.py: $(pynatenforcer_wrap_includes)
-	$(SWIG) $(SWIG_PYTHON_OPT) $(SWIG_INCLUDES) -I$(top_srcdir)/src/nox/netapps/ -outdir $(builddir)/. -o pynatenforcer_wrap.cc -c++ -python -module pynatenforcer $(srcdir)/nat_enforcer.i
+	$(SWIG) $(SWIG_PYTHON_OPT) $(SWIG_INCLUDES) -I$(top_srcdir)/src/nox/netapps/ -outdir $(builddir)/. -o pynatenforcer_wrap.cc -module pynatenforcer $(srcdir)/nat_enforcer.i
 
 pkglib_LTLIBRARIES += _pynatenforcer.la
 _pynatenforcer_la_CPPFLAGS = $(AM_CPPFLAGS) -I$(top_srcdir)/src/nox -I$(srcdir)/../ -I$(top_builddir)/src/nox/ -I$(top_srcdir)/src/nox/coreapps/ -I$(top_srcdir)/src/nox/thirdparty/protobuf/src
