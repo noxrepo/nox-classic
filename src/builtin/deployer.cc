@@ -18,6 +18,8 @@
 #include "deployer.hh"
 
 #include "xml-util.hh"
+#include <boost/foreach.hpp>
+#include <sstream>
 
 using namespace std;
 using namespace vigil;
@@ -128,4 +130,35 @@ Component_configuration::keys() const {
 const Component_argument_list
 Component_configuration::get_arguments() const {
     return arguments;
+}
+
+
+const hash_map<std::string,std::string> 
+Component_configuration::get_arguments_list(char d1, char d2) const {
+    hash_map<std::string,std::string> argmap;
+       
+    BOOST_FOREACH(const std::string& arg_str, arguments){
+        std::stringstream args(arg_str);
+	std::string arg;
+	int argcount = 0;
+	
+	while (getline(args,arg, ',')) {
+	    std::stringstream argsplit(arg);
+	    std::string argid,argval,tmparg;
+	    while (getline(argsplit, tmparg, '=')) {
+	      switch (argcount) {
+	      case 0:
+		argid = tmparg;
+		break;
+	      case 1:
+		argval = tmparg;
+		break;
+	      }
+	      argcount++;
+	    }
+	    argmap.insert(std::make_pair(argid, argval));
+	}
+    }
+
+    return argmap;
 }

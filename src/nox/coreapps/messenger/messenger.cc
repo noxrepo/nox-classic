@@ -1,12 +1,12 @@
 #include "messenger.hh"
 #include "vlog.hh"
 #include "assert.hh"
-#include <sstream>
-#include <boost/foreach.hpp>
+#include "hash_map.hh"
 
 namespace vigil
 {
   using namespace vigil::container;    
+  using namespace std;
 
   static Vlog_module lg("messenger");
   static const std::string app_name("messenger");
@@ -38,42 +38,15 @@ namespace vigil
       sslport = 0;
 
     //Get commandline arguments
-    BOOST_FOREACH (const std::string& arg_str, config->get_arguments())
-    {
-      //Get each argument
-      std::stringstream args(arg_str); 
-      std::string arg;
-      int argcount = 0;
-      while (getline(args, arg, ',')) 
-      {
-	//Look into each argument
-        std::stringstream argsplit(arg);
-        std::string argid, argval, tmparg;
-	while (getline(argsplit, tmparg, '=')) 
-	{
-	  switch (argcount)
-	  {
-	  case 0:
-	    argid=tmparg;
-	    break;
-	  case 1:
-	    argval=tmparg;
-	    break;
-	  default:
-	    VLOG_WARN(lg, "Peculiar argument %s", arg.c_str());
-	  }
-	  argcount++;
-	}
-	//Check for known arguments
-	if (argid == "tcpport")
-	  tcpport = (uint16_t) atoi(argval.c_str());
-	else if (argid == "sslport")
-	  sslport = (uint16_t) atoi(argval.c_str());
-	else
-	  VLOG_WARN(lg, "Unknown argument %s = %s", 
-		   argid.c_str(), argval.c_str());
-      }
-    }
+    const hash_map<string, string> argmap = \
+      config->get_arguments_list();
+    hash_map<string, string>::const_iterator i;
+    i = argmap.find("tcpport");
+    if (i != argmap.end())
+      tcpport = (uint16_t) atoi(i->second.c_str());
+    i = argmap.find("sslport");
+    if (i != argmap.end())
+      sslport = (uint16_t) atoi(i->second.c_str());
   }
 
   void messenger::install() 

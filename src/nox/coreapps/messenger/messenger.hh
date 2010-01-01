@@ -41,7 +41,7 @@ namespace vigil
    * tcpport and sslport arguments for golems respectively. 
    * port 0 is interpreted as disabling the server socket.  
    * E.g.,
-   * ./nox_core -i ptcp:6633 messenger=tcport=11222,sslport=0
+   * ./nox_core -i ptcp:6633 messenger=tcpport=11222,sslport=0
    * will run TCP server on port 11222 and SSL server will be disabled.
    *
    * Received messages are sent to other components via the Msg_event.

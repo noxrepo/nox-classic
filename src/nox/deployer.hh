@@ -72,6 +72,14 @@ public:
     const bool has(const std::string&) const;
     const std::list<std::string> keys() const;
     const container::Component_argument_list get_arguments() const;
+    /** /brief Return all command line arguments in a list. 
+     *
+     * @param d1 delimiter (for different arguments)
+     * @param d2 delimiter (for value in arguments)
+     * @return hash map of arguments
+     */
+    const hash_map<std::string,std::string> get_arguments_list(char d1=',', 
+							       char d2='=') const;
 
     /* Human-readable component name */
     container::Component_name name;

@@ -276,6 +276,10 @@ public:
     
     /* Return all command line arguments of the component. */
     virtual const Component_argument_list get_arguments() const = 0;
+
+    /* Return list of arguments. */
+    virtual const hash_map<std::string, std::string> 
+    get_arguments_list(char d1 = ',', char d2 = '=') const = 0;
 };
 
 /* Basic component factory template for simple application needs. */

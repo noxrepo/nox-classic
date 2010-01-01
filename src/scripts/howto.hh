@@ -8,6 +8,7 @@
  * <UL>
  * <LI> \ref new-c-component </LI>
  * <LI> \ref new-event </LI>
+ * <LI> \ref parse-component-arguments </LI>
  * </UL>
  *
  * <HR>
@@ -46,4 +47,24 @@
  * to src/etc/nox.xml.  However, the event must have at least one
  * subscription.
  * 
+ * <HR>
+ *
+ * \section parse-component-arguments Parsing arguments for components. 
+ * @author ykk
+ * @date December 2009
+ *
+ * NOX allows components to get commandline arguments, through Configuration.
+ * In the configure function, the configuration is passed in as an argument.
+ * To get the argument string for the components, use<BR>
+ * <PRE>string arg = c->get_argument()</PRE><BR>
+ * 
+ * If you use the convention of separating each argument with a delimiter, and
+ * the argument identifier and value with another delimiter, you can use<BR>
+ * <PRE>const hash_map<string,string> argmap = c->get_arguments_list(',','=');</PRE><BR>
+ * <PRE>hash_map<string,string>::const_iterator i = argmap.find("interval");</PRE><BR>
+ * <PRE>if (i != argmap.end())</PRE><BR>
+ * <PRE>   interval = atoi(i->second.c_str());</PRE><BR>
+ * Here, we have used comma and equal as the delimiters respectively. 
+ * This example from allows the component to be called with arguments like this:<BR>
+ * <PRE>./nox_core switchrtt=interval=600</PRE><BR>
  */
