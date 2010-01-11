@@ -94,5 +94,5 @@ fi
 echo "AC_OUTPUT  " >> configure.ac
 
 # Bootstrap configure system from .ac/.am files
-autoreconf -Wno-portability --install -I config --force
+autoreconf -Wno-portability --install -I `pwd`/config --force
 
