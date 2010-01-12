@@ -12,10 +12,10 @@
 #define ENABLE_TCP_MESSENGER true
 /** Enable SSL connection.
  */
-#define ENABLE_SSL_MESSENGER true
+#define ENABLE_SSL_MESSENGER false
 /** Send message when new connections.
  */
-#define MSG_ON_NEW_CONNECTION false
+#define MSG_ON_NEW_CONNECTION true
 /** Idle interval to trigger echo request (in s).
  */
 #define MESSENGER_ECHO_IDLE_THRESHOLD 0

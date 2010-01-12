@@ -44,5 +44,9 @@
       <filter>dwh</filter>
     </event>
 
+    <event name="Msg_event">
+      <filter>messsenger</filter>
+    </event>
+
   </events>
 </nox:nox>

@@ -33,7 +33,7 @@ enum msg_type
 
   /** Plain string.
    */
-  MSG_STRING = 0x0A,
+  MSG_NOX_STR_CMD = 0x0A,
 };
 
 /** \brief Basic structure of message in \ref vigil::messenger.

@@ -130,10 +130,10 @@ namespace vigil
       VLOG_DBG(lg, "Echo reply received");
       return STOP;
       break;
-    case MSG_STRING:
-      char mstring[ntohs(me.msg->length)-2];
-      memcpy(mstring, me.msg->body, ntohs(me.msg->length)-3);
-      mstring[ntohs(me.msg->length)-3] = '\0';
+    case MSG_NOX_STR_CMD:
+      char mstring[ntohs(me.msg->length)-sizeof(messenger_msg)+1];
+      memcpy(mstring, me.msg->body, ntohs(me.msg->length)-sizeof(messenger_msg));
+      mstring[ntohs(me.msg->length)-sizeof(messenger_msg)] = '\0';
       VLOG_DBG(lg, "Received string %s", mstring);
       break;
     }
