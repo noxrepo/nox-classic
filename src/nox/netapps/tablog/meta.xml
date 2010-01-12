@@ -11,4 +11,9 @@
     <dependency><name>switchrtt</name></dependency>
     <dependency><name>tablog</name></dependency>
   </component>
+  <component>
+    <name>flowlog</name>
+    <library>flowlog</library>
+    <dependency><name>tablog</name></dependency>
+  </component>
 </components:components>
