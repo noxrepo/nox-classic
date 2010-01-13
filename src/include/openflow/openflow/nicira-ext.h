@@ -167,40 +167,4 @@ struct nx_command_reply {
 };
 OFP_ASSERT(sizeof(struct nx_command_reply) == 20);
 
-enum nx_flow_end_reason {
-    NXFER_IDLE_TIMEOUT,         /* Flow idle time exceeded idle_timeout. */
-    NXFER_HARD_TIMEOUT,         /* Time exceeded hard_timeout. */
-    NXFER_DELETE,               /* Flow was removed by delete command. */
-    NXFER_EJECT                 /* Flow was ejected. */
-};
-
-struct nx_flow_end_config {
-    struct nicira_header header;
-    uint8_t enable;           /* Set to 1 to enable Flow End message
-                                 generation.  0 to disable.  */
-    uint8_t pad[3];
-};
-OFP_ASSERT(sizeof(struct nx_flow_end_config) == 20);
-
-struct nx_flow_end {
-    struct nicira_header header;
-    struct ofp_match match;   /* Description of fields. */
-
-    uint16_t priority;        /* Priority level of flow entry. */
-    uint8_t reason;           /* One of NXFER_*. */
-
-    uint8_t tcp_flags;        /* Union of seen TCP flags. */
-    uint8_t ip_tos;           /* IP TOS value. */
-
-    uint8_t pad[7];           /* Align to 64-bits. */
-
-    uint64_t init_time;       /* Time flow started in milliseconds. */
-    uint64_t used_time;       /* Time entry was last used in milliseconds. */
-    uint64_t end_time;        /* Time flow ended in milliseconds. */
-
-    uint64_t packet_count;    
-    uint64_t byte_count;
-};
-OFP_ASSERT(sizeof(struct nx_flow_end) == 108);
-
 #endif /* openflow/nicira-ext.h */
