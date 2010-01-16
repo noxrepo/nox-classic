@@ -131,8 +131,8 @@ class webserver(Component):
         self.defaults = {
             "network_name" : ["Local"],
             "port" : [ int(80) ],
-            "ssl_certificate" : [ "" ],
-            "ssl_privatekey" : [ "" ],
+            "ssl_certificate" : [ u"" ],
+            "ssl_privatekey" : [ u"" ],
             "ssl_port" : [ int(443) ],
             }
 
@@ -242,8 +242,9 @@ class webserver(Component):
                     else:    
                         key_file = nox.lib.config.pkgsysconfdir+"/noxca.key.insecure"
                 
-                p['ssl_certificate'] = base64.b64encode(open(cert_file).read())
-                p['ssl_privatekey']  = base64.b64encode(open(key_file).read())
+                p['ssl_certificate'] = [base64.b64encode(open(cert_file).read())]
+                p['ssl_privatekey']  = [base64.b64encode(open(key_file).read())]
+
 
              # if ssl_certificate not set in properties, use default
              # self signed certs
@@ -284,7 +285,9 @@ class webserver(Component):
                addCallback(lambda ign: merge(conf['arguments'], p)).\
                addCallback(lambda ign: p.commit())
          except ImportError, e:
-           return self.defaults
+           # if properties don't exist, use
+           # system defaults or CLAs 
+           merge(conf['arguments'], self.defaults)
 
     def install(self):
         # Setup twisted.web instance for pages
@@ -353,7 +356,8 @@ class webserver(Component):
               addCallback(self.reconfigure_listeners, p).\
               addErrback(self.restart_error)
         except ImportError, e:
-           return self.defaults
+           # if properties don't exist use the system defaults 
+           self.reconfigure_listeners(0, self.defaults)
 
     #def close_ports(self, port_to_close=None):
     #    remaining_ports_to_close = []
@@ -393,7 +397,6 @@ class webserver(Component):
                 sslContext = UIOpenSSLContextFactory(\
                     base64.b64decode(p['ssl_privatekey'][0]),
                     base64.b64decode(p['ssl_certificate'][0]))
-
                 if not p['ssl_port'][0] == 0:
                     port = reactor.listenSSL(p['ssl_port'][0],
                                              server.Site(self.root),
