@@ -3,9 +3,6 @@
 
   <component>
     <name>webserver</name>
-    <dependency>
-      <name>datamanager</name>
-    </dependency>
     <python>nox.webapps.webserver.webserver</python>
   </component>
 
