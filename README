@@ -20,5 +20,5 @@ the NOX manual in docs/manual/build/html.
 *Note*
 
 NOX relies on OpenFlow as the communication protocol for controlling
-switches.  This build supports Openflow v0x89 experimental.
+switches.  This build supports Openflow v0x01.
 
