@@ -56,6 +56,10 @@
       <filter>tablog</filter>
     </event>
 
+    <event name="JSONMsg_event">
+      <filter>jsonmesssenger</filter>
+    </event>
+
     <event name="Shutdown_event">
       <filter>flowlog</filter>
       <filter>rttlog</filter>

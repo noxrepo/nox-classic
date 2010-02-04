@@ -19,7 +19,10 @@
     <library>msgpacket</library>
   </component>
 
-  <!-- Python component -->
-
-
+  <component>
+    <name>jsonmessenger</name>
+    <library>jsonmessenger</library>
+    <dependency><name>messenger_core</name></dependency>
+    <dependency><name>msgpacket</name></dependency>
+  </component>
 </components:components>

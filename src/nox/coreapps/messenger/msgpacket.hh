@@ -46,18 +46,35 @@ namespace vigil
     void install() 
     {}
 
-    /** Initialize packet with size and type.
+    /** Initialize packet with length and type.
      * @param msg_raw message buffer reference
      * @param size size of buffer to allocate
      * @param type type of packet
      */
     void init(boost::shared_array<uint8_t>& msg_raw, ssize_t size, uint8_t type);
 
+    /** Initialize JSON string with type and length.
+     * @param msg_raw message buffer reference
+     * @param str string to contain
+     * @param size size of buffer to allocate (if 0, use min to contain string)
+     * @param addbraces indidcate if braces should be added
+     */
+    void init(boost::shared_array<uint8_t>& msg_raw, const char* str, 
+	      ssize_t size=0, bool addbraces=true);
+
     /** Send packet on given socket.
      * @param msg message buffer reference
      * @param sock Async_stream socket
+     * @param size size of messages (if 0, assume length-type)
      */
-    void send(boost::shared_array<uint8_t>& msg, Async_stream* sock);
+    void send(boost::shared_array<uint8_t>& msg, Async_stream* sock, 
+	      ssize_t size=0);
+
+    /** Send packet on given socket.
+     * @param str string to send
+     * @param sock Async_stream socket
+     */
+    void send(const std::string& str, Async_stream* sock);
 
     /** Get instance.
      * @param ctxt context

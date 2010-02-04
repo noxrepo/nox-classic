@@ -28,7 +28,6 @@ namespace vigil
 {
   using namespace vigil::container; 
 
-
   /** Async_stream for messenger.
    * 
    * Copyright (C) Stanford University, 2009.
@@ -120,7 +119,7 @@ namespace vigil
     /** Memory allocated for message.
      */
     boost::shared_array<uint8_t> raw_msg;
-    /** Reference to TCP socket.
+    /** Reference to socket.
      */
     Msg_stream* sock;
   };   

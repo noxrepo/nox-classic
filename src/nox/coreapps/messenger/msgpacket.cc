@@ -7,7 +7,8 @@ namespace vigil
   void msgpacket::configure(const Configuration* config)
   { }
 
-  void msgpacket::init(boost::shared_array<uint8_t>& msg_raw, ssize_t size, uint8_t type)
+  void msgpacket::init(boost::shared_array<uint8_t>& msg_raw, ssize_t size, 
+		       uint8_t type)
   {
     msg_raw.reset(new uint8_t[size]);
     messenger_msg* mmsg = (messenger_msg*) msg_raw.get();
@@ -15,13 +16,48 @@ namespace vigil
     mmsg->type = type;
   }
 
-  void msgpacket::send(boost::shared_array<uint8_t>& msg, Async_stream* sock)
+  void msgpacket::init(boost::shared_array<uint8_t>& msg_raw, const char* str, 
+		       ssize_t size, bool addbraces)
   {
-    messenger_msg* mmsg = (messenger_msg*) msg.get();
-    Nonowning_buffer buf(mmsg, ntohs(mmsg->length));
+    if (size == 0)
+    {
+      size = strlen(str)+1;
+      if (addbraces)
+	size += 2;
+    }
+    msg_raw.reset(new uint8_t[size]);
+    char* msg = (char*) msg_raw.get();
+    if (addbraces)
+    {
+      msg[0] = '{';
+      strcpy(msg+1, str); 
+      msg[size-2] = '}';
+    }
+    else
+      strcpy(msg, str); 
+    msg[size-1] = '\0';
+  }
+
+  void msgpacket::send(boost::shared_array<uint8_t>& msg, Async_stream* sock,
+		       ssize_t size)
+  {
+    if (size == 0)
+    {
+      messenger_msg* mmsg = (messenger_msg*) msg.get();
+      size = ntohs(mmsg->length);
+    }
+    Nonowning_buffer buf(msg.get(), size);
     sock->write(buf, 0);
-    VLOG_DBG(lg, "Sent message %p of length %"PRIx16" with type %"PRIx8" over socket %p",
-	     msg.get(), ntohs(mmsg->length), mmsg->type, sock);
+    VLOG_DBG(lg, "Sent message %p of length %zu socket %p",
+	     msg.get(), size, sock);
+  }
+
+  void msgpacket::send(const std::string& str, Async_stream* sock)
+  {
+    Nonowning_buffer buf(str.c_str(), str.size());
+    sock->write(buf, 0);
+    VLOG_DBG(lg, "Sent string %s of length %zu socket %p",
+	     str.c_str(), str.size(), sock);
   }
 
   void msgpacket::getInstance(const container::Context* ctxt,

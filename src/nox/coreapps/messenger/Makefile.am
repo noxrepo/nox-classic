@@ -7,6 +7,7 @@ endif # PY_ENABLED
 pkglib_LTLIBRARIES =		\
 	messenger_core.la \
 	messenger.la \
+	jsonmessenger.la \
 	msgpacket.la
 
 messenger_la_CPPFLAGS = $(AM_CPPFLAGS) -I $(top_srcdir)/src/nox -I $(top_srcdir)/src/nox/coreapps/
@@ -20,6 +21,10 @@ messenger_core_la_LDFLAGS = -module -export-dynamic
 msgpacket_la_CPPFLAGS = $(AM_CPPFLAGS) -I $(top_srcdir)/src/nox -I $(top_srcdir)/src/nox/coreapps/
 msgpacket_la_SOURCES = msgpacket.cc msgpacket.hh
 msgpacket_la_LDFLAGS = -module -export-dynamic
+
+jsonmessenger_la_CPPFLAGS = $(AM_CPPFLAGS) -I $(top_srcdir)/src/nox -I $(top_srcdir)/src/nox/coreapps/
+jsonmessenger_la_SOURCES = jsonmessenger.hh jsonmessenger.cc
+jsonmessenger_la_LDFLAGS = -module -export-dynamic
 
 NOX_RUNTIMEFILES = meta.xml	
 
