@@ -97,6 +97,26 @@ namespace vigil
      */
     void send_echo(Async_stream* sock);
 
+    /** Function to do processing for block received.
+     * @param buf pointer to block received
+     * @param dataSize size of block
+     * @param data pointer to current message data (block not added)
+     * @param currSize size of current message
+     * @param sock reference to socket
+     * @return length to copy
+     */
+    ssize_t processBlock(uint8_t* buf, ssize_t& dataSize,
+			 uint8_t* data, ssize_t currSize, 
+			 Msg_stream* sock);
+
+    /** Function to determine message is completed.
+     * @param data pointer to current message data (block not added)
+     * @param currSize size of current message
+     * @param sock reference to message stream
+     * @return if message is completed (i.e., can be posted)
+     */
+    bool msg_complete(uint8_t* data, ssize_t currSize, Msg_stream* sock);
+
     /** Process string type, i.e., print in debug logs.
      * @param e event to be handled
      * @return CONTINUE always

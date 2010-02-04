@@ -66,6 +66,9 @@ namespace vigil
     /** Indicate if socket is SSL, else is TCP.
      */
     bool isSSL;
+    /** Reference to magic item tagged with stream
+     */
+    void* magic;
   private:
   };
 
@@ -83,8 +86,9 @@ namespace vigil
      * Allocate memory for message.
      * @param message message
      * @param socket socket message is received with
+     * @param size length of message received
      */
-    Msg_event(messenger_msg* message, Msg_stream* socket);
+    Msg_event(messenger_msg* message, Msg_stream* socket, ssize_t size);
 
     /** Destructor.
      */
@@ -110,6 +114,9 @@ namespace vigil
     /** Array reference to hold message.
      */
     messenger_msg* msg;
+    /** Length of message.
+     */
+    ssize_t len;
     /** Memory allocated for message.
      */
     boost::shared_array<uint8_t> raw_msg;
@@ -138,6 +145,29 @@ namespace vigil
     message_processor(const Context* c, const xercesc::DOMNode* node): 
       Component(c)
     { };
+
+    /** Function to do processing for block received.
+     * @param buf pointer to block received
+     * @param dataSize size of block
+     * @param data pointer to current message data (block not added)
+     * @param currSize size of current message
+     * @param sock reference to socket
+     * @return length to copy to current message data
+     */
+    virtual ssize_t processBlock(uint8_t* buf, ssize_t& dataSize,
+				 uint8_t* data, ssize_t currSize, 
+				 Msg_stream* sock)
+    { return 0; };
+
+    /** Function to determine message is completed.
+     * @param data pointer to current message data (block not added)
+     * @param currSize size of current message
+     * @param sock reference to message stream
+     * @return if message is completed (i.e., can be posted)
+     */
+    virtual bool msg_complete(uint8_t* data, ssize_t currSize,
+			      Msg_stream* sock)
+    { return false; };
 
     /** Function to do processing for messages received.
      * @param msg message event for message received
@@ -325,7 +355,7 @@ namespace vigil
      * @param sock socket reference
      */
     void processBlock(Array_buffer& buf, ssize_t& dataSize, Msg_stream* sock);
-    
+
     /** Function to check for disconnect messages.
      * @param msg message event for message received
      */

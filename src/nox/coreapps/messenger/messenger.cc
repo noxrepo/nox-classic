@@ -66,6 +66,33 @@ namespace vigil
     }
   }
   
+  ssize_t messenger::processBlock(uint8_t* buf, ssize_t& dataSize,
+				  uint8_t* data, ssize_t currSize,
+				  Msg_stream* sock)
+  {
+    if (currSize < 2)
+    {
+      if (dataSize < 2)
+	return dataSize;
+      else
+	return 2;
+    }
+
+    uint16_t size = ntohs(*((uint16_t*) data));
+    if ((size-currSize-dataSize) >= 0)
+      return dataSize;
+    else
+      return size-currSize;
+  }
+
+  bool messenger::msg_complete(uint8_t* data, ssize_t currSize, Msg_stream* sock)
+  {
+    uint16_t size = ntohs(*((uint16_t*) data));
+    VLOG_DBG(lg, "Check message completeness %zu (expected %u)",
+	     currSize, size);
+    return (size==currSize) && (currSize > 2);
+  }
+
   void messenger::process(const Msg_event* msg)
   {
     VLOG_DBG(lg, "Message posted as Msg_event");
@@ -128,10 +155,7 @@ namespace vigil
       (ctxt->get_by_interface(container::Interface_description
 			      (typeid(messenger).name())));
   }
-}
 
-namespace noxsup
-{
   REGISTER_COMPONENT(vigil::container::
 		     Simple_component_factory<vigil::messenger>, 
 		     vigil::messenger);

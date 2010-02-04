@@ -16,29 +16,31 @@ namespace vigil
   static const std::string app_name("messenger_core");
  
   Msg_stream::Msg_stream(Async_stream* stream_):
-    stream(stream_)
+    stream(stream_), magic(NULL)
   {};
  
   Msg_stream::Msg_stream(Async_stream* stream_, bool isSSL_):
-    stream(stream_), isSSL(isSSL_)
+    stream(stream_), isSSL(isSSL_), magic(NULL)
   {};
 
 
-  Msg_stream::Msg_stream(Msg_stream& stream_)
+  Msg_stream::Msg_stream(Msg_stream& stream_):
+    magic(NULL)
   {
     stream =stream_.stream;
     isSSL = stream_.isSSL;
   }
 
-  Msg_event::Msg_event(messenger_msg* message, Msg_stream* socket):
+  Msg_event::Msg_event(messenger_msg* message, Msg_stream* socket, 
+		       ssize_t size):
     Event(static_get_name())
   {
     sock = socket;
 
     //Allocate memory and copy message
-    ssize_t size = ntohs(message->length);
-    if (size < sizeof(messenger_msg))
+    if (size < sizeof(messenger_msg) && size != 0)
       size = sizeof(messenger_msg);
+    len = size;
     raw_msg.reset(new uint8_t[size]);
     memcpy(raw_msg.get(), message, size);
     msg = (messenger_msg*) raw_msg.get();
@@ -50,11 +52,10 @@ namespace vigil
 
   void Msg_event::dumpBytes()
   {
-    uint8_t* readhead =  (uint8_t*) msg;
-    ssize_t currSize = ntohs(*((uint16_t*) msg));
+    uint8_t* readhead =  (uint8_t*) raw_msg.get();
     fprintf(stderr,"messenger_core Msg_event of size %zu\n\t",
-	    currSize);
-    for (int i = 0; i < currSize; i++)
+	    len);
+    for (int i = 0; i < len; i++)
     {
       fprintf(stderr, "%"PRIx8" ", *readhead);
       readhead++;
@@ -265,7 +266,7 @@ namespace vigil
     msgbuf->length = htons(0);
     msgbuf->type = 0;
     process(new Msg_event((messenger_msg*) internalrecvbuf, 
-			  msgstream));
+			  msgstream, ntohs(msgbuf->length)));
   }
 
   void messenger_connection::check_idle()
@@ -305,14 +306,14 @@ namespace vigil
     msgbuf->length = htons(3);
     msgbuf->type = MSG_DISCONNECT;
     process(new Msg_event((messenger_msg*) internalrecvbuf, 
-			  msgstream));
+			  msgstream, ntohs(msgbuf->length)));
   }
 
   void messenger_connection::processBlock(Array_buffer& buf, ssize_t& dataSize, 
 					  Msg_stream* sock)
   {
     uint8_t* dataPointer = buf.data();
-    uint16_t* lenPointer = (uint16_t*) &internalrecvbuf[0];
+    ssize_t cpSize;
 
     if (dataSize > MESSENGER_BUFFER_SIZE)
       VLOG_WARN(lg, "Read buffer insufficient, check MESSENGER_BUFFER_SIZE in messenger.hh");
@@ -320,21 +321,27 @@ namespace vigil
     //Copy message into buffer.
     while (dataSize > 0)
     {
-      memcpy(endpointer,dataPointer,1);
-      endpointer++;
-      dataPointer++;
-      dataSize--;
-      currSize++;
-      if (currSize > MESSENGER_MAX_MSG_SIZE)
+      cpSize=msger->processBlock(dataPointer,dataSize,
+				 &internalrecvbuf[0],currSize, sock);      
+      if ((currSize+cpSize) > MESSENGER_MAX_MSG_SIZE)
 	VLOG_WARN(lg, "Message buffer insufficient, check MESSENGER_MAX_MSG_SIZE in messenger.hh");
+      else
+	VLOG_DBG(lg, "Copy %zu bytes to message",cpSize);
+
+      memcpy(endpointer,dataPointer,cpSize);
+      endpointer+=cpSize;
+      dataPointer+=cpSize;
+      dataSize-=cpSize;
+      currSize+=cpSize;
 
       //End of message
-      if ((currSize == ntohs(*lenPointer)) && currSize > 2)
+      if ((currSize > 0) &&
+	  msger->msg_complete(&internalrecvbuf[0],currSize, sock))
       {
 	if (MESSENGER_BYTE_DUMP)
         {
-	  fprintf(stderr,"messenger_core message of size %zu %"PRIx16"\n\t", 
-		  currSize, ntohs(*lenPointer));
+	  fprintf(stderr,"messenger_core message of size %zu\n\t", 
+		  currSize);
 	  uint8_t* readhead =  internalrecvbuf;
 	  for (int i = 0; i < currSize; i++)
 	  {
@@ -344,7 +351,8 @@ namespace vigil
 	  fprintf(stderr,"\n");
 	}
 
-	process(new Msg_event((messenger_msg*) internalrecvbuf, sock));
+	process(new Msg_event((messenger_msg*) internalrecvbuf, sock,
+			      currSize));
 	endpointer = &internalrecvbuf[0];
 	currSize=0;
       }
