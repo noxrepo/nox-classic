@@ -37,6 +37,11 @@ Event::~Event() {
 
 }
 
+void
+Event::set_name(const Event_name& name_) {
+    name = name_;
+}
+
 Event_name 
 Event::get_name() const { 
     return name; 

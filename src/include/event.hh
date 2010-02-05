@@ -63,6 +63,8 @@ public:
 protected:
     Event(const Event_name&);
 
+    void set_name(const Event_name&);
+
 private:
     Event_name name;
 };
