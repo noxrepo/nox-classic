@@ -31,6 +31,7 @@
 
 #include <boost/function.hpp>
 #include <boost/noncopyable.hpp>
+#include <boost/shared_array.hpp>
 
 #include <xercesc/dom/DOM.hpp>
 
@@ -172,6 +173,10 @@ public:
     /* OpenFlow interaction methods */
 
     int send_openflow_command(const datapathid&, const ofp_header*, 
+                              bool block) const;
+
+    int send_openflow_command(const datapathid&, 
+			      boost::shared_array<uint8_t>& of_raw, 
                               bool block) const;
     
     int send_openflow_packet(const datapathid&, uint32_t buffer_id, 

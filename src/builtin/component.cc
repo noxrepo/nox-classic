@@ -48,6 +48,14 @@ Component::send_openflow_command(const datapathid& datapath_id,
     return nox::send_openflow_command(datapath_id, oh, block);
 }
 
+int 
+Component::send_openflow_command(const datapathid& datapath_id, 
+                                 boost::shared_array<uint8_t>& of_raw, 
+				 bool block) const {
+    return nox::send_openflow_command(datapath_id, 
+				      (ofp_header *) of_raw.get(), block);
+}
+
 int
 Component::send_openflow_packet(const datapathid& datapath_id, 
                                 uint32_t buffer_id, uint16_t out_port, 
