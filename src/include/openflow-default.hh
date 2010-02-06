@@ -1,3 +1,5 @@
+#ifndef OPENFLOW_DEFAULT
+#define OPENFLOW_DEFAULT
 /* Copyright 2009 (C) Stanford University
  *
  * This file is part of NOX.
@@ -15,11 +17,15 @@
  * You should have received a copy of the GNU General Public License
  * along with NOX.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef OPENFLOW_DEFAULT
-#define OPENFLOW_DEFAULT
 #include "openflow/openflow.h"
 
+/** Send flow removed messages
+ */
 #define SEND_FLOW_REMOVED true
+
+/** Default idle timeout for flows
+ */
+#define DEFAULT_FLOW_TIMEOUT 5
 
 /** Provide default flags for flow_mod
  */
