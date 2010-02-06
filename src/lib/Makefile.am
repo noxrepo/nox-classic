@@ -52,7 +52,8 @@ libnoxcore_la_SOURCES = \
 	timer-dispatcher.cc \
 	timeval.cc \
 	dhparams.h \
-	xml-util.cc
+	xml-util.cc \
+	JSON_parser.c
 
 nodist_libnoxcore_la_SOURCES = dhparams.c
 dhparams.c: dh1024.pem dh2048.pem dh4096.pem

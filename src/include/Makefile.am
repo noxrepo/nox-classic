@@ -100,4 +100,6 @@ type-props.h					\
 vlog-socket.hh					\
 vlog.hh						\
 xml-util.hh					\
-xtoxll.h
+xtoxll.h					\
+JSON_parser.h
+
