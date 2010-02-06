@@ -34,6 +34,8 @@ hash_func.hh					\
 hash.hh						\
 hash_map.hh					\
 hash_set.hh					\
+JSON_parser.h					\
+json_object.hh					\
 leak-checker.hh					\
 netinet++/arp.hh				\
 netinet++/bpdu.hh				\
@@ -100,6 +102,5 @@ type-props.h					\
 vlog-socket.hh					\
 vlog.hh						\
 xml-util.hh					\
-xtoxll.h					\
-JSON_parser.h
+xtoxll.h					
 

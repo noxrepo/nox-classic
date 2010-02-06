@@ -27,6 +27,8 @@ libnoxcore_la_SOURCES = \
 	fault.cc \
 	flow.cc \
 	flow-stats-in.cc \
+	JSON_parser.c \
+	json_object.cc \
 	leak-checker.cc \
 	netinet++/ethernetaddr.cc \
 	openflow-event.cc \
@@ -52,8 +54,7 @@ libnoxcore_la_SOURCES = \
 	timer-dispatcher.cc \
 	timeval.cc \
 	dhparams.h \
-	xml-util.cc \
-	JSON_parser.c
+	xml-util.cc 
 
 nodist_libnoxcore_la_SOURCES = dhparams.c
 dhparams.c: dh1024.pem dh2048.pem dh4096.pem
