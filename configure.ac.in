@@ -66,7 +66,7 @@ ACI_PACKAGE([netapps],[misc network apps],
                [storage authenticator 
                	routing user_event_log tests topology discovery 
                	bindings_storage switchstats flow_fetcher data
-               	switch_management networkstate tablog 
+               	switch_management networkstate hoststate tablog 
                	routeinstaller
                 #add netapps component here
 		],
