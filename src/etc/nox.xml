@@ -21,6 +21,7 @@
     </event>
 
     <event name="Packet_in_event">
+      <filter>hostrack_pktin</filter>
       <filter>authenticator</filter>
       <filter>dwh</filter>
       <filter>noop</filter>

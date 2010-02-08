@@ -4,4 +4,10 @@
     <name>hosttracker</name>
     <library>hosttracker</library>
   </component>
+  <component>
+    <name>trackhost_pktin</name>
+    <library>trackhost_pktin</library>
+    <dependency><name>hosttracker</name></dependency>
+    <dependency><name>topology</name></dependency>
+  </component>
 </components:components>

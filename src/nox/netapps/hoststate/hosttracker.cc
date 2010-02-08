@@ -100,7 +100,7 @@ namespace vigil
       j.push_front(loc);
       hostlocation.insert(make_pair(host,j));
       VLOG_DBG(lg, "New host %"PRIx64" at %"PRIx64":%"PRIx16"",
-	       i->first.hb_long(), loc.dpid.as_host(), loc.port);
+	       host.hb_long(), loc.dpid.as_host(), loc.port);
     }
     else
     {
