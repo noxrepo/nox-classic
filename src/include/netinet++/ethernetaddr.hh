@@ -49,6 +49,7 @@
 #include <netinet/in.h>
 #include <stdint.h>
 #include "xtoxll.h"
+#include "hash_map.hh" // hash fn defined at end of file
 
 namespace vigil {
 
@@ -469,5 +470,15 @@ operator <<(std::ostream& os,const ethernetaddr& addr_in)
 //-----------------------------------------------------------------------------
 
 }
+
+ENTER_HASH_NAMESPACE
+template <>
+struct hash<vigil::ethernetaddr> {
+    std::size_t operator() (const vigil::ethernetaddr& ena) const {
+        return HASH_NAMESPACE::hash<uint64_t>()(ena.hb_long());
+    }
+};
+EXIT_HASH_NAMESPACE
+
 
 #endif   // ETHERNETADDR_HH
