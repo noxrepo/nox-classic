@@ -165,6 +165,17 @@ struct ipaddr
     bool operator >= (uint32_t) const;
     bool operator >= (const ipaddr&) const;
 
+    // ------------------------------------------------------------------------
+    // Convenient functions
+    // ------------------------------------------------------------------------
+
+    /** Indicate address is multicast
+     */
+    bool isMulticast();
+    /** Indicate address is private IP space
+     */
+    bool isPrivate();
+    
 }__attribute__ ((__packed__)); // -- struct ipaddr
 
 //-----------------------------------------------------------------------------
@@ -629,6 +640,25 @@ operator <<(std::ostream& os,const ipaddr& addr)
 {
     os << addr.string();
     return os;
+}
+//-----------------------------------------------------------------------------
+
+
+//-----------------------------------------------------------------------------
+inline
+bool ipaddr::isMulticast()
+{
+  return (ntohl(addr) >= 0xE0000000L) && (ntohl(addr) <= 0xEFFFFFFFL);
+}
+//-----------------------------------------------------------------------------
+
+//-----------------------------------------------------------------------------
+inline
+bool ipaddr::isPrivate()
+{
+  return ((ntohl(addr) >= 0x10000000L) && (ntohl(addr) <= 0x10FFFFFFL)) || \
+    ((ntohl(addr) >= 0xAC100000L) && (ntohl(addr) <= 0xAC1FFFFFL)) || \
+    ((ntohl(addr) >= 0xC0A80000L) && (ntohl(addr) <= 0xC0ABFFFFL));
 }
 //-----------------------------------------------------------------------------
 
