@@ -10,4 +10,8 @@
     <dependency><name>hosttracker</name></dependency>
     <dependency><name>topology</name></dependency>
   </component>
+  <component>
+    <name>hostip</name>
+    <library>hostip</library>
+  </component>
 </components:components>
