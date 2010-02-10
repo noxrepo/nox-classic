@@ -40,6 +40,8 @@
 #include "desc-stats-in.hh"
 #include "table-stats-in.hh"
 #include "port-stats-in.hh"
+#include "queue-stats-in.hh"
+#include "queue-config-in.hh"
 #include "error-event.hh"
 #include "flow-removed.hh"
 #include "ofmp-config-update.hh"
@@ -86,6 +88,15 @@ handle_flow_removed(boost::shared_ptr<Openflow_connection> oconn,
 }
 
 Event*
+handle_queue_config_reply(boost::shared_ptr<Openflow_connection> oconn,
+			  const ofp_queue_get_config_reply *oqgcr, 
+			  std::auto_ptr<Buffer> buf)
+{
+    datapathid datapath_id = oconn->get_datapath_id();
+    return new Queue_config_in_event(datapath_id, oqgcr, buf);
+}
+
+Event*
 handle_port_status(boost::shared_ptr<Openflow_connection> oconn,
                    const ofp_port_status *ops, std::auto_ptr<Buffer> buf)
 {
@@ -105,6 +116,14 @@ handle_features_reply(boost::shared_ptr<Openflow_connection> oconn,
     lg.err("ignoring additional features reply event from %s", 
             datapath_id.string().c_str());
     return NULL;
+}
+
+Event*
+handle_stats_queue_reply(boost::shared_ptr<Openflow_connection> oconn,
+			 const ofp_stats_reply *osr, std::auto_ptr<Buffer> buf)
+{
+    datapathid datapath_id = oconn->get_datapath_id();
+    return new Queue_stats_in_event(datapath_id, osr, buf);
 }
 
 Event*
@@ -227,6 +246,8 @@ handle_stats_reply(boost::shared_ptr<Openflow_connection> oconn,
             return handle_stats_aggregate_reply(oconn, osr, buf);
         case OFPST_FLOW:
             return handle_stats_flow_reply(oconn, osr, buf);
+        case OFPST_QUEUE:
+            return handle_stats_queue_reply(oconn, osr, buf);
         default:    
             lg.warn("unhandled reply type %d", htons(osr->type));
             return NULL; 
@@ -443,7 +464,8 @@ handle_error(boost::shared_ptr<Openflow_connection> oconn,
 
 template <class Packet>
 Event*
-handle_packet(Event* (*handler)(boost::shared_ptr<Openflow_connection> oconn,
+handle_packet
+(Event* (*handler)(boost::shared_ptr<Openflow_connection> oconn,
                               const Packet*, std::auto_ptr<Buffer>),
               boost::shared_ptr<Openflow_connection> oconn,
               const ofp_header* oh, std::auto_ptr<Buffer> packet,
@@ -504,6 +526,8 @@ openflow_packet_to_event(boost::shared_ptr<Openflow_connection> oconn, std::auto
         return handle_packet(handle_packet_in, oconn, oh, p);
     case OFPT_FLOW_REMOVED:
         return handle_packet(handle_flow_removed, oconn, oh, p);
+    case OFPT_QUEUE_GET_CONFIG_REPLY:
+        return handle_packet(handle_queue_config_reply, oconn, oh, p);
     case OFPT_PORT_STATUS:
         return handle_packet(handle_port_status, oconn, oh, p);
     case OFPT_FEATURES_REPLY:

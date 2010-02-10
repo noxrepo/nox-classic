@@ -68,6 +68,8 @@ port-stats-in.hh				\
 port-status.hh					\
 port.hh						\
 ppoll.hh					\
+queue-stats-in.hh				\
+queue-config-in.hh				\
 resolver.hh					\
 rule.hh						\
 shutdown-event.hh				\

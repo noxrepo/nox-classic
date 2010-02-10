@@ -30,6 +30,8 @@
 #include "aggregate-stats-in.hh"
 #include "desc-stats-in.hh"
 #include "flow-stats-in.hh"
+#include "queue-stats-in.hh"
+#include "queue-config-in.hh"
 #include "ofmp-config-update.hh"
 #include "ofmp-config-update-ack.hh"
 #include "ofmp-resources-update.hh"
@@ -102,6 +104,8 @@ EventDispatcherComponent::EventDispatcherComponent(const Context* c,
     register_event<Shutdown_event>();
     register_event<Bootstrap_complete_event>();
     register_event<Flow_stats_in_event>();
+    register_event<Queue_stats_in_event>();
+    register_event<Queue_config_in_event>();
     register_event<Table_stats_in_event>();
     register_event<Ofmp_config_update_event>();
     register_event<Ofmp_config_update_ack_event>();

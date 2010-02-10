@@ -35,6 +35,8 @@ libnoxcore_la_SOURCES = \
 	packetgen.cc \
 	poll-loop.cc \
 	ppoll.cc \
+	queue-stats-in.cc \
+	queue-config-in.cc \
 	resolver.cc \
 	sha1.cc \
 	sigset.cc \
