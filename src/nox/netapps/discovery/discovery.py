@@ -152,6 +152,7 @@ class discovery(Component):
     def install(self):
         self.register_for_datapath_join ( lambda dp,stats : discovery.dp_join(self, dp, stats) )
         self.register_for_datapath_leave( lambda dp       : discovery.dp_leave(self, dp) )
+        self.register_for_port_status( lambda dp, reason, port : discovery.port_status_change(self, dp, reason, port) )
         # register handler for all LLDP packets 
         match = {DL_DST : array_to_octstr(array.array('B',NDP_MULTICAST)),\
                   DL_TYPE: ethernet.LLDP_TYPE}
@@ -195,6 +196,31 @@ class discovery(Component):
                 deleteme.append(linktuple)
     
         self.delete_links(deleteme)
+
+
+    # --
+    # Update the list of LLDP packets if ports are added/removed
+    # --
+
+    def port_status_change(self, dp, reason, port):
+        '''Update LLDP packets on port status changes
+
+        Add to the list of LLDP packets if a port is added.
+        Delete from the list of LLDP packets if a port is removed.
+
+        Keyword arguments:
+        dp -- Datapath ID of port
+        reason -- what event occured
+        port -- port
+        '''
+        # Only process 'sane' ports
+        if port[PORT_NO] <= openflow.OFPP_MAX:
+            if reason == openflow.OFPPR_ADD:
+                self.lldp_packets[dp][port[PORT_NO]] = create_discovery_packet(dp, port[PORT_NO], LLDP_TTL);
+            elif reason == openflow.OFPPR_DELETE:
+                del self.lldp_packets[dp][port[PORT_NO]]
+
+        return CONTINUE
 
 
     def timeout_links(self):
