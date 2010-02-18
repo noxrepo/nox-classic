@@ -45,6 +45,20 @@ struct Port
     uint32_t peer;
 
     ethernetaddr hw_addr;
+
+    Port& operator=(const Port& p)
+    {
+        port_no = p.port_no;
+	name = p.name;
+	speed = p.speed;
+	config = p.config;
+	curr = p.curr;
+	advertised = p.advertised;
+	supported = p.supported;
+	peer = p.peer;
+
+	return *this;
+    }
 };
 
 inline
