@@ -39,6 +39,20 @@ struct Port_stats
         rx_dropped(0), tx_dropped(0), rx_errors(0), tx_errors(0),
         rx_frame_err(0), rx_over_err(0), rx_crc_err(0), collisions(0) { ; }
 
+    Port_stats(const Port_stats& ps) :
+        port_no(ps.port_no),
+	rx_packets(ps.rx_packets), 
+        tx_packets(ps.tx_packets), 
+        rx_bytes(ps.rx_bytes), 
+        tx_bytes(ps.tx_bytes), 
+        rx_dropped(ps.rx_dropped), 
+        tx_dropped(ps.tx_dropped), 
+        rx_errors(ps.rx_errors), 
+        tx_errors(ps.tx_errors), 
+        rx_frame_err(ps.rx_frame_err), 
+        rx_over_err(ps.rx_over_err), 
+        rx_crc_err(ps.rx_crc_err), 
+        collisions(ps.collisions) { ; }
 
     Port_stats(struct ofp_port_stats *ops) :
         port_no(ntohs(ops->port_no)), 
@@ -68,6 +82,25 @@ struct Port_stats
     uint64_t rx_over_err;
     uint64_t rx_crc_err;
     uint64_t collisions;
+
+    Port_stats& operator=(const Port_stats& ps)
+    {
+        port_no = ps.port_no;
+	rx_packets = ps.rx_packets;
+	tx_packets = ps.tx_packets;
+	rx_bytes = ps.rx_bytes;
+	tx_bytes = ps.tx_bytes;
+	rx_dropped = ps.rx_dropped;
+	tx_dropped = ps.tx_dropped;
+	rx_errors = ps.rx_errors;
+	tx_errors = ps.tx_errors;
+	rx_frame_err = ps.rx_frame_err;
+	rx_over_err = ps.rx_over_err;
+	rx_crc_err = ps.rx_crc_err;
+	collisions = ps.collisions;
+
+	return *this;
+    }
 };
 
 /** \ingroup noxevents
