@@ -8,11 +8,13 @@
 
     <event name="Datapath_join_event">
       <filter>datapathmem</filter>
+      <filter>linkload</filter>
       <filter>authenticator</filter>
     </event>
 
     <event name="Datapath_leave_event">
       <filter>datapathmem</filter>
+      <filter>linkload</filter>
       <filter>noop</filter>
     </event>
 
@@ -51,6 +53,14 @@
     <event name="Flow_removed_event">
       <filter>flowlog</filter>
       <filter>dwh</filter>
+    </event>
+
+    <event name="Port_status_event">
+      <filter>linkload</filter>
+    </event>
+
+    <event name="Port_stats_in_event">
+      <filter>linkload</filter>
     </event>
 
     <event name="Msg_event">

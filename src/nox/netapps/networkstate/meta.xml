@@ -9,4 +9,9 @@
     <library>switchrtt</library>
     <dependency><name>datapathmem</name></dependency>
   </component>
+  <component>
+    <name>linkload</name>
+    <library>linkload</library>
+    <dependency><name>datapathmem</name></dependency>
+  </component>
 </components:components>
