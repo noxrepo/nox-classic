@@ -104,9 +104,26 @@ namespace vigil
      */
     Disposition handle_dp_leave(const Event& e);
 
+    /** \brief Handle port status changes
+     *
+     * @param e port status event
+     * @return CONTINUE
+     */
+    Disposition handle_port_event(const Event& e);
+
+    /** \brief Get link bandwidth
+     * 
+     * @param dpid datapath id of switch
+     * @param port port number
+     * @return speed in mbps (0 if port is not found)
+     */
+    uint32_t get_link_speed(datapathid dpid, uint16_t port);
+    
     /** \brief Hash map of datapath join event.
      *
      * Indexed by datapath id in host order.
+     * This hash_map holds the join event that will be sent
+     * considering all the Port_status_event changes.
      */
     hash_map<uint64_t,Datapath_join_event> dp_events;
 
