@@ -43,7 +43,12 @@ struct Flow {
     uint16_t tp_src;        /* TCP/UDP source port. */
     uint16_t tp_dst;        /* TCP/UDP destination port. */
 
-    Flow() {} // for Python bindings
+    Flow() :
+        in_port(0), dl_vlan(0), dl_vlan_pcp(0), 
+        dl_src(), dl_dst(), dl_type(0),
+        nw_src(0), nw_dst(0), 
+	nw_proto(0), nw_tos(0),
+        tp_src(0), tp_dst(0) { }
     Flow(uint16_t in_port_, const Buffer&);
     Flow(const ofp_match& match);
     Flow(const ofp_match* match);
