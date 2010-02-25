@@ -118,7 +118,10 @@ Openflow_connection::s_recv_hello()
                          "peer no later than version 0x%02"PRIx8")",
                          to_string().c_str(), version, min_version,
                          OFP_VERSION, oh->version);
-                state = S_CONNECTED;
+		if (oh->version > OFP_EXPERIMENTAL_VERSION)
+		  state = S_SEND_ERROR;
+		else
+		  state = S_CONNECTED;
                 timeout = do_gettimeofday() + make_timeval(probe_interval, 0);
                 fsm.wake();
             }

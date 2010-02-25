@@ -34,6 +34,8 @@
 #include "tcp-socket.hh"
 #include "ssl-socket.hh"
 
+#define OFP_EXPERIMENTAL_VERSION 0x80
+
 namespace vigil {
 
 class Buffer;
