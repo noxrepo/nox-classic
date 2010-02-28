@@ -11,8 +11,7 @@ import xml.dom.minidom
 #
 # Run nox-draw-dependencies.py --help to see help on usage
 #
-# Dependency: python-xml in Debian
-# 
+# Dependency: python-xml in Debian 
 #
 # @author ykk
 # @date April 2009
@@ -88,12 +87,13 @@ def usage():
           "-f/--format <valid format for Graphviz>\n\tSpecify format to draw in (default=ps)\n"+\
           "-p/--program <valid Graphviz program>\n\tSpecify program to draw with (default=dot)\n"+\
           "-d/--dir <root directory>\n\tSpecify root directory to find meta.xml in (default=PWD)\n"+\
-          "-n/--name <filename>\n\tfilename of outputs (default=nox-component-dependency)\n"
+          "-o/--output <filename>\n\tfilename of outputs (default=nox-component-dependency)\n"+\
 
 #Parse options and arguments
 try:
-    opts, args = getopt.getopt(sys.argv[1:], "hf:p:d:",
-                               ["help","format","program","directory"])
+    opts, args = getopt.getopt(sys.argv[1:], "hf:p:d:o:",
+                               ["help","format=","program=","directory=",
+                                "output="])
 except getopt.GetoptError:
     print "Option error!"
     usage()
@@ -112,7 +112,7 @@ for opt,arg in opts:
         format=arg
     elif (opt in ("-p","--program")):
         program=arg
-    elif (opt in ("-n","--name")):
+    elif (opt in ("-o","--output")):
         filename=arg
     elif (opt in ("-d","--dir")):
         dir=arg
