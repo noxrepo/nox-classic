@@ -23,9 +23,9 @@
     <dependency>
       <name>user_event_log</name>
     </dependency>
-<!--    <dependency>
+    <dependency>
       <name>routing_module</name>
-    </dependency> -->
+    </dependency> <!-- Comment this dependency out if AUTH_WITH_ROUTING==0 -->
     <dependency>
       <name>datatypes</name>
     </dependency>

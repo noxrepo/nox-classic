@@ -21,11 +21,14 @@
 #include "bootstrap-complete.hh"
 #include "datapath-join.hh"
 #include "datapath-leave.hh"
-//#include "discovery/link-event.hh"
 #include "netinet++/ethernet.hh"
 #include "port-status.hh"
 #include "switch_event.hh"
 #include "openflow-default.hh"
+
+#if AUTH_WITH_ROUTING
+#include "discovery/link-event.hh"
+#endif
 
 #define TIMER_INTERVAL         30
 #define DEFAULT_IDLE_TIMEOUT   300     // 5 min idle timeout
@@ -68,7 +71,7 @@ Authenticator::Authenticator(const container::Context* c,
                              const xercesc::DOMNode*)
     : Component(c), routing(false), auto_auth(true),
       expire_timer(TIMER_INTERVAL),
-      datatypes(0), data_cache(0), /*routing_mod(0), */bindings(0),
+      datatypes(0), data_cache(0), bindings(0),
       user_log(0), default_hard_timeout(DEFAULT_HARD_TIMEOUT),
       default_idle_timeout(DEFAULT_IDLE_TIMEOUT)
 {
@@ -109,9 +112,11 @@ Authenticator::configure(const container::Configuration*)
 
     resolve(datatypes);
     resolve(data_cache);
-//     resolve(routing_mod);
     resolve(bindings);
     resolve(user_log);
+#if AUTH_WITH_ROUTING
+    resolve(routing_mod);
+#endif
 
     data_cache->add_switch_updated(
         boost::bind(&Authenticator::update_switch, this, _1, _2, _3));
@@ -142,14 +147,16 @@ Authenticator::configure(const container::Configuration*)
         (boost::bind(&Authenticator::handle_datapath_leave, this, _1));
     register_handler<Port_status_event>
         (boost::bind(&Authenticator::handle_port_status, this, _1));
-//     register_handler<Link_event>
-//         (boost::bind(&Authenticator::handle_link_change, this, _1));
     register_handler<Host_auth_event>
         (boost::bind(&Authenticator::handle_host_auth, this, _1));
     register_handler<User_auth_event>
         (boost::bind(&Authenticator::handle_user_auth, this, _1));
     register_handler<Packet_in_event>
         (boost::bind(&Authenticator::handle_packet_in, this, _1));
+#if AUTH_WITH_ROUTING
+    register_handler<Link_event>
+        (boost::bind(&Authenticator::handle_link_change, this, _1));
+#endif
 }
 
 void
@@ -1059,18 +1066,20 @@ Authenticator::get_on_path_location(const datapathid& dp, uint16_t port,
                                     std::list<AuthedLocation>& als,
                                     std::list<AuthedLocation>::iterator &al) const
 {
-//     Routing_module::RoutePtr rte;
-//     Routing_module::RouteId rid;
-//     rid.dst = dp;
-//     for (al = als.begin(); al != als.end(); ++al) {
-//         rid.src = al->location->sw->dp;
-//         if (routing_mod->is_on_path_location(rid,
-//                                              al->location->port,
-//                                              port))
-//         {
-//             return true;
-//         }
-//     }
+#if AUTH_WITH_ROUTING
+    Routing_module::RoutePtr rte;
+    Routing_module::RouteId rid;
+    rid.dst = dp;
+    for (al = als.begin(); al != als.end(); ++al) {
+        rid.src = al->location->sw->dp;
+        if (routing_mod->is_on_path_location(rid,
+                                             al->location->port,
+                                             port))
+        {
+            return true;
+        }
+    }
+#endif
     return false;
 }
 

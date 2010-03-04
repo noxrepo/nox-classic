@@ -31,9 +31,21 @@
 #include "hash_map.hh"
 #include "host_event.hh"
 #include "netinet++/cidr.hh"
-//#include "routing/routing.hh"
 #include "user_event.hh"
 #include "user_event_log/user_event_log.hh"
+
+// enable to have locations added/removed based on topology i.e. so
+// hosts wont have duplicate locations with one downstream from
+// another.  Requires routing_module library to be loaded as
+// dependency.  Often you'll want this enabled, but NOX is set up
+// currently such that routing_module auto pulls in LLDP discovery
+// component etc which a user may not always want running.
+
+#define AUTH_WITH_ROUTING 1
+
+#if AUTH_WITH_ROUTING
+#include "routing/routing.hh"
+#endif
 
 namespace vigil {
 namespace applications {
@@ -258,13 +270,15 @@ private:
 
     Datatypes *datatypes;
     Data_cache *data_cache;
-//    Routing_module *routing_mod;
     Bindings_Storage *bindings;
     User_Event_Log *user_log;
     std::list<EndpointUpdatedFn> updated_fns;
     uint32_t default_hard_timeout;
     uint32_t default_idle_timeout;
     char buf[1024];
+#if AUTH_WITH_ROUTING
+    Routing_module *routing_mod;
+#endif
 
     const std::string& get_switch_name(int64_t id);
     const std::string& get_location_name(int64_t id);

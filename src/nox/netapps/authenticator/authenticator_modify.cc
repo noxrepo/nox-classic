@@ -219,8 +219,10 @@ Authenticator::add_host_location(const Host_auth_event& ha, LocEntry *location,
     std::string dlstr = ha.dladdr.string();
     std::list<AuthedLocation>::iterator authed;
     std::vector<std::pair<datapathid, uint16_t> > to_remove;
-//    Routing_module::RouteId rid, rid2;
-//     rid.src = rid2.dst = ha.datapath_id;
+#if AUTH_WITH_ROUTING
+    Routing_module::RouteId rid, rid2;
+    rid.src = rid2.dst = ha.datapath_id;
+#endif
     for (authed = dlentry->locations.begin();
          authed != dlentry->locations.end(); ++authed)
     {
@@ -246,19 +248,21 @@ Authenticator::add_host_location(const Host_auth_event& ha, LocEntry *location,
                      get_location_name(location->entry->name).c_str());
             return;
         // if upstream, remove other.  if downstream, dont add and return
-//         } else { // want if routing?
-//             rid.dst = rid2.src = authed->location->sw->dp;
-//             if (routing_mod->is_on_path_location(rid, ha.port,
-//                                                  authed->location->port))
-//             {
-//                 to_remove.push_back(std::make_pair(authed->location->sw->dp,
-//                                                    authed->location->port));
-//             } else if (routing_mod->is_on_path_location(rid2,
-//                                                         authed->location->port,
-//                                                         ha.port))
-//             {
-//                 return;
-//             }
+#if AUTH_WITH_ROUTING
+        } else { // want if routing?
+            rid.dst = rid2.src = authed->location->sw->dp;
+            if (routing_mod->is_on_path_location(rid, ha.port,
+                                                 authed->location->port))
+            {
+                to_remove.push_back(std::make_pair(authed->location->sw->dp,
+                                                   authed->location->port));
+            } else if (routing_mod->is_on_path_location(rid2,
+                                                        authed->location->port,
+                                                        ha.port))
+            {
+                return;
+            }
+#endif
         }
     }
 

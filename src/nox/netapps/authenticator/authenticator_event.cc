@@ -21,10 +21,13 @@
 #include "assert.hh"
 #include "datapath-join.hh"
 #include "datapath-leave.hh"
-//#include "discovery/link-event.hh"
 #include "netinet++/ethernet.hh"
 #include "port-status.hh"
 #include "vlog.hh"
+
+#if AUTH_WITH_ROUTING
+#include "discovery/link-event.hh"
+#endif
 
 namespace vigil {
 namespace applications {
@@ -79,11 +82,13 @@ Authenticator::handle_port_status(const Event& e)
 Disposition
 Authenticator::handle_link_change(const Event& e)
 {
-//     const Link_event& le = assert_cast<const Link_event&>(e);
-//     if (le.action == Link_event::ADD) {
-//         remove_location_hosts(le.dpdst, le.dport, false,
-//                               Host_event::INTERNAL_LOCATION, false);
-//     }
+#if AUTH_WITH_ROUTING
+    const Link_event& le = assert_cast<const Link_event&>(e);
+    if (le.action == Link_event::ADD) {
+        remove_location_hosts(le.dpdst, le.dport, false,
+                              Host_event::INTERNAL_LOCATION, false);
+    }
+#endif
     return CONTINUE;
 }
 
@@ -371,8 +376,9 @@ Authenticator::make_primary(const time_t& curtime, DLEntry *dlentry,
     location->last_active = curtime;
     std::list<AuthedLocation>::iterator begin = dlentry->locations.begin();
     if (location != begin) {
-//      L2/L3 switching should learn new path
-//         poison_location(location->location->sw->dp, dlentry->dladdr, 0, true);
+#if AUTH_WITH_ROUTING
+        poison_location(location->location->sw->dp, dlentry->dladdr, 0, true);
+#endif
         dlentry->locations.splice(begin, dlentry->locations, location);
     }
 }
