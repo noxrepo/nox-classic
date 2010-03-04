@@ -1,5 +1,4 @@
 #include "json_object.hh"
-#include <stdint.h>
 
 namespace vigil
 {

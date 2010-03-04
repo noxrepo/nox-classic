@@ -4,6 +4,7 @@
 #include "JSON_parser.h"
 #include "hash_map.hh"
 #include <stdio.h>
+#include <stdint.h>
 #include <stdlib.h>
 #include <list>
 #include <string.h>
