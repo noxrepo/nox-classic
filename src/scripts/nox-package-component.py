@@ -85,6 +85,7 @@ def usage():
           "-h/--help\n\tPrint this usage guide\n"+\
           "-c/--commit\n\tCommit to add to package\n"+\
           "-n/--name\n\tName of package (defaults to that of component)\n"+\
+          "-s/--since\n\tSpecify commit since\n"+\
           "-f/--force\n\tForce package creation (delete directory if available)\n"+\
           "-d/--dir <root directory>\n\tSpecify root directory to find meta.xml in (default=PWD)\n"+\
           "-e/--edit\n\tSpecify to edit package.xml (default: True for no description provided, else false)\n"+\
@@ -95,10 +96,10 @@ def usage():
 
 #Parse options and arguments
 try:
-    opts, args = getopt.getopt(sys.argv[1:], "hd:fec:n:i:",
+    opts, args = getopt.getopt(sys.argv[1:], "hd:fec:n:i:s:",
                                ["help","directory=","force","edit",
                                 "description=","pre=","post=",
-                                "name=","commit=","ignore="])
+                                "name=","commit=","ignore=","since="])
 except getopt.GetoptError:
     print "Option error!"
     usage()
@@ -114,6 +115,7 @@ postscript=None
 commits=[]
 name = None
 excludeopt=""
+since=None
 for opt,arg in opts:
     if (opt in ("-h","--help")):
         usage()
@@ -122,6 +124,8 @@ for opt,arg in opts:
         commits.append(arg)
     elif (opt in ("-i","--ignore")):
         excludeopt += " -e "+arg
+    elif (opt in ("-s","--since")):
+        since=arg
     elif (opt in ("-n","--name")):
         name=arg
     elif (opt in ("-d","--dir")):
@@ -201,19 +205,20 @@ else:
     print "Component package already exist!?"
     sys.exit(1)
 os.chdir(name)
+gdpdopt = " -e src/etc/nox.xml"+\
+          " -e configure.ac.in"+\
+          excludeopt
+if (since != None):
+    gdpdopt += " -s "+since
 if (keycomponent != None):
     print commands.getoutput("git-dependency -p"+\
-                       " -e src/etc/nox.xml"+\
-                       " -e configure.ac.in"+\
-                       excludeopt+\
-                       " -f "+" -f ".join(keycomponent.files)+\
-                       " "+" ".join(commits))
+                             gdpdopt+\
+                             " -f "+" -f ".join(keycomponent.files)+\
+                             " "+" ".join(commits))
 else:
     print commands.getoutput("git-dependency -p"+\
-                       " -e src/etc/nox.xml"+\
-                       " -e configure.ac.in"+\
-                       excludeopt+\
-                       " "+" ".join(commits))
+                             gdpdopt+\
+                             " "+" ".join(commits))
 
 #Create XML file
 impl = xml.dom.minidom.getDOMImplementation()
