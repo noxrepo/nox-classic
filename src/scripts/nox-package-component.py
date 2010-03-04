@@ -81,6 +81,7 @@ def usage():
     print "Usage "+sys.argv[0]+" <options> component\n"+\
           "Component and related commits are packaged into tarball.\n"+\
           "Options:\n"+\
+          "-i/--ignore\n\tIgnore file in dependency search(can be used multiple times)\n"+\
           "-h/--help\n\tPrint this usage guide\n"+\
           "-c/--commit\n\tCommit to add to package\n"+\
           "-n/--name\n\tName of package (defaults to that of component)\n"+\
@@ -94,10 +95,10 @@ def usage():
 
 #Parse options and arguments
 try:
-    opts, args = getopt.getopt(sys.argv[1:], "hd:fec:n:",
+    opts, args = getopt.getopt(sys.argv[1:], "hd:fec:n:i:",
                                ["help","directory=","force","edit",
                                 "description=","pre=","post=",
-                                "name=","commit="])
+                                "name=","commit=","ignore="])
 except getopt.GetoptError:
     print "Option error!"
     usage()
@@ -112,12 +113,15 @@ prescript=None
 postscript=None
 commits=[]
 name = None
+excludeopt=""
 for opt,arg in opts:
     if (opt in ("-h","--help")):
         usage()
         sys.exit(0)
     elif (opt in ("-c","--commit")):
         commits.append(arg)
+    elif (opt in ("-i","--ignore")):
+        excludeopt += " -e "+arg
     elif (opt in ("-n","--name")):
         name=arg
     elif (opt in ("-d","--dir")):
@@ -201,12 +205,14 @@ if (keycomponent != None):
     print commands.getoutput("git-dependency -p"+\
                        " -e src/etc/nox.xml"+\
                        " -e configure.ac.in"+\
+                       excludeopt+\
                        " -f "+" -f ".join(keycomponent.files)+\
                        " "+" ".join(commits))
 else:
     print commands.getoutput("git-dependency -p"+\
                        " -e src/etc/nox.xml"+\
                        " -e configure.ac.in"+\
+                       excludeopt+\
                        " "+" ".join(commits))
 
 #Create XML file
