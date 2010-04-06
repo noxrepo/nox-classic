@@ -1,0 +1,5 @@
+<?xml version="1.0" ?>
+<nox_sources>
+   <source>http://openflowswitch.org/downloads/noxget/nox-index.xml</source>
+   <source>../component-cache/nox-index.xml</source>
+</nox_sources>
