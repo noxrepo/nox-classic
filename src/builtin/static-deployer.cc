@@ -24,14 +24,13 @@
 using namespace vigil;
 using namespace vigil::container;
 using namespace std;
-using namespace xercesc;
 
 Static_component_context::
 Static_component_context(Kernel* kernel, 
                          const Component_name& name, 
                          const Constructor_callback& constructor_,
                          const container::Interface_description& interface,
-                         DOMNode* platform_conf) 
+                         json_object* platform_conf)
     : Component_context(kernel), constructor(constructor_), factory(0) {    
     init_actions(name, interface, platform_conf);
 }
@@ -40,7 +39,7 @@ Static_component_context::
 Static_component_context(Kernel* kernel, 
                          const Component_name& name, 
                          const container::Component_factory* f,
-                         DOMNode* platform_conf) 
+                         json_object* platform_conf)
     : Component_context(kernel), constructor(0), factory(f) {    
     init_actions(name, f->get_interface(), platform_conf);
 }
@@ -48,7 +47,7 @@ Static_component_context(Kernel* kernel,
 void
 Static_component_context::init_actions(const Component_name& name,
                                        const Interface_description& interface,
-                                       DOMNode* platform_conf) {
+                                       json_object* platform_conf) {
     using namespace boost;
 
     install_actions[DESCRIBED] = 
@@ -65,7 +64,7 @@ Static_component_context::init_actions(const Component_name& name,
 
     this->name = name;
     this->configuration = new Component_configuration();
-    this->xml_description = platform_conf;
+    this->json_description = platform_conf;
     this->interface = interface;
 }
 
@@ -91,8 +90,8 @@ void
 Static_component_context::instantiate() {
     try {
         component = factory ? 
-            factory->instance(this, xml_description) :
-            constructor(this, xml_description);
+            factory->instance(this, json_description) :
+            constructor(this, json_description);
         current_state = INSTANTIATED;
     }
     catch (const std::exception& e) {

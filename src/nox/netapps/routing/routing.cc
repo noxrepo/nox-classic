@@ -90,7 +90,7 @@ get_max_action_len() {
 // Constructor - initializes openflow packet memory used to setup route
 
 Routing_module::Routing_module(const container::Context* c,
-                               const xercesc::DOMNode* d)
+                               const json_object* d)
     : container::Component(c), topology(0), nat(0), len_flow_actions(0),
       num_actions(0), ofm(0)
 {

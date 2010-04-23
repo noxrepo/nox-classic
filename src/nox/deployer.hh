@@ -23,7 +23,7 @@
 
 #include <boost/filesystem.hpp>
 
-#include <xercesc/dom/DOM.hpp>
+#include "json_object.hh"
 
 #include "component.hh"
 #include "hash_map.hh"
@@ -45,9 +45,10 @@ public:
     virtual bool deploy(Kernel*, const container::Component_name&);
 
     static const char* COMPONENTS_CONFIGURATION_SCHEMA;
-    static const char* XML_DESCRIPTION;
+    ////static const char* XML_DESCRIPTION;
+    static const char* JSON_DESCRIPTION;
 
-    /* Find recursively any XML component description files. */
+    /* Find recursively any JSON component description files. */
     typedef std::list<boost::filesystem::path> Path_list;
     static Path_list scan(boost::filesystem::path);
 
@@ -66,7 +67,7 @@ class Component_configuration
     : public container::Configuration {
 public:
     Component_configuration();
-    Component_configuration(xercesc::DOMNode*, 
+    Component_configuration(json_object*, 
                             const container::Component_argument_list&);
     const std::string get(const std::string&) const;
     const bool has(const std::string&) const;
@@ -84,14 +85,14 @@ public:
     /* Human-readable component name */
     container::Component_name name;
     
-    /* Component's XML description */
-    xercesc::DOMNode* xml_description;
+    /* Component's JSON description */
+    json_object* json_description;
 
     /* Command line arguments */
     container::Component_argument_list arguments;
 
 private:
-    /* XML configuration translated into key-value pairs */
+    /* JSON configuration translated into key-value pairs */
     mutable hash_map<std::string, std::string> kv;
 };
 

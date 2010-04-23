@@ -30,10 +30,6 @@
 #include "discovery/link-event.hh"
 #endif
 
-#if AUTH_WITH_ROUTING
-#include "discovery/link-event.hh"
-#endif
-
 #define TIMER_INTERVAL         30
 #define DEFAULT_IDLE_TIMEOUT   300     // 5 min idle timeout
 #define DEFAULT_HARD_TIMEOUT   18000   // 5 hr hard timeout
@@ -72,7 +68,7 @@ Authenticator::sptreq::operator()(const boost::shared_ptr<Location>& a,
 }
 
 Authenticator::Authenticator(const container::Context* c,
-                             const xercesc::DOMNode*)
+                             const json_object*)
     : Component(c), routing(false), auto_auth(true),
       expire_timer(TIMER_INTERVAL),
       datatypes(0), data_cache(0), bindings(0),

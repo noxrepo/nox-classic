@@ -8,7 +8,7 @@ namespace vigil
 {
   static Vlog_module lg("rttlog");
 
-  rttlog::rttlog(const Context* c, const xercesc::DOMNode* node)
+  rttlog::rttlog(const Context* c, const json_object* node)
     : Component(c)
   {
     filename = string(RTTLOG_DEFAULT_FILE);    

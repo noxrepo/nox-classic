@@ -26,10 +26,10 @@ jsonmessenger_la_CPPFLAGS = $(AM_CPPFLAGS) -I $(top_srcdir)/src/nox -I $(top_src
 jsonmessenger_la_SOURCES = jsonmessenger.hh jsonmessenger.cc
 jsonmessenger_la_LDFLAGS = -module -export-dynamic
 
-NOX_RUNTIMEFILES = meta.xml	
+NOX_RUNTIMEFILES = meta.json	
 
 EXTRA_DIST = \
-	meta.xml
+	meta.json
 
 all-local:  nox-all-local
 clean-local: nox-clean-local

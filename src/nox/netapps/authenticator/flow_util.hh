@@ -181,7 +181,7 @@ class Flow_util
 {
 
 public:
-    Flow_util(const container::Context*, const xercesc::DOMNode*);
+    Flow_util(const container::Context*, const json_object*);
 
     static void getInstance(const container::Context*, Flow_util*&);
 

@@ -3,7 +3,7 @@ include ../../../Make.vars
 SUBDIRS = t
 
 EXTRA_DIST = \
-	meta.xml \
+	meta.json \
 	__init__.py	\
 	pystorage.cc \
 	pystorage.hh \
@@ -16,7 +16,7 @@ if PY_ENABLED
 AM_CPPFLAGS += $(PYTHON_CPPFLAGS)
 endif # PY_ENABLED
 
-NOX_RUNTIMEFILES = meta.xml
+NOX_RUNTIMEFILES = meta.json
 
 pkglib_LTLIBRARIES =							\
 	storage-common.la						\

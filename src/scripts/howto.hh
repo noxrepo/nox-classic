@@ -20,7 +20,7 @@
  * To create a new C/C++ component, the following has to be done:
  * <OL>
  * <LI>Create a new directory in coreapps, netapps or webapps</LI>
- * <LI>Add the appropriate C and header files with meta.xml and Makefile.am</LI>
+ * <LI>Add the appropriate C and header files with meta.json and Makefile.am</LI>
  * <LI>Add the new directory to configure.ac.in</LI>
  * <LI>Rerun ./boot.sh and ./configure</LI>
  * </OL>

@@ -31,7 +31,7 @@ class Data_cache
     : public container::Component {
 
 public:
-    Data_cache(const container::Context*, const xercesc::DOMNode*);
+    Data_cache(const container::Context*, const json_object*);
     Data_cache() : Component(0) { }
 
     static void getInstance(const container::Context*, Data_cache*&);

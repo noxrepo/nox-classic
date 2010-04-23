@@ -1,5 +1,8 @@
 #include "json_object.hh"
 
+#include <iostream>   //remove
+using namespace std;  //remove
+
 namespace vigil
 {
   json_object::json_object(const uint8_t* str, ssize_t& size, 
@@ -26,6 +29,7 @@ namespace vigil
     {
       if (!JSON_parser_char(jc, (int) *str))
       {
+      cout<<"json syntax error at:\n"<<str; // remove / return this as error?
 	delete_JSON_parser(jc);
 	type = JSONT_NULL;
 	return;
@@ -135,7 +139,8 @@ namespace vigil
 	retStr += "false";
       break;
     case JSONT_STRING:
-      retStr += "\""+*((std::string *)object)+"\"";
+      //retStr += "\""+*((std::string *)object)+"\""; //kyr change. check if ok.
+      retStr += *((std::string *)object);
       break;
     } 
     

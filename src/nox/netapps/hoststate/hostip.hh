@@ -20,7 +20,6 @@
 
 #include "component.hh"
 #include "config.h"
-#include <xercesc/dom/DOM.hpp>
 #include "hash_map.hh"
 #include "netinet++/ethernetaddr.hh"
 
@@ -49,9 +48,9 @@ namespace vigil
     /** \brief Constructor of hostip.
      *
      * @param c context
-     * @param node XML configuration (Xercesc DOMNode)
+     * @param node XML configuration (JSON object)
      */
-    hostip(const Context* c, const xercesc::DOMNode* node)
+    hostip(const Context* c, const json_object* node)
       : Component(c)
     {}
     

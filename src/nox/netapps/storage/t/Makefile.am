@@ -2,7 +2,7 @@ include ../../../../Make.vars
 
 EXTRA_DIST =								\
 	__init__.py							\
-	meta.xml							\
+	meta.json							\
 	storage_test.py							\
 	storage_test_base.py						\
 	test_storage.sh							\
@@ -10,7 +10,7 @@ EXTRA_DIST =								\
 
 NOX_RUNTIMEFILES =							\
 	__init__.py							\
-	meta.xml							\
+	meta.json							\
 	storage_test.py							\
 	storage_test_base.py						\
 	test_storage.sh							\

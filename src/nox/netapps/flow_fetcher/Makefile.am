@@ -1,7 +1,7 @@
 include ../../../Make.vars 
 
 EXTRA_DIST = 					\
-	meta.xml				\
+	meta.json				\
 	__init__.py				\
 	test.py \
 	pyflow_fetcher.i
@@ -19,7 +19,7 @@ flow_fetcher_la_CPPFLAGS =						\
 flow_fetcher_la_SOURCES = flow_fetcher.cc flow_fetcher.hh 
 flow_fetcher_la_LDFLAGS = -module -export-dynamic
 
-NOX_RUNTIMEFILES = meta.xml
+NOX_RUNTIMEFILES = meta.json
 
 if PY_ENABLED
 

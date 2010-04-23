@@ -39,7 +39,7 @@ class Async_DHT_storage
       public container::Component {
 public:
     Async_DHT_storage(const container::Context*,
-                      const xercesc::DOMNode*);
+                      const json_object*);
 
     void create_table(const Table_name&,
                       const Column_definition_map&,

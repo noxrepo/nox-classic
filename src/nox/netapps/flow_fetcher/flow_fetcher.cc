@@ -37,7 +37,7 @@ struct Flow_fetcher_app
 {
     /* Application interface. */
     Flow_fetcher_app(const container::Context* c,
-                     const xercesc::DOMNode*)
+                     const json_object*)
         : Component(c) { }
 
     static void getInstance(const container::Context*, Flow_fetcher_app*&);

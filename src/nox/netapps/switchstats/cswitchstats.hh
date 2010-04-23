@@ -41,7 +41,7 @@ class CSwitchStats
 
     public:
 
-        CSwitchStats(const container::Context*, const xercesc::DOMNode*);
+        CSwitchStats(const container::Context*, const json_object*);
 
         static void getInstance(const container::Context*, CSwitchStats*&);
 

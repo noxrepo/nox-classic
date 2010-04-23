@@ -37,7 +37,7 @@ namespace applications {
 static Vlog_module lg("topology");
 
 Topology::Topology(const Context* c,
-                   const xercesc::DOMNode*)
+                   const json_object*)
     : Component(c)
 {
     empty_dp.active = false;

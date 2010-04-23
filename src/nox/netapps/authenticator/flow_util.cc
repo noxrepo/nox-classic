@@ -184,7 +184,7 @@ Flow_action::set_arg(const C_func_t& fn)
 }
 
 Flow_util::Flow_util(const container::Context* c,
-                     const xercesc::DOMNode*)
+                     const json_object*)
     : Component(c)
 {}
 

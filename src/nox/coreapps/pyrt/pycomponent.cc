@@ -32,7 +32,6 @@
 #include "pyrt/pyrt.hh"
 #include "pycontext.hh"
 #include "vlog.hh"
-#include "xml-util.hh"
 
 using namespace std;
 using namespace vigil;
@@ -41,13 +40,17 @@ using namespace vigil::container;
 
 static Vlog_module lg("pycomponent");
 
-PyComponent::PyComponent(const Context* c, const xercesc::DOMNode* conf)
+PyComponent::PyComponent(const Context* c, const json_object* conf)
     : Component(c), pyobj(0) {
     // Import the Python component implementation module and get the
     // factory.
-    string module =
-        xml::to_string(xml::get_child_by_tag(conf, "python")->
-                       getTextContent());
+    string module;
+    
+    json_dict::iterator di;
+    json_dict* jodict = (json_dict*) conf->object;
+    di = jodict->find("python");
+    module = di->second->get_string();
+    
     lg.dbg("Importing Python module %s", module.c_str());
 
     PyObject* m = PyImport_ImportModule(module.c_str());

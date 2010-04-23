@@ -1,7 +1,7 @@
 include ../../../../Make.vars 
 
 EXTRA_DIST = \
-	meta.xml \
+	meta.json \
 	__init__.py \
 	test_bs_link.py \
 	test_bs_location.py \
@@ -9,7 +9,7 @@ EXTRA_DIST = \
 	TEST_DIRECTORY
 
 NOX_RUNTIMEFILES = \
-	meta.xml \
+	meta.json \
 	__init__.py \
 	test_bs_link.py \
 	test_bs_location.py \

@@ -38,7 +38,7 @@ namespace applications {
 static Vlog_module lg("data_cache");
 
 Data_cache::Data_cache(const container::Context* c,
-                       const xercesc::DOMNode*)
+                       const json_object*)
     : Component(c), reserved(5),
       unauthenticated(UNAUTHENTICATED),
       authenticated(AUTHENTICATED), unknown(UNKNOWN)

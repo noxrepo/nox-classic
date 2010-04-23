@@ -39,7 +39,7 @@ namespace applications {
 
 static Vlog_module lg("sp_routing");
 
-SPRouting::SPRouting(const container::Context *c, const xercesc::DOMNode* d)
+SPRouting::SPRouting(const container::Context *c, const json_object* d)
     : container::Component(c), routing(NULL), 
       empty(new Routing_module::Route()), passive(false)
 {}

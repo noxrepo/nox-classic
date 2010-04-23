@@ -45,7 +45,7 @@ namespace vigil
     jsonobj.reset(new json_object(raw_msg.get(), len));
   }
 
-  jsonmessenger::jsonmessenger(const Context* c, const xercesc::DOMNode* node): 
+  jsonmessenger::jsonmessenger(const Context* c, const json_object* node): 
     message_processor(c,node)
   { 
     idleInterval = JSONMESSENGER_ECHO_IDLE_THRESHOLD;

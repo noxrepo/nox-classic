@@ -54,7 +54,7 @@ static Vlog_module lg("dht-storage");
     } while (0);
 
 Async_DHT_storage::Async_DHT_storage(const container::Context* c,
-                                     const xercesc::DOMNode*)
+                                     const json_object*)
     : Component(c) {
 
 }

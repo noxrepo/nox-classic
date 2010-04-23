@@ -1,14 +1,14 @@
 include ../../../../Make.vars 
 
 EXTRA_DIST = \
-	meta.xml \
+	meta.json \
     test_example.py \
     test_example.sh \
 	__init__.py \
 	TEST_DIRECTORY
 
 NOX_RUNTIMEFILES = \
-    meta.xml \
+    meta.json \
     test_example.py \
     test_example.sh \
 	__init__.py \

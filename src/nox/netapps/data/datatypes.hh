@@ -60,7 +60,7 @@ class Datatypes
 {
 
 public:
-    Datatypes(const container::Context* c, const xercesc::DOMNode*);
+    Datatypes(const container::Context* c, const json_object*);
 
     static void getInstance(const container::Context*, Datatypes*&);
 

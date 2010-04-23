@@ -51,7 +51,7 @@ class BindingsStorageTestCase
 public:
 
     BindingsStorageTestCase(const vigil::container::Context* c,
-                const xercesc::DOMNode* xml) 
+                const json_object* xml) 
         : Test_component(c), b_store(NULL), trigger_count(0),debug(false)  {}
 
     ~BindingsStorageTestCase() { } 

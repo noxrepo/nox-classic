@@ -43,55 +43,47 @@
 
 #include "nox.hh"
 #include "vlog.hh"
-#include "xml-util.hh"
+#include "json_object.hh"
 
 #include <iostream>
 
 using namespace std;
 using namespace vigil;
 using namespace vigil::container;
-using namespace xercesc;
 
 static Vlog_module lg("event-dispatcher-c");
 
 EventDispatcherComponent::EventDispatcherComponent(const Context* c,
-                                                   const xercesc::DOMNode* 
-                                                   platformconf) 
+                                                   const json_object*
+                                                   platformconf)  
+                                                   
     : Component(c) {
-
-        
-    // First construct the 'filter sequences' defined the XML
-    // configuration file.
-    const DOMNode* nox = xml::get_child_by_tag(platformconf, "nox");
-    assert(nox);
-    const DOMNode* events = xml::get_child_by_tag(nox, "events");
-    assert(events);
-    DOMNodeList* l = events->getChildNodes();
-    assert(l);
-    
-    for (XMLSize_t i = 0; i < l->getLength(); ++i) {
-        DOMNode* event = l->item(i);
-        assert(event);
-        if (event->getNodeType() != DOMNode::ELEMENT_NODE) { continue; }
-
-        list<DOMNode*> fl = xml::get_children_by_tag(event, "filter");
-        DOMNamedNodeMap* attributes = event->getAttributes();
-        assert(attributes);
-        string event_name = xml::to_string
-            ((static_cast<DOMAttr*>
-              (attributes->getNamedItem(XMLString::transcode("name"))))->
-             getTextContent()); 
-
+    // First construct the 'filter sequences' defined the JSON
+    // configuration file        
+    // get 'nox' dict
+    json_dict::iterator di;
+    json_dict* jodict = (json_dict*) platformconf->object;
+    di = jodict->find("nox");
+    jodict = (json_dict*) di->second->object;
+    // get 'events' dict
+    di = jodict->find("events");
+    json_dict::iterator event_di;
+    json_dict* eventDict = (json_dict*) di->second->object;  
+    // For every event
+    for(event_di=eventDict->begin(); event_di!=eventDict->end(); ++event_di) {
+        string event_name = event_di->first;
         int order = 0;
-
-        EventFilterChain chain;
-        for (list<DOMNode*>::iterator j = fl.begin(); j != fl.end(); ++j) {
-            string filter = xml::to_string((*j)->getTextContent()); 
+        json_array::iterator li;
+        json_array* compList = (json_array*) event_di->second->object;
+        // for every filter under the event
+        for(li=compList->begin(); li!=compList->end(); ++li) {
+            // add the filter in the event's filter_chain
+            EventFilterChain chain;
+            string filter = (((json_object*)*li)->get_string());
             chain[filter] = order++;
+            filter_chains[event_name] = chain;
         }
-
-        filter_chains[event_name] = chain;
-    }    
+    }
 
     // Register the system events
     register_event<Datapath_join_event>();
@@ -121,7 +113,7 @@ EventDispatcherComponent::EventDispatcherComponent(const Context* c,
 
 Component*
 EventDispatcherComponent::instantiate(const Context* ctxt, 
-                                      const xercesc::DOMNode* platform_conf) {
+                                      const json_object* platform_conf) {
     return new EventDispatcherComponent(ctxt, platform_conf);
 }
 

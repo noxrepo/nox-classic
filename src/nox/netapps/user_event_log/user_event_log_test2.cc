@@ -50,7 +50,7 @@ class UserEventLogTest2
 public:
 
     UserEventLogTest2(const container::Context* c,
-                      const xercesc::DOMNode* xml) 
+                      const json_object* xml) 
         : Component(c), counter(0) {
     }
 

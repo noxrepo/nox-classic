@@ -286,7 +286,7 @@ protected:
     container::Component* component;
 
     /* Component XML description, typically loaded from disk */
-    xercesc::DOMNode* xml_description;
+    json_object* json_description;
 
     /* Configuration merging the static XML component description and
        dynamic runtime-configuration */

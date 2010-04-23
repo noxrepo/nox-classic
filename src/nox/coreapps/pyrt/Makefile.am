@@ -2,7 +2,7 @@ include ../../../Make.vars
 
 EXTRA_DIST = 			\
 	__init__.py		\
-	meta.xml		\
+	meta.json		\
 	bootstrap.py    	\
 	componentws.py		\
 	deferredcallback.i	\
@@ -17,7 +17,7 @@ NOX_RUNTIMEFILES = 		\
 	bootstrap.py   		\
 	componentws.py		\
 	deferredcallback.py	\
-	meta.xml		\
+	meta.json		\
 	pyoxidereactor.py
 
 NOX_PYBUILDFILES = \

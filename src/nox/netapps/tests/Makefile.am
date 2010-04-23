@@ -30,7 +30,7 @@ tests_la_SOURCES = 							\
 #	tests/file-server.hh			
 
 EXTRA_DIST = 								\
-	meta.xml                    					\
+	meta.json                    					\
 	__init__.py                 					\
 	servercert.pem							\
 	cacert.pem							\
@@ -40,7 +40,7 @@ EXTRA_DIST = 								\
 	pytests.i     
 
 NOX_RUNTIMEFILES = 							\
-	meta.xml							\
+	meta.json							\
 	servercert.pem							\
 	serverkey.pem							\
 	cacert.pem		

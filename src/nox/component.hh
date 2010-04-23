@@ -33,7 +33,7 @@
 #include <boost/noncopyable.hpp>
 #include <boost/shared_array.hpp>
 
-#include <xercesc/dom/DOM.hpp>
+#include "json_object.hh"
 
 #include "netinet++/datapathid.hh"
 #include "netinet++/ethernetaddr.hh"
@@ -254,7 +254,7 @@ public:
     Component_factory();
     virtual ~Component_factory();
     virtual Component* instance(const Context*, 
-                                const xercesc::DOMNode*) const = 0;
+                                    const json_object*) const = 0;
     virtual Interface_description get_interface() const = 0;
     virtual void destroy(Component*) const = 0;
 };
@@ -296,7 +296,7 @@ public:
     Simple_component_factory() : i(typeid(T).name()) { }
 
     Component* instance(const Context* c, 
-                        const xercesc::DOMNode* conf) const { 
+                        const json_object* conf) const { 
         return new T(c, conf);
     }
 

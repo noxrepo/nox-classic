@@ -18,7 +18,7 @@ namespace vigil {
 namespace applications {
 
 Switch_management::Switch_management(const container::Context* c,
-        const xercesc::DOMNode*) 
+        const json_object*) 
     : Component(c)
 {
     //NOP

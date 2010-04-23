@@ -8,7 +8,7 @@ EXTRA_DIST =\
 	__init__.py \
 	pytopology_test.py \
 	pytopology.i \
-	meta.xml
+	meta.json
 
 pkglib_LTLIBRARIES =		\
 	topology.la	
@@ -23,7 +23,7 @@ topology_la_CPPFLAGS =								\
 topology_la_SOURCES = topology.cc topology.hh
 topology_la_LDFLAGS = -module -export-dynamic
 
-NOX_RUNTIMEFILES = meta.xml
+NOX_RUNTIMEFILES = meta.json
 
 if PY_ENABLED
 NOX_RUNTIMEFILES += __init__.py\

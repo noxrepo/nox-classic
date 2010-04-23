@@ -271,7 +271,7 @@ public:
     static const std::string LINK_TABLE_NAME;
     static const std::string LOCATION_TABLE_NAME;
 
-    Bindings_Storage(const container::Context* c,const xercesc::DOMNode*);
+    Bindings_Storage(const container::Context* c,const json_object*);
 
     void configure(const container::Configuration*);
     void install();

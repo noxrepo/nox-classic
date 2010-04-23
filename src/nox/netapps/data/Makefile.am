@@ -1,7 +1,7 @@
 include ../../../Make.vars 
 
 EXTRA_DIST = \
-	meta.xml
+	meta.json
 
 if PY_ENABLED
 AM_CPPFLAGS += $(PYTHON_CPPFLAGS)
@@ -38,7 +38,7 @@ datacache_la_SOURCES =  datacache.hh datacache.cc principal_event.hh		\
 datacache_la_LDFLAGS = -module -export-dynamic
 
 NOX_RUNTIMEFILES =								\
-	meta.xml
+	meta.json
 
 if PY_ENABLED
 

@@ -2,7 +2,7 @@ include ../../../Make.vars
 
 SUBDIRS = t
 
-EXTRA_DIST = meta.xml		\
+EXTRA_DIST = meta.json		\
 	__init__.py \
 	bindings_directory.py \
 	pybindings_storage.i
@@ -34,7 +34,7 @@ bindings_storage_la_LDFLAGS = -module -export-dynamic
 #bs_memleak_test_la_SOURCES = bs_memleak_test.cc 
 #bs_memleak_test_la_LDFLAGS = -module -export-dynamic
 
-NOX_RUNTIMEFILES = meta.xml	
+NOX_RUNTIMEFILES = meta.json	
 
 if PY_ENABLED
 

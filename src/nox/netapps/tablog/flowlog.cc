@@ -9,7 +9,7 @@ namespace vigil
 {
   static Vlog_module lg("flowlog");
   
-  flowlog::flowlog(const Context* c, const xercesc::DOMNode* node)
+  flowlog::flowlog(const Context* c, const json_object* node)
     : Component(c)
   {
     filename = string(FLOWLOG_DEFAULT_FILE);    

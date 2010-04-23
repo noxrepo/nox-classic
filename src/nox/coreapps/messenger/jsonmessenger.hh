@@ -97,9 +97,9 @@ namespace vigil
     /** \brief Constructor.
      * Start server socket.
      * @param c context as required by Component
-     * @param node Xercesc DOMNode
+     * @param node JSON object
      */
-    jsonmessenger(const Context* c, const xercesc::DOMNode* node);
+    jsonmessenger(const Context* c, const json_object* node);
 
     /** Destructor.
      * Close server socket.

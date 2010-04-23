@@ -5,11 +5,11 @@ AM_CPPFLAGS += $(PYTHON_CPPFLAGS)
 endif # PY_ENABLED
 
 EXTRA_DIST =\
-	meta.xml\
+	meta.json\
 	__init__.py\
 	switchstats.py
 
-NOX_RUNTIMEFILES = meta.xml	\
+NOX_RUNTIMEFILES = meta.json	\
 	__init__.py		\
 	switchstats.py
 

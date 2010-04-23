@@ -22,7 +22,6 @@
 #include "config.h"
 #include "hash_map.hh"
 #include "datapath-join.hh"
-#include <xercesc/dom/DOM.hpp>
 
 #ifdef LOG4CXX_ENABLED
 #include <boost/format.hpp>
@@ -51,9 +50,9 @@ namespace vigil
     /** \brief Constructor of datapathmem.
      *
      * @param c context
-     * @param node XML configuration (Xercesc DOMNode)
+     * @param node configuration (JSON object) 
      */
-    datapathmem(const Context* c, const xercesc::DOMNode* node)
+    datapathmem(const Context* c, const json_object* node)
       : Component(c)
     {}
     

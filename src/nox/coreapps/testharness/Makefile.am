@@ -2,7 +2,7 @@ include ../../../Make.vars
 
 EXTRA_DIST =\
 	__init__.py\
-	meta.xml\
+	meta.json\
 	initindicator.py\
 	testharness.py\
 	testrunner.py\
@@ -11,7 +11,7 @@ EXTRA_DIST =\
 
 NOX_RUNTIMEFILES = \
 	__init__.py \
-	meta.xml \
+	meta.json \
 	initindicator.py \
 	testharness.py \
 	testrunner.py \

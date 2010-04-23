@@ -101,6 +101,6 @@ timeval.hh					\
 type-props.h					\
 vlog-socket.hh					\
 vlog.hh						\
-xml-util.hh					\
+json-util.hh					\
 xtoxll.h					
 

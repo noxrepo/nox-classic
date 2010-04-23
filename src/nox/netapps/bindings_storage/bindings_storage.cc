@@ -19,7 +19,6 @@
 #include <boost/function.hpp>
 #include <boost/shared_ptr.hpp>
 #include <sstream>
-#include <xercesc/dom/DOM.hpp>
 
 #include "assert.hh"
 #include "bindings_storage.hh"
@@ -38,7 +37,7 @@ const std::string Bindings_Storage::LINK_TABLE_NAME = "bindings_link";
 const std::string Bindings_Storage::LOCATION_TABLE_NAME = "bindings_location";
 
 Bindings_Storage::Bindings_Storage(const container::Context* c,
-                                   const xercesc::DOMNode*)
+                                   const json_object*)
     : Component(c), np_store(0), datatypes(0), data_cache(0),
       host_serial_queue(this,"Host Queue",lg),
       user_serial_queue(this,"User Queue",lg),

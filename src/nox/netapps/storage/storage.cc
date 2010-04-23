@@ -311,7 +311,7 @@ using namespace vigil::container;
 namespace {
     struct Null_component
         : public Component {
-        Null_component(const container::Context* c, const xercesc::DOMNode*)
+        Null_component(const container::Context* c, const json_object*)
             : Component(c) { };
         void configure(const Configuration*) { }
         void install() { }

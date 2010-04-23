@@ -37,7 +37,7 @@ using namespace vigil::container;
 static Vlog_module lg("cswitchstats");
 
 CSwitchStats::CSwitchStats(const Context* c,
-                   const xercesc::DOMNode*)
+                   const json_object*)
     : Component(c) 
 {
 }

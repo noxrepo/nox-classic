@@ -33,7 +33,7 @@ namespace applications {
 static Vlog_module lg("nat_enforcer");
 
 NAT_enforcer::NAT_enforcer(const container::Context* c,
-                           const xercesc::DOMNode*)
+                           const json_object*)
     : Classifier<Flow_expr, Flow_action>(), Component(c),
       result(&data)
 {}

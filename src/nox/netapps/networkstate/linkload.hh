@@ -25,7 +25,6 @@
 #include "routeinstaller/network_graph.hh"
 #include "netinet++/datapathid.hh"
 #include "datapathmem.hh"
-#include <xercesc/dom/DOM.hpp>
 #include <boost/shared_array.hpp>
 
 #ifdef LOG4CXX_ENABLED
@@ -97,9 +96,9 @@ namespace vigil
     /** \brief Constructor of linkload.
      *
      * @param c context
-     * @param node XML configuration (Xercesc DOMNode)
+     * @param node configuration (JSON object) 
      */
-    linkload(const Context* c, const xercesc::DOMNode* node)
+    linkload(const Context* c, const json_object* node)
       : Component(c)
     {}
     

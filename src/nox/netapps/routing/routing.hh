@@ -85,7 +85,7 @@ public:
     typedef std::list<Nonowning_buffer> ActionList;
 
     Routing_module(const container::Context*,
-                   const xercesc::DOMNode*);
+                   const json_object*);
     // for python
     Routing_module();
     ~Routing_module() { }

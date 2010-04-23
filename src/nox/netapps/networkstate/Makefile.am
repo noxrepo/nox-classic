@@ -1,7 +1,7 @@
 include ../../../Make.vars 
 
 EXTRA_DIST =\
-	meta.xml
+	meta.json
 
 if PY_ENABLED
 AM_CPPFLAGS += $(PYTHON_CPPFLAGS)
@@ -24,7 +24,7 @@ linkload_la_CPPFLAGS = $(AM_CPPFLAGS) -I $(top_srcdir)/src/nox -I $(top_srcdir)/
 linkload_la_SOURCES = linkload.hh linkload.cc
 linkload_la_LDFLAGS = -module -export-dynamic
 
-NOX_RUNTIMEFILES = meta.xml	
+NOX_RUNTIMEFILES = meta.json	
 
 all-local: nox-all-local
 clean-local: nox-clean-local 

@@ -2,7 +2,7 @@ include ../../../Make.vars
 
 EXTRA_DIST = \
 	__init__.py\
-	meta.xml\
+	meta.json\
 	discovery.py\
 	discoveryws.py\
 	link.i
@@ -22,7 +22,7 @@ endif # PY_ENABLED
 noinst_HEADERS =		\
 	link-event.hh
 
-NOX_RUNTIMEFILES = meta.xml	
+NOX_RUNTIMEFILES = meta.json	
 
 if PY_ENABLED
 NOX_RUNTIMEFILES += \

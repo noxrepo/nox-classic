@@ -53,7 +53,7 @@ class UELMemleakTest
 public:
 
     UELMemleakTest(const container::Context* c,
-                const xercesc::DOMNode* xml) 
+                const json_object* xml) 
         : Component(c), trigger_count(0), counter(0)  {
     }
 

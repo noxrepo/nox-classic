@@ -4,7 +4,6 @@
 #include "async_io.hh"
 #include <errno.h>
 #include "errno_exception.hh"
-#include <xercesc/dom/DOM.hpp>
 #include "vlog.hh"
 #include "assert.hh"
 

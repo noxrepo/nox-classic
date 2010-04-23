@@ -22,7 +22,6 @@
 #include "config.h"
 #include "networkstate/datapathmem.hh"
 #include "openflow/openflow.h"
-#include <xercesc/dom/DOM.hpp>
 #include <boost/shared_array.hpp>
 #include <time.h>
 
@@ -69,9 +68,9 @@ namespace vigil
     /** \brief Constructor of switchrtt.
      *
      * @param c context
-     * @param node XML configuration (Xercesc DOMNode)
+     * @param node configuration (JSON object) 
      */
-    switchrtt(const Context* c, const xercesc::DOMNode* node);
+    switchrtt(const Context* c, const json_object* node);
     
     /** \brief Configure switchrtt.
      * 

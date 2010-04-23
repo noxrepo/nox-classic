@@ -33,7 +33,7 @@ class Normal_routing
 
 public:
     Normal_routing(const container::Context*,
-                   const xercesc::DOMNode*);
+                   const json_object*);
 
     ~Normal_routing() { }
 

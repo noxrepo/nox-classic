@@ -1,6 +1,6 @@
 include ../../../Make.vars 
 
-EXTRA_DIST = meta.xml \
+EXTRA_DIST = meta.json \
 	__init__.py \
 	networkeventsws.py \
 	py_uel_memleak_test.py \
@@ -36,7 +36,7 @@ uel_memleak_test_la_SOURCES = uel_memleak_test.cc
 uel_memleak_test_la_LDFLAGS = -module -export-dynamic
 
 
-NOX_RUNTIMEFILES = meta.xml
+NOX_RUNTIMEFILES = meta.json
 
 if PY_ENABLED
 

@@ -32,9 +32,9 @@ namespace vigil
   public:
     /** Constructor.
      * @param c context as required by Component
-     * @param node Xercesc DOMNode
+     * @param node JSON object
      */
-    routeinstaller(const Context* c,const xercesc::DOMNode* node) 
+    routeinstaller(const Context* c,const json_object* node) 
       : Component(c) 
     {}
     

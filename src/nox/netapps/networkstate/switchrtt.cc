@@ -11,7 +11,7 @@ namespace vigil
 {
   static Vlog_module lg("switchrtt");
 
-  switchrtt::switchrtt(const Context* c, const xercesc::DOMNode* node)
+  switchrtt::switchrtt(const Context* c, const json_object* node)
     : Component(c)
   {
     ofpack::header(of_raw, OFPT_ECHO_REQUEST,sizeof(ofp_header));

@@ -139,9 +139,9 @@ namespace vigil
   public:
     /** Constructor.
      * @param c context as required by Component
-     * @param node Xercesc DOMNode
+     * @param node JSON object
      */
-    message_processor(const Context* c, const xercesc::DOMNode* node): 
+    message_processor(const Context* c, const json_object* node): 
       Component(c)
     { };
 
@@ -214,9 +214,9 @@ namespace vigil
     /** Constructor.
      * Start server socket.
      * @param c context as required by Component
-     * @param node Xercesc DOMNode
+     * @param node JSON object
      */
-    messenger_core(const Context* c, const xercesc::DOMNode* node): 
+    messenger_core(const Context* c, const json_object* node): 
       Component(c)
     { };
 

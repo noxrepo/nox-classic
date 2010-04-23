@@ -69,7 +69,7 @@
 #include <boost/filesystem.hpp>
 #include <boost/foreach.hpp>
 
-#include <xercesc/dom/DOM.hpp>
+#include <fstream>
 
 #include "builtin/event-dispatcher-component.hh"
 #include "bootstrap-complete.hh"
@@ -92,7 +92,8 @@
 #include "log4cxx/helpers/exception.h"
 #include "log4cxx/xml/domconfigurator.h"
 #endif
-#include "xml-util.hh"
+#include "json-util.hh"
+#include "json_object.hh"
 
 #include "openflow/openflow.h"
 
@@ -145,7 +146,7 @@ void hello(const char* program_name)
            program_name);
     printf("Compiled with OpenFlow 0x%x%x %s\n", 
            (OFP_VERSION >> 4) & 0x0f, OFP_VERSION & 0x0f,
-           (OFP_VERSION & 0x80) ? "(exp)" : ""); 
+           (OFP_VERSION & 0x80) ? "(exp)" : "");
 }
 
 void usage(const char* program_name)
@@ -274,13 +275,13 @@ int main(int argc, char *argv[])
     bool daemon_flag = false;
     vector<string> interfaces;
 
-    string conf = PKGSYSCONFDIR"/nox.xml";
+    string conf = PKGSYSCONFDIR"/nox.json";
 
     /* Where to look for configuration file.  Check local dir first,
        and then global install dir. */
     list<string> conf_dirs; 
-    conf_dirs.push_back(PKGSYSCONFDIR"/nox.xml");
-    conf_dirs.push_back("etc/nox.xml");
+    conf_dirs.push_back(PKGSYSCONFDIR"/nox.json");
+    conf_dirs.push_back("etc/nox.json");
 
     /* Add PKGLIBDIRS and local build dir to libdirectory */
     list<string> lib_dirs;
@@ -399,31 +400,28 @@ int main(int argc, char *argv[])
 
     /* Determine the end-user applications to run */
     Application_list applications = parse_application_list(optind, argc, argv);
-    xercesc::DOMNode* platform_configuration = 0;
+    json_object* platform_configuration;
         
     try {
         /* Parse the platform configuration file */
-        string platform_configuration_file_error;
+        //string platform_configuration_file_error;
         
         BOOST_FOREACH(string s, conf_dirs) {
             boost::filesystem::path confpath(s);
             if (!boost::filesystem::exists(confpath)) { continue; }
-            platform_configuration = 
-                xml::load_document(platform_configuration_schema, s,
-                                   platform_configuration_file_error);
-
-            /* Try only the first found XML configuration file, ... */
-            if (!platform_configuration) {
+            
+            platform_configuration = json::load_document(s);
+            
+            /* Try only the first found JSON configuration file, ... */
+            if (platform_configuration->type == json_object::JSONT_NULL) {
                 throw runtime_error
-                    ("Unable to parse the platform configuration file '" +
-                     s + "': " + platform_configuration_file_error);
+                    ("Unable to parse the platform configuration file '" + s);
             }
 
             break;
         }
 
-        /* ... and give up, if it didn't load/pass the schema
-           validation. */
+        /* ... and give up, if it didn't load/pass the json validation. */
         if (!platform_configuration) {
             string err = "Unable to find a configuration file. "
                 "Checked the following locations:\n";

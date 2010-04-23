@@ -126,7 +126,7 @@ public:
 
 
      User_Event_Log(const container::Context* c,
-                    const xercesc::DOMNode*) 
+                    const json_object*) 
         : Component(c), is_ready(false), next_log_id(1),
           max_num_entries(100),min_existing_logid(0) {
     }

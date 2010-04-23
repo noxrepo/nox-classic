@@ -40,7 +40,7 @@ class SPRouting
 
 public:
     SPRouting(const container::Context*,
-              const xercesc::DOMNode*);
+              const json_object*);
 
     ~SPRouting() { }
 

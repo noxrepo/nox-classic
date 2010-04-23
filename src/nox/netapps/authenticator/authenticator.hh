@@ -60,7 +60,7 @@ class Authenticator
     : public container::Component {
 
 public:
-    Authenticator(const container::Context*, const xercesc::DOMNode*);
+    Authenticator(const container::Context*, const json_object*);
     Authenticator() : Component(0) { }
 
     static void getInstance(const container::Context*, Authenticator*&);

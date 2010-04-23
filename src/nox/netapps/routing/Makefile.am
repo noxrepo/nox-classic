@@ -1,6 +1,6 @@
 include ../../../Make.vars 
 
-EXTRA_DIST = meta.xml		\
+EXTRA_DIST = meta.json		\
 	routing.i		\
 	nat_enforcer.i		\
 	samplerouting.py	\
@@ -59,7 +59,7 @@ normal_routing_la_CPPFLAGS =							\
 normal_routing_la_SOURCES = normal_routing.cc normal_routing.hh
 normal_routing_la_LDFLAGS = -module -export-dynamic
 
-NOX_RUNTIMEFILES = meta.xml
+NOX_RUNTIMEFILES = meta.json
 
 if PY_ENABLED
 pyrouting_wrap_includes = 	\

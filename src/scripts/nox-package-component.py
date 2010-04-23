@@ -19,6 +19,8 @@ import subprocess
 # @date March 2010
 #
 
+# TODO: switch to meta.json
+
 class component:
     """Component in NOX.
     """

@@ -21,7 +21,6 @@
 
 #include "component.hh"
 #include "config.h"
-#include <xercesc/dom/DOM.hpp>
 
 #ifdef LOG4CXX_ENABLED
 #include <boost/format.hpp>
@@ -48,9 +47,9 @@ namespace vigil
     /** \brief Constructor of simple_cc_app.
      *
      * @param c context
-     * @param node XML configuration (Xercesc DOMNode)
+     * @param node XML configuration (JSON object)
      */
-    simple_cc_app(const Context* c, const xercesc::DOMNode* node)
+    simple_cc_app(const Context* c, const json_object* node)
       : Component(c)
     {}
     

@@ -44,7 +44,7 @@ class NDBTestCase
 public:
 
     NDBTestCase(const Context* c,
-                const xercesc::DOMNode* xml) 
+                const json_object* xml) 
         : Test_component(c) {
     }
 

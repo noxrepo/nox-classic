@@ -1,11 +1,11 @@
 include ../../../Make.vars 
 
 EXTRA_DIST = \
-	meta.xml \
+	meta.json \
 	__init__.py \
 	cpustats.py 
 
-NOX_RUNTIMEFILES = meta.xml	\
+NOX_RUNTIMEFILES = meta.json	\
 	__init__.py	\
 	cpustats.py 
 

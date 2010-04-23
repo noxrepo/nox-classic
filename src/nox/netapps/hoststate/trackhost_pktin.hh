@@ -22,7 +22,6 @@
 #include "config.h"
 #include "hosttracker.hh"
 #include "topology/topology.hh"
-#include <xercesc/dom/DOM.hpp>
 
 #ifdef LOG4CXX_ENABLED
 #include <boost/format.hpp>
@@ -50,9 +49,9 @@ namespace vigil
     /** \brief Constructor of trackhost_pktin.
      *
      * @param c context
-     * @param node XML configuration (Xercesc DOMNode)
+     * @param node configuration (JSON object)
      */
-    trackhost_pktin(const Context* c, const xercesc::DOMNode* node)
+    trackhost_pktin(const Context* c, const json_object* node)
       : Component(c)
     {}
     

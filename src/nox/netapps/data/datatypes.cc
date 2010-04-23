@@ -63,7 +63,7 @@ Datatypes::DSNameEq::operator()(const DSName& a, const DSName& b) const
     return a.ds_t == b.ds_t && a.name == b.name;
 }
 
-Datatypes::Datatypes(const container::Context* c, const xercesc::DOMNode*)
+Datatypes::Datatypes(const container::Context* c, const json_object*)
     : Component(c)
 {
     switch_t = DEFAULT_SWITCH;

@@ -2,7 +2,7 @@ include ../../../Make.vars
 
 EXTRA_DIST=\
 	__init__.py \
-	meta.xml \
+	meta.json \
 	webserver.py \
 	webauth.py \
 	dummywebpage.py
@@ -14,7 +14,7 @@ MODULE_BASE_ESCAPE=../..
 
 NOX_RUNTIMEFILES = \
 	__init__.py \
-	meta.xml \
+	meta.json \
     webserver.py \
 	webauth.py \
 	dummywebpage.py

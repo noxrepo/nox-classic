@@ -18,7 +18,7 @@ class Switch_management
     : public container::Component {
 public:
 
-    Switch_management(const container::Context*, const xercesc::DOMNode*);
+    Switch_management(const container::Context*, const json_object*);
 
     void configure(const container::Configuration*);
     void install();

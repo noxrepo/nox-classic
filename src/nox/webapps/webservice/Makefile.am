@@ -2,13 +2,13 @@ include ../../../Make.vars
 
 EXTRA_DIST=\
 	__init__.py \
-	meta.xml \
+	meta.json \
 	webservice.py \
 	web_arg_utils.py
 
 NOX_RUNTIMEFILES = \
 	 __init__.py \
-	 meta.xml \
+	 meta.json \
 	 webservice.py \
 	 web_arg_utils.py
 

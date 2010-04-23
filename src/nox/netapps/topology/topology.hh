@@ -58,7 +58,7 @@ public:
         bool active;
     };
 
-    Topology(const container::Context*, const xercesc::DOMNode*);
+    Topology(const container::Context*, const json_object*);
 
     static void getInstance(const container::Context*, Topology*&);
 

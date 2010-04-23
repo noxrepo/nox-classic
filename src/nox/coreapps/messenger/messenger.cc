@@ -11,7 +11,7 @@ namespace vigil
   static Vlog_module lg("messenger");
   static const std::string app_name("messenger");
 
-  messenger::messenger(const Context* c, const xercesc::DOMNode* node): 
+  messenger::messenger(const Context* c, const json_object* node): 
     message_processor(c,node)
   { 
     idleInterval = MESSENGER_ECHO_IDLE_THRESHOLD;

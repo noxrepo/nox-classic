@@ -1,6 +1,6 @@
 include ../../../Make.vars 
 
-EXTRA_DIST = meta.xml		\
+EXTRA_DIST = meta.json		\
 	auth.i			\
 	flow_util.i		\
 	__init__.py
@@ -42,7 +42,7 @@ authenticator_la_SOURCES = authenticator.hh authenticator_modify.cc		\
 
 authenticator_la_LDFLAGS = -module -export-dynamic
 
-NOX_RUNTIMEFILES = meta.xml
+NOX_RUNTIMEFILES = meta.json
 
 if PY_ENABLED
 pyflowutil_wrap_includes = flow_util.i

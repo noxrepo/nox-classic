@@ -18,8 +18,6 @@
 #ifndef NAT_ENFORCER_HH
 #define NAT_ENFORCER_HH 1
 
-#include <xercesc/dom/DOM.hpp>
-
 #include "authenticator/flow_util.hh"
 #include "classifier.hh"
 #include "component.hh"
@@ -41,7 +39,7 @@ class NAT_enforcer
 {
 
 public:
-    NAT_enforcer(const container::Context*, const xercesc::DOMNode*);
+    NAT_enforcer(const container::Context*, const json_object*);
 
     static void getInstance(const container::Context*, NAT_enforcer*&);
 

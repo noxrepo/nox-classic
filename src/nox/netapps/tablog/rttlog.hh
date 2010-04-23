@@ -70,9 +70,9 @@ namespace vigil
     /** \brief Constructor of rttlog.
      *
      * @param c context
-     * @param node XML configuration (Xercesc DOMNode)
+     * @param node configuration (JSON object)
      */
-    rttlog(const Context* c, const xercesc::DOMNode* node);
+    rttlog(const Context* c, const json_object* node);
 
     /** \brief Configure rttlog.
      * 

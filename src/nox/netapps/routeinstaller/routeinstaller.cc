@@ -1,5 +1,4 @@
 #include "routeinstaller.hh"
-#include <xercesc/dom/DOM.hpp>
 #include "vlog.hh"
 #include "assert.hh"
 #include <boost/bind.hpp>

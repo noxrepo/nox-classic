@@ -21,8 +21,6 @@
 #include <list>
 #include <string>
 
-#include <xercesc/dom/DOM.hpp>
-
 #include "component.hh"
 //#include "container.hh"
 #include "event.hh"
@@ -44,7 +42,7 @@ class EventDispatcherComponent
 public:
     /* Construct a new component instance. For nox::main() */
     static container::Component* instantiate(const container::Context*,
-                                             const xercesc::DOMNode*);
+                                             const json_object*);
     
     static void getInstance(const container::Context*, 
                             EventDispatcherComponent*&);
@@ -71,7 +69,7 @@ public:
                           const Event_handler&) const;
     
 private:
-    EventDispatcherComponent(const container::Context*,const xercesc::DOMNode*);
+    EventDispatcherComponent(const container::Context*,const json_object*);
 
     /* Configured event filter chains */
     typedef std::string EventName;

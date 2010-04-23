@@ -3,7 +3,6 @@
 
 #include "component.hh"
 #include "config.h"
-#include <xercesc/dom/DOM.hpp>
 #include <boost/shared_array.hpp>
 #include "messenger_core.hh"
 
@@ -29,9 +28,9 @@ namespace vigil
   public:
     /** Constructor.
      * @param c context as required by Component
-     * @param node Xercesc DOMNode
+     * @param node JSON object
      */
-    msgpacket(const Context* c, const xercesc::DOMNode* node)
+    msgpacket(const Context* c, const json_object* node)
         : Component(c) 
     {}
 

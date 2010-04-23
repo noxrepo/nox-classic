@@ -21,7 +21,6 @@
 #include "component.hh"
 #include "config.h"
 #include "tablog.hh"
-#include <xercesc/dom/DOM.hpp>
 
 #ifdef LOG4CXX_ENABLED
 #include <boost/format.hpp>
@@ -67,9 +66,9 @@ namespace vigil
     /** \brief Constructor of flowlog.
      *
      * @param c context
-     * @param node XML configuration (Xercesc DOMNode)
+     * @param node configuration (JSON object)
      */
-    flowlog(const Context* c, const xercesc::DOMNode* node);
+    flowlog(const Context* c, const json_object* node);
     
     /** \brief Configure flowlog.
      * 

@@ -28,7 +28,6 @@
 #include "storage/storage-blocking.hh"
 #include "vlog.hh"
 
-#include <xercesc/dom/DOM.hpp>
 #include "user_event_log.hh"
 
 using namespace std;

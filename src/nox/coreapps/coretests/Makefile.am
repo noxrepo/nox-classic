@@ -1,7 +1,7 @@
 include ../../../Make.vars 
 
 EXTRA_DIST = \
-	meta.xml \
+	meta.json \
 	__init__.py \
 	test_packet.py \
 	servercert.pem \
@@ -28,7 +28,7 @@ async_test_la_SOURCES  = async-test.cc async-test.hh
 async_test_la_LDFLAGS  = -module -export-dynamic
 
 NOX_RUNTIMEFILES = \
-    meta.xml \
+    meta.json \
 	__init__.py \
 	test_packet.py \
 	servercert.pem \

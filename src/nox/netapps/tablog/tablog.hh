@@ -21,7 +21,6 @@
 #include "component.hh"
 #include "config.h"
 #include "hash_map.hh"
-#include <xercesc/dom/DOM.hpp>
 #include <boost/filesystem/operations.hpp>
 
 #ifdef LOG4CXX_ENABLED
@@ -83,9 +82,9 @@ namespace vigil
     /** \brief Constructor of tablog.
      *
      * @param c context
-     * @param node XML configuration (Xercesc DOMNode)
+     * @param node configuration (JSON object) 
      */
-    tablog(const Context* c, const xercesc::DOMNode* node);
+    tablog(const Context* c, const json_object* node);
 
     /** \brief Destructor.
      * 

@@ -17,9 +17,9 @@
  */
 #include "deployer.hh"
 
-#include "xml-util.hh"
 #include <boost/foreach.hpp>
 #include <sstream>
+#include <iostream> //remove
 
 using namespace std;
 using namespace vigil;
@@ -32,6 +32,7 @@ Deployer::~Deployer() {
 bool
 Deployer::deploy(Kernel* kernel, const Component_name& name) {
     Component_name_context_map::iterator i = uninstalled_contexts.find(name);
+    
     if (i == uninstalled_contexts.end()) {
         return false;
     }
@@ -44,10 +45,10 @@ Deployer::deploy(Kernel* kernel, const Component_name& name) {
 }
 
 const char*
-Deployer::XML_DESCRIPTION = "meta.xml";
+Deployer::JSON_DESCRIPTION = "meta.json";
 
 Deployer::Path_list
-Deployer::scan(boost::filesystem::path p) {
+Deployer::scan(boost::filesystem::path p) {;
     using namespace boost::filesystem;
 
     Path_list description_files;
@@ -60,7 +61,7 @@ Deployer::scan(boost::filesystem::path p) {
     for (directory_iterator j(p); j != end; ++j) {
         try {
             if (!is_directory(j->status()) && 
-                j->path().leaf() == XML_DESCRIPTION) {
+                j->path().leaf() == JSON_DESCRIPTION) {
                 description_files.push_back(j->path());
                 continue;
             }
@@ -70,7 +71,7 @@ Deployer::scan(boost::filesystem::path p) {
                 description_files.insert(description_files.end(), 
                                          result.begin(), result.end());
             }
-        } catch (...) { 
+        } catch (...) {
             /* Ignore any directory browsing errors. */
         } 
     }
@@ -94,14 +95,19 @@ Deployer::get_contexts() const {
 Component_configuration::Component_configuration() {
 }
 
-Component_configuration::Component_configuration(xercesc::DOMNode* d,
+Component_configuration::Component_configuration(json_object* d,
                                             const Component_argument_list& args)
-    : xml_description(d), arguments(args)
+    : json_description(d), arguments(args)
+
 {
     using namespace vigil::container;
 
-    name = xml::to_string(xml::get_child_by_tag(d, "name")->getTextContent()); 
-
+    ////name = xml::to_string(xml::get_child_by_tag(d, "name")->getTextContent());
+    ///NEED TO PARSE d AND LOOK FOR "name" HERE
+    json_dict::iterator i;
+    json_dict* jodict = (json_dict*) d->object;
+    i = jodict->find("name");
+    name = i->second->get_string();
     // TODO: parse keys
 }
 

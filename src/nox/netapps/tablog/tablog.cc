@@ -10,7 +10,7 @@ namespace vigil
 {
   static Vlog_module lg("tablog");
 
-  tablog::tablog(const Context* c, const xercesc::DOMNode* node)
+  tablog::tablog(const Context* c, const json_object* node)
     : Component(c)
   {
     for (int i = 0; i < TABLOG_MAX_AUTO_DUMP; i++)

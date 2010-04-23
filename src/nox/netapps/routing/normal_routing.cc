@@ -33,7 +33,7 @@ namespace applications {
 
 static Vlog_module lg("normal_routing");
 
-Normal_routing::Normal_routing(const container::Context *c, const xercesc::DOMNode* d)
+Normal_routing::Normal_routing(const container::Context *c, const json_object* d)
     : container::Component(c)
 {
     uint16_t size = sizeof(*ofm) + sizeof(ofp_action_output);

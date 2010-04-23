@@ -22,7 +22,7 @@
 #include "component.hh"
 #include "config.h"
 
-#include <xercesc/dom/DOM.hpp>
+#include "json_object.hh"
 
 using namespace vigil;
 using namespace vigil::container;
@@ -31,7 +31,7 @@ class AsyncTest
     : public Component {
 
 public:
-    AsyncTest(const Context* c, const xercesc::DOMNode*)
+    AsyncTest(const Context* c, const json_object*)
         : Component(c) {
     }
 

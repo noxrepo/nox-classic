@@ -51,13 +51,12 @@
 #include "pycomponent.hh"
 #include "pycontext.hh"
 #include "vlog.hh"
-#include "xml-util.hh"
+#include "json-util.hh"
 
 using namespace std;
 using namespace vigil;
 using namespace vigil::applications;
 using namespace vigil::container;
-using namespace xercesc;
 
 static Vlog_module lg("pyrt");
 
@@ -315,7 +314,7 @@ static void convert_shutdown(const Event& e, PyObject* proxy) {
 }
 
 PyRt::PyRt(const Context* c,
-           const xercesc::DOMNode*) 
+           const json_object*) 
     : Component(c), Deployer() {
     using namespace boost::filesystem;
 
@@ -379,39 +378,37 @@ PyRt::PyRt(const Context* c,
         directory.remove_leaf();
         
         lg.dbg("Loading a component description file '%s'.", f.c_str());
-
-        string error_msg;
-        const DOMDocument* d = 
-            xml::load_document(COMPONENTS_CONFIGURATION_SCHEMA, f, error_msg);
-        if (!d) {
-            lg.err("Can't load and parse '%s': %s", 
-                   f.c_str(), error_msg.c_str());
+        
+        const json_object* d = json::load_document(f);
+        if (d->type == json_object::JSONT_NULL) {
+            lg.err("Can't load and parse '%s'", f.c_str());
             continue;
         }
-        const DOMNode* n = xml::get_child_by_tag(d, "components");
-        const DOMNodeList* l = n->getChildNodes();
-        for (XMLSize_t j = 0; j < l->getLength(); ++j) {
-            DOMNode* cc_xml = l->item(j);
-
-            if (cc_xml->getNodeType() == DOMNode::ELEMENT_NODE) {
-                try {
-                    Component_context* ctxt = 
-                        new Python_component_context(c->get_kernel(), 
+        
+        json_dict::iterator di;
+        json_dict* jodict = (json_dict*) d->object;
+        di = jodict->find("components");
+        
+        json_array::iterator li;
+        json_array* componentList = (json_array*) di->second->object;      
+        
+        for(li=componentList->begin(); li!=componentList->end(); ++li) {
+            try {
+                Component_context* ctxt = 
+                    new Python_component_context(c->get_kernel(), 
                                                      c->get_name(),
-                                                     directory.string(),cc_xml);
-                    if (uninstalled_contexts.find(ctxt->get_name()) ==
-                        uninstalled_contexts.end()) {
-                        uninstalled_contexts[ctxt->get_name()] = ctxt;
-                    } else {
-                        lg.err("Component '%s' declared multiple times.",
-                               ctxt->get_name().c_str());
-                        delete ctxt;
-                    }
-
-                } catch (const bad_cast& e) {
-                    /* Not a Python component, skip. */
-                    continue;
+                                                     directory.string(),*li);
+                if (uninstalled_contexts.find(ctxt->get_name()) ==
+                    uninstalled_contexts.end()) {
+                    uninstalled_contexts[ctxt->get_name()] = ctxt;
+                } else {
+                    lg.err("Component '%s' declared multiple times.",
+                           ctxt->get_name().c_str());
+                    delete ctxt;
                 }
+            } catch (const bad_cast& e) {
+                // Not a Python component, skip.
+                continue;
             }
         }
     }
@@ -721,11 +718,10 @@ Python_event_manager::create_python_context(const Context* ctxt,
 Python_component_context::Python_component_context(Kernel* kernel, 
                                                    const Component_name& pyrt,
                                                    const std::string& home_path,
-                                                  xercesc::DOMNode* description)
+                                                  json_object* description)
     : Component_context(kernel) {
     using namespace boost;
-    using namespace xml;
-
+    
     install_actions[DESCRIBED] = 
         bind(&Python_component_context::describe, this);
     install_actions[LOADED] = bind(&Python_component_context::load, this);
@@ -739,25 +735,33 @@ Python_component_context::Python_component_context(Kernel* kernel,
         bind(&Python_component_context::install, this);
     
     // Determine the configuration, including dependencies
-    name = to_string(get_child_by_tag(description, "name")->getTextContent()); 
-    if (!get_child_by_tag(description, "python")) {
+    json_dict::iterator di;
+    json_dict* jodict = (json_dict*) description->object;
+    di = jodict->find("name");
+    name = di->second->get_string();
+    
+    di = jodict->find("python");
+    if (di==jodict->end()) {
         throw bad_cast();
     }
 
     this->home_path = home_path;
 
-    BOOST_FOREACH(DOMNode* n, get_children_by_tag(description, "dependency")) {
-        const container::Component_name dep_name = 
-            to_string(xml::get_child_by_tag(n, "name")->getTextContent()); 
-        dependencies.push_back(new Name_dependency(dep_name));
-    }
-
+    di = jodict->find("dependencies");
+    if (di!=jodict->end()) {        
+        json_array::iterator li;
+        json_array* depList = (json_array*) di->second->object;
+        for(li=depList->begin(); li!=depList->end(); ++li) {
+            dependencies.push_back(new Name_dependency(((json_object*)*li)->get_string()));
+        }
+    }   
+    
     // Add a depedency to the Python runtime itself
     dependencies.push_back(new Name_dependency(pyrt));
     
     configuration = new Component_configuration(description, 
                                                 kernel->get_arguments(name));
-    xml_description = description;
+    json_description = description;
 }
 
 void 
@@ -779,7 +783,7 @@ Python_component_context::instantiate_factory() {
 void 
 Python_component_context::instantiate() {
     try {
-        PyComponent* p = new PyComponent(this, xml_description);
+        PyComponent* p = new PyComponent(this, json_description);
         component = p;
         interface = p->get_interface();
         current_state = INSTANTIATED;
