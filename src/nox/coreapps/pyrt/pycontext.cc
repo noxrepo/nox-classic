@@ -133,6 +133,7 @@ static void convert_python_event(const Event& e, PyObject* proxy) {
 
     if(sfe.python_arg){
         pyglue_setattr_string(proxy, "pyevent", sfe.python_arg);
+        Py_INCREF(sfe.python_arg);
     }else{
         pyglue_setattr_string(proxy, "pyevent", Py_None);
         vlog().log(vlog().get_module_val("pyrt"), Vlog::LEVEL_ERR,

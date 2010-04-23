@@ -30,6 +30,10 @@
 #include "discovery/link-event.hh"
 #endif
 
+#if AUTH_WITH_ROUTING
+#include "discovery/link-event.hh"
+#endif
+
 #define TIMER_INTERVAL         30
 #define DEFAULT_IDLE_TIMEOUT   300     // 5 min idle timeout
 #define DEFAULT_HARD_TIMEOUT   18000   // 5 hr hard timeout
