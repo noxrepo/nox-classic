@@ -164,8 +164,7 @@ class Component:
                 if iaddr == None:
                     print 'invalid ip addr'
                     return None
-                # ipaddr already in network byte order
-                a = struct.pack("HHI", htons(action[0]), htons(8), iaddr.addr)
+                a = struct.pack("HHI", htons(action[0]), htons(8), htonl(ipaddr(iaddr).addr))
             elif action[0] == openflow.OFPAT_SET_TP_SRC \
                     or action[0] == openflow.OFPAT_SET_TP_DST:
                 a = struct.pack("!HHHH", action[0], 8, action[1], 0)
