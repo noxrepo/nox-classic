@@ -1,0 +1,67 @@
+{
+    "nox": {
+        "events": {
+            "Bootstrap_complete_event": [
+                "role_config_manager",
+                "sepl_enforcer"],
+            "Datapath_join_event": [
+                "datapathmem",
+                "linkload",
+                "authenticator"
+                ],
+            "Datapath_leave_event": [
+                "datapathmem",
+                "linkload",
+                "noop"
+                ],
+            "Openflow_msg_event": [
+                "switchrtt"
+                ],
+            "Packet_in_event": [
+                "hostrack_pktin",
+                "hostip",
+                "authenticator",
+                "dwh",
+                "noop",
+                "counter",
+                "packetdump",
+                "ctlflood",
+                "switch"
+                ],
+            "Flow_in_event": [
+                "sepl_enforcer",
+                "routing",
+                "sample_routing",
+                "normal_routing",
+                "flow_cache"
+                ],
+            "Link_event": [
+                "authenticator"
+                ],
+            "Flow_mod_event": [
+                "authenticator"
+                ],
+            "Flow_removed_event": [
+                "flowlog",
+                "dwh"
+                ],
+            "Port_status_event": [
+                "linkload"
+                ],
+            "Port_stats_in_event": [
+                "linkload"
+                ],
+            "Msg_event": [
+                "jsonmesssenger"
+                ],
+            "JSONMsg_event": [
+                "sepl_enforcer",
+                "routing"
+                ],
+            "Shutdown_event": [
+                "flowlog",
+                "rttlog"
+                ]
+        }
+    }
+}
