@@ -154,8 +154,9 @@ class tcp(packet_base):
                 self.options.append(tcp_opt(tcp_opt.MSS,val))
             elif arr[i] == tcp_opt.WSOPT:    
                 if arr[i+1] != 3:
-                    raise Exception() 
-                self.options.append(tcp_opt(tcp_opt.WSOPT, arr[i+1]))
+                    raise Exception()
+                val = struct.unpack('!H',arr[i+2:i+3])[0]
+                self.options.append(tcp_opt(tcp_opt.WSOPT, val))
             elif arr[i] == tcp_opt.SACKPERM:    
                 if arr[i+1] != 2:
                     raise Exception() 
