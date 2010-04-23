@@ -1,0 +1,18 @@
+{
+    "components": [
+        {
+            "name": "routeinstaller" ,
+            "library": "routeinstaller" ,
+            "dependencies": [
+                "routing_module"
+            ]
+        },
+        {
+            "name": "python routeinstaller" ,
+            "dependencies": [
+                "pyrouteinstaller"
+            ],
+            "python": "nox.apps.routeinstaller.pyrouteinstaller"
+        }
+    ]
+}

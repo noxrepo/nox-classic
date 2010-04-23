@@ -1,0 +1,21 @@
+{
+    "components": [
+        {
+            "name": "hosttracker" ,
+            "library": "hosttracker" 
+        },
+        {
+            "name": "trackhost_pktin" ,
+            "library": "trackhost_pktin" , 
+            "dependencies": [
+                "hosttracker",
+                "topology"
+            ],
+            "python": "nox.coreapps.pyrt.componentws"
+        },
+        {
+            "name": "hostip" ,
+            "library": "hostip" 
+        }
+    ]
+}
