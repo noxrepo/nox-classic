@@ -5,7 +5,7 @@
             "dependencies": [
                 "pystorage"
             ],
-            "python": "nox.netapps.storage.t.storage_test"
+            "python": "nox.netapps.storage.t.storage_test" 
         }
     ]
 }

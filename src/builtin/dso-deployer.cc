@@ -76,7 +76,7 @@ DSO_deployer::DSO_deployer(Kernel* kernel, const list<string>& lib_dirs_)
                             demangle_undefined_symbol(::dlerror()));
     }
 #endif
-    
+
     list<path> description_files;
     BOOST_FOREACH(string directory, lib_dirs) {
         list<path> results = scan(directory);
@@ -88,7 +88,7 @@ DSO_deployer::DSO_deployer(Kernel* kernel, const list<string>& lib_dirs_)
         const string f = p.string();
         path directory = p;
         directory.remove_leaf();
-        
+    
         const json_object* d = json::load_document(f);
         if (d->type == json_object::JSONT_NULL) {
             lg.err("Can't load and parse '%s'", f.c_str());
@@ -105,8 +105,7 @@ DSO_deployer::DSO_deployer(Kernel* kernel, const list<string>& lib_dirs_)
         for(li=componentList->begin(); li!=componentList->end(); ++li) {
             try {
                 Component_context* ctxt = 
-                    new DSO_component_context(kernel, directory.string(), 
-                                              *li);
+                    new DSO_component_context(kernel, directory.string(), *li);
                 if (uninstalled_contexts.find(ctxt->get_name()) ==
                     uninstalled_contexts.end()) {
                     uninstalled_contexts[ctxt->get_name()] = ctxt;
@@ -187,13 +186,13 @@ DSO_component_context::DSO_component_context(Kernel* kernel,
     json_dict::iterator di;
     json_dict* jodict = (json_dict*) description->object;
     di = jodict->find("name");
-    name = di->second->get_string();
+    name = di->second->get_string(true);
     
     di = jodict->find("library");
     if (di==jodict->end()) {
         throw bad_cast();
     }
-    library = di->second->get_string();
+    library = di->second->get_string(true);
     
     this->home_path = home_path;
     
@@ -208,7 +207,7 @@ DSO_component_context::DSO_component_context(Kernel* kernel,
         json_array::iterator li;
         json_array* depList = (json_array*) di->second->object;
         for(li=depList->begin(); li!=depList->end(); ++li) {
-            dependencies.push_back(new Name_dependency(((json_object*)*li)->get_string()));
+            dependencies.push_back(new Name_dependency(((json_object*)*li)->get_string(true)));
         }
     }   
     

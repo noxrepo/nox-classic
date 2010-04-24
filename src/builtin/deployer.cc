@@ -107,7 +107,7 @@ Component_configuration::Component_configuration(json_object* d,
     json_dict::iterator i;
     json_dict* jodict = (json_dict*) d->object;
     i = jodict->find("name");
-    name = i->second->get_string();
+    name = i->second->get_string(true);
     // TODO: parse keys
 }
 

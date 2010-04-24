@@ -86,7 +86,7 @@ namespace vigil
     object = NULL;
   }
 
-  std::string json_object::get_string()
+  std::string json_object::get_string(bool noquotes)
   {
     std::string retStr = "";
     std::ostringstream s;
@@ -139,8 +139,10 @@ namespace vigil
 	retStr += "false";
       break;
     case JSONT_STRING:
-      //retStr += "\""+*((std::string *)object)+"\""; //kyr change. check if ok.
-      retStr += *((std::string *)object);
+      if(noquotes){
+        retStr += *((std::string *)object); }
+      else {
+        retStr += "\""+*((std::string *)object)+"\""; }
       break;
     } 
     

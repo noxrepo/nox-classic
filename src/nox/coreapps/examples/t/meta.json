@@ -1,7 +1,7 @@
 {
     "components": [
         {
-            "name": "test_example" ,
+            "name": "test_example",
             "python": "nox.coreapps.examples.t.test_example" 
         }
     ]

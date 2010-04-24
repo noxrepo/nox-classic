@@ -738,7 +738,7 @@ Python_component_context::Python_component_context(Kernel* kernel,
     json_dict::iterator di;
     json_dict* jodict = (json_dict*) description->object;
     di = jodict->find("name");
-    name = di->second->get_string();
+    name = di->second->get_string(true);
     
     di = jodict->find("python");
     if (di==jodict->end()) {
@@ -752,7 +752,7 @@ Python_component_context::Python_component_context(Kernel* kernel,
         json_array::iterator li;
         json_array* depList = (json_array*) di->second->object;
         for(li=depList->begin(); li!=depList->end(); ++li) {
-            dependencies.push_back(new Name_dependency(((json_object*)*li)->get_string()));
+            dependencies.push_back(new Name_dependency(((json_object*)*li)->get_string(true)));
         }
     }   
     

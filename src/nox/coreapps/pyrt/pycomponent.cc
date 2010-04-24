@@ -49,7 +49,7 @@ PyComponent::PyComponent(const Context* c, const json_object* conf)
     json_dict::iterator di;
     json_dict* jodict = (json_dict*) conf->object;
     di = jodict->find("python");
-    module = di->second->get_string();
+    module = di->second->get_string(true);
     
     lg.dbg("Importing Python module %s", module.c_str());
 

@@ -79,7 +79,7 @@ EventDispatcherComponent::EventDispatcherComponent(const Context* c,
         for(li=compList->begin(); li!=compList->end(); ++li) {
             // add the filter in the event's filter_chain
             EventFilterChain chain;
-            string filter = (((json_object*)*li)->get_string());
+            string filter = (((json_object*)*li)->get_string(true));
             chain[filter] = order++;
             filter_chains[event_name] = chain;
         }

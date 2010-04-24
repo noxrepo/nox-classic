@@ -49,7 +49,7 @@ namespace vigil
     /** \brief String representation
      * @return JSON string
      */
-    std::string get_string();
+    std::string get_string(bool noquotes=false);
 
     /** Enumeration of JSON types
      */

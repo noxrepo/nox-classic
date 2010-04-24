@@ -1,7 +1,7 @@
 {
     "components": [
         {
-            "name": "test_packet" ,
+            "name": "test_packet" , 
             "python": "nox.coreapps.coretests.test_packet" 
         },
         {
