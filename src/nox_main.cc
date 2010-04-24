@@ -507,12 +507,12 @@ int main(int argc, char *argv[])
               boost::bind(&DSO_deployer::instantiate, kernel, lib_dirs, _1, _2),
               typeid(DSO_deployer).name(),              
               platform_configuration), INSTALLED);
-cout<<"HERE1";
+              
 #ifdef TWISTED_ENABLED
         /* Boot the Python deployer/runtime component, responsible for
            all Python components. */
         kernel->install("python", INSTALLED);
-cout<<"HERE2";
+        
 #endif
 
         /* Finish the booting on its own thread, so that pollables are

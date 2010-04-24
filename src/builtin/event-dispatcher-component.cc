@@ -44,6 +44,7 @@
 #include "nox.hh"
 #include "vlog.hh"
 #include "json_object.hh"
+#include "json-util.hh"
 
 #include <iostream>
 
@@ -58,8 +59,7 @@ EventDispatcherComponent::EventDispatcherComponent(const Context* c,
                                                    platformconf)  
                                                    
     : Component(c) {
-    // First construct the 'filter sequences' defined the JSON
-    // configuration file        
+    // Construct the 'filter sequences' defined the JSON configuration file        
     // get 'nox' dict
     json_dict::iterator di;
     json_dict* jodict = (json_dict*) platformconf->object;
@@ -67,9 +67,13 @@ EventDispatcherComponent::EventDispatcherComponent(const Context* c,
     jodict = (json_dict*) di->second->object;
     // get 'events' dict
     di = jodict->find("events");
-    json_dict::iterator event_di;
-    json_dict* eventDict = (json_dict*) di->second->object;  
+    json_dict* eventDict = (json_dict*) di->second->object;
+    /*json_object* nox = json::get_dict_value(platformconf, "nox");
+    json_object* events = json::get_dict_value(nox, "events");
+    json_dict* eventDict = (json_dict*) events->object;  */
+    
     // For every event
+    json_dict::iterator event_di;
     for(event_di=eventDict->begin(); event_di!=eventDict->end(); ++event_di) {
         string event_name = event_di->first;
         int order = 0;

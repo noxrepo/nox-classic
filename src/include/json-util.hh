@@ -26,17 +26,19 @@
 #include "json_object.hh"
 
 namespace vigil {
-namespace json {
+    namespace json {
 
-/*
- * JSON convenience functions component developers may find useful
- * while accessing a JSON object tree passed for them.
- */
- 
-/* Load a JSON file. */
-json_object* load_document(const std::string& file);
-
-}
+        /*
+         * JSON convenience functions component developers may find useful
+         * while accessing a JSON object tree passed for them.
+         */
+         
+        /* Load a JSON file. */
+        json_object* load_document(const std::string& file);
+        
+        /* Get value from json doct given a key*/
+        json_object* get_dict_value(const json_object* jo, std::string key);
+    }
 }
 
 #endif
