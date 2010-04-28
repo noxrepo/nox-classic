@@ -48,12 +48,16 @@ namespace vigil {
         }
         
         json_object* get_dict_value(const json_object* jo, string key){
-            //Make sure jo is a dictionary
+            //Make sure jo is a dictionary (add)
             json_dict::iterator di;
             json_dict* jodict = (json_dict*) jo->object;
             di = jodict->find(key);
-            return (json_object*) di->second->object;
+            if (di==jodict->end()) {
+                return NULL;
+                }
+            else {
+                return di->second;
+                }
         }
-
     }
 }

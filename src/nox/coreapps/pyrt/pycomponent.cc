@@ -32,6 +32,7 @@
 #include "pyrt/pyrt.hh"
 #include "pycontext.hh"
 #include "vlog.hh"
+#include "json-util.hh"
 
 using namespace std;
 using namespace vigil;
@@ -42,14 +43,9 @@ static Vlog_module lg("pycomponent");
 
 PyComponent::PyComponent(const Context* c, const json_object* conf)
     : Component(c), pyobj(0) {
-    // Import the Python component implementation module and get the
-    // factory.
-    string module;
-    
-    json_dict::iterator di;
-    json_dict* jodict = (json_dict*) conf->object;
-    di = jodict->find("python");
-    module = di->second->get_string(true);
+    // Import the Python component implementation module and get the factory.
+    json_object* mod = json::get_dict_value(conf, "python"); 
+    string module = mod->get_string(true);
     
     lg.dbg("Importing Python module %s", module.c_str());
 

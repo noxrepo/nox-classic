@@ -385,13 +385,10 @@ PyRt::PyRt(const Context* c,
             continue;
         }
         
-        json_dict::iterator di;
-        json_dict* jodict = (json_dict*) d->object;
-        di = jodict->find("components");
+        json_object* components = json::get_dict_value(d, "components"); 
+        json_array* componentList = (json_array*) components->object;   
         
         json_array::iterator li;
-        json_array* componentList = (json_array*) di->second->object;      
-        
         for(li=componentList->begin(); li!=componentList->end(); ++li) {
             try {
                 Component_context* ctxt = 
@@ -735,26 +732,23 @@ Python_component_context::Python_component_context(Kernel* kernel,
         bind(&Python_component_context::install, this);
     
     // Determine the configuration, including dependencies
-    json_dict::iterator di;
-    json_dict* jodict = (json_dict*) description->object;
-    di = jodict->find("name");
-    name = di->second->get_string(true);
+    json_object* attr;    
+    attr = json::get_dict_value(description, "name");
+    name = attr->get_string(true);
     
-    di = jodict->find("python");
-    if (di==jodict->end()) {
+    if (json::get_dict_value(description, "python")==NULL) {
         throw bad_cast();
     }
 
-    this->home_path = home_path;
-
-    di = jodict->find("dependencies");
-    if (di!=jodict->end()) {        
-        json_array::iterator li;
-        json_array* depList = (json_array*) di->second->object;
-        for(li=depList->begin(); li!=depList->end(); ++li) {
+    attr = json::get_dict_value(description, "dependencies");
+    if (attr!=NULL) {     
+        json_array* depList = (json_array*) attr->object;
+        for(json_array::iterator li=depList->begin(); li!=depList->end(); ++li){
             dependencies.push_back(new Name_dependency(((json_object*)*li)->get_string(true)));
         }
     }   
+    
+    this->home_path = home_path;
     
     // Add a depedency to the Python runtime itself
     dependencies.push_back(new Name_dependency(pyrt));

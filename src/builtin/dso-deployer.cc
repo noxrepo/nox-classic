@@ -95,13 +95,10 @@ DSO_deployer::DSO_deployer(Kernel* kernel, const list<string>& lib_dirs_)
             continue;
         }
         
-        json_dict::iterator di;
-        json_dict* jodict = (json_dict*) d->object;
-        di = jodict->find("components");
+        json_object* components = json::get_dict_value(d, "components"); 
+        json_array* componentList = (json_array*) components->object;
         
         json_array::iterator li;
-        json_array* componentList = (json_array*) di->second->object;       
-        
         for(li=componentList->begin(); li!=componentList->end(); ++li) {
             try {
                 Component_context* ctxt = 
@@ -183,33 +180,32 @@ DSO_component_context::DSO_component_context(Kernel* kernel,
         bind(&DSO_component_context::install, this);
     
     /* Determine the configuration */
-    json_dict::iterator di;
-    json_dict* jodict = (json_dict*) description->object;
-    di = jodict->find("name");
-    name = di->second->get_string(true);
+    json_object* attr;
     
-    di = jodict->find("library");
-    if (di==jodict->end()) {
+    attr = json::get_dict_value(description, "name");
+    name = attr->get_string(true);
+    
+    attr = json::get_dict_value(description, "library");
+    if (attr==NULL) {
         throw bad_cast();
     }
-    library = di->second->get_string(true);
-    
-    this->home_path = home_path;
-    
+    library = attr->get_string(true);
+        
     if (library.length() > 3 && library.find(".so") == library.length() - 3) {
         lg.warn("Dropped an unneccessary '.so' suffix in a shared library "
                 "file definition: %s", library.c_str());
         library = library.substr(0, library.size() - 3);
     }
     
-    di = jodict->find("dependencies");
-    if (di!=jodict->end()) {        
-        json_array::iterator li;
-        json_array* depList = (json_array*) di->second->object;
-        for(li=depList->begin(); li!=depList->end(); ++li) {
+    this->home_path = home_path;
+    
+    attr = json::get_dict_value(description, "dependencies");
+    if (attr!=NULL) {
+        json_array* depList = (json_array*) attr->object;
+        for(json_array::iterator li=depList->begin(); li!=depList->end(); ++li){
             dependencies.push_back(new Name_dependency(((json_object*)*li)->get_string(true)));
         }
-    }   
+    }
     
     configuration = new Component_configuration(description, 
                                                 kernel->get_arguments(name));

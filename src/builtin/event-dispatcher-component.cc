@@ -59,22 +59,14 @@ EventDispatcherComponent::EventDispatcherComponent(const Context* c,
                                                    platformconf)  
                                                    
     : Component(c) {
-    // Construct the 'filter sequences' defined the JSON configuration file        
-    // get 'nox' dict
-    json_dict::iterator di;
-    json_dict* jodict = (json_dict*) platformconf->object;
-    di = jodict->find("nox");
-    jodict = (json_dict*) di->second->object;
-    // get 'events' dict
-    di = jodict->find("events");
-    json_dict* eventDict = (json_dict*) di->second->object;
-    /*json_object* nox = json::get_dict_value(platformconf, "nox");
+    // Construct the 'filter sequences' defined the JSON configuration file  
+    json_object* nox = json::get_dict_value(platformconf, "nox");    
     json_object* events = json::get_dict_value(nox, "events");
-    json_dict* eventDict = (json_dict*) events->object;  */
+    json_dict* eventsDict = (json_dict*) events->object;
     
-    // For every event
+    // For every event defined in the configuration
     json_dict::iterator event_di;
-    for(event_di=eventDict->begin(); event_di!=eventDict->end(); ++event_di) {
+    for(event_di=eventsDict->begin(); event_di!=eventsDict->end(); ++event_di) {
         string event_name = event_di->first;
         int order = 0;
         json_array::iterator li;

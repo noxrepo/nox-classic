@@ -33,10 +33,10 @@ namespace vigil {
          * while accessing a JSON object tree passed for them.
          */
          
-        /* Load a JSON file. */
+        /* Load a JSON file on a json_object*. */
         json_object* load_document(const std::string& file);
         
-        /* Get value from json doct given a key*/
+        /* Get value from json dict given a key. */
         json_object* get_dict_value(const json_object* jo, std::string key);
     }
 }
