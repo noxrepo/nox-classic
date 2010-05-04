@@ -27,7 +27,6 @@
 #include "fault.hh"
 #include "vlog.hh"
 #include "json-util.hh"
-#include <iostream>
 
 using namespace vigil;
 using namespace std;

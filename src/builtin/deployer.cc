@@ -19,7 +19,7 @@
 
 #include <boost/foreach.hpp>
 #include <sstream>
-#include <iostream> //remove
+#include "json-util.hh"
 
 using namespace std;
 using namespace vigil;
@@ -102,12 +102,12 @@ Component_configuration::Component_configuration(json_object* d,
 {
     using namespace vigil::container;
 
-    ////name = xml::to_string(xml::get_child_by_tag(d, "name")->getTextContent());
-    ///NEED TO PARSE d AND LOOK FOR "name" HERE
-    json_dict::iterator i;
+    json_object* n = json::get_dict_value(d, "name");
+    name = n->get_string(true);
+    /*json_dict::iterator i;
     json_dict* jodict = (json_dict*) d->object;
     i = jodict->find("name");
-    name = i->second->get_string(true);
+    name = i->second->get_string(true);*/
     // TODO: parse keys
 }
 
