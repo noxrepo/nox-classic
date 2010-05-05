@@ -47,8 +47,7 @@ nox_core_LDFLAGS = 							\
 	$(AM_LDFLAGS) $(BOOST_LDFLAGS) 					\
 	$(BOOST_UNIT_TEST_FRAMEWORK_LIB) 				\
 	$(BOOST_FILESYSTEM_LIB) 					\
-	$(SSL_LIBS)                             			\
-	$(XERCES_LDFLAGS) -Wl,-E
+	$(SSL_LIBS) -Wl,-E
 nox_core_LDADD = \
 	$(builddir)/builtin/.libs/libbuiltin.la \
 	$(builddir)/lib/libnoxcore.la \

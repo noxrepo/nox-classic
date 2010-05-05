@@ -79,11 +79,10 @@ endif
 libnoxcore_la_LIBADD =							\
 	-lcrypto							\
 	-lpthread							\
-	-lxerces-c							\
 	$(PCAP_LDFLAGS)							\
 	$(SSL_LIBS)
 
-libnoxcore_la_LDFLAGS = $(AM_LDFLAGS) $(BOOST_LDFLAGS) $(XERCES_LDFLAGS)
+libnoxcore_la_LDFLAGS = $(AM_LDFLAGS) $(BOOST_LDFLAGS) 
 
 if PY_ENABLED
 libnoxcore_la_LIBADD += $(PYTHON_EXTRA_LDFLAGS) $(PYTHON_EXTRA_LIBS) $(PYTHON_LDFLAGS)
