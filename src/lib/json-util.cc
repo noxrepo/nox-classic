@@ -17,6 +17,8 @@
  */
 #include "json-util.hh"
 #include <fstream>
+#include <iostream>
+#include <string>
 
 using namespace std;
 
@@ -38,10 +40,10 @@ namespace vigil {
             // alloc
             jsonstr = new char [len];
             in.read(jsonstr,len);
-            in.close();
+            in.close();            
             boost::shared_array<uint8_t> str;
             str.reset(new uint8_t[len+1]);
-            strcpy((char *) str.get(),jsonstr);
+            memcpy((char *) str.get(),jsonstr, len);
             jo = new json_object(str.get(), len);
             
             return jo;
