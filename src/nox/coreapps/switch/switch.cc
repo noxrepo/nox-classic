@@ -176,6 +176,7 @@ Switch::handle(const Event& e)
         ofm->match.nw_src = flow.nw_src;
         ofm->match.nw_dst = flow.nw_dst;
         ofm->match.nw_proto = flow.nw_proto;
+        ofm->match.nw_tos = flow.nw_tos;
         ofm->match.tp_src = flow.tp_src;
         ofm->match.tp_dst = flow.tp_dst;
         ofm->cookie = htonl(0);

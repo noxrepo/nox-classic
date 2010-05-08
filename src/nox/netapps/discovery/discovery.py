@@ -76,7 +76,9 @@ def create_discovery_packet(dpid, portno, ttl_):
     discovery_packet.add_tlv(end_tlv())
 
     eth = ethernet()
-    eth.src = struct.pack('!Q',dpid)[2:8]
+    # To insure that the LLDP src mac address is not a multicast
+    # address, since we have no control on choice of dpid
+    eth.src = '\x00' + struct.pack('!Q',dpid)[3:8]
     eth.dst = NDP_MULTICAST
     eth.set_payload(discovery_packet)
     eth.type = ethernet.LLDP_TYPE

@@ -218,7 +218,7 @@ Flow::Flow(uint16_t in_port_, const Buffer& buffer)
 		      nw_src = arp->ar_spa;
 		      nw_dst = arp->ar_tpa;
 		 }
-		 nw_proto = ntohs(arp->ar_op) && 0xff;
+		 nw_proto = ntohs(arp->ar_op) & 0xff;
 	    }
 	}
     }
