@@ -32,20 +32,23 @@ namespace vigil {
             ifstream in;
             json_object* jo;
             
+            // open file
             in.open(file.c_str());
             // get conf file len
             in.seekg(0, ios::end);
             len = in.tellg();
             in.seekg(0, ios::beg);
-            // alloc
-            jsonstr = new char [len];
+            // alloc, read string, close file
+            jsonstr = new char [len+1];
             in.read(jsonstr,len);
             in.close();            
+            jsonstr[len]='\0';
+            // create and return json_object
             boost::shared_array<uint8_t> str;
             str.reset(new uint8_t[len+1]);
             memcpy((char *) str.get(),jsonstr, len);
             jo = new json_object(str.get(), len);
-            
+            delete(jsonstr);
             return jo;
         }
         
