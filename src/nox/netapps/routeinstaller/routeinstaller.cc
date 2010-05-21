@@ -1,4 +1,5 @@
 #include "routeinstaller.hh"
+#include "openflow-default.hh"
 #include "vlog.hh"
 #include "assert.hh"
 #include <boost/bind.hpp>
@@ -163,18 +164,25 @@ namespace vigil
   void routeinstaller::install_flow_entry(const datapathid& dpid,
 					  const Flow& flow, uint32_t buffer_id, uint16_t in_port,
 					  ofp_action_list act_list, uint32_t wildcards_,
-					  uint16_t idletime, uint16_t hardtime)
+					  uint16_t idletime, uint16_t hardtime, uint64_t cookie)
   {
-    ofpack::flow_mod(of_raw, act_list);
-    ofpack::flow_mod_exact(of_raw, flow, buffer_id, htons(in_port), OFPFC_ADD, 
-			   0, OFPP_NONE, idletime, hardtime, OFP_DEFAULT_PRIORITY,
-			   wildcards_);
-    ofpack::flow_mod_actions(of_raw, act_list);
+    of_raw.reset(new uint8_t[sizeof(ofp_flow_mod)+act_list.mem_size()]);
+    of_flow_mod ofm;
+    ofm.match = flow.get_exact_match();
+    ofm.match.wildcards = wildcards_;
+    ofm.cookie = cookie;
+    ofm.command = OFPFC_ADD;
+    ofm.flags = ofd_flow_mod_flags();
+    ofm.idle_timeout = idletime;
+    ofm.hard_timeout = hardtime;
+    ofm.buffer_id = buffer_id;
+    ofm.out_port = OFPP_NONE;
+    ofm.pack((ofp_flow_mod*) openflow_pack::get_pointer(of_raw));
+    act_list.pack(openflow_pack::get_pointer(of_raw,sizeof(ofp_flow_mod)));
     send_openflow_command(dpid, of_raw, false);
 
-    ofpack::flow_mod_exact(of_raw, flow, buffer_id, htons(in_port), OFPFC_MODIFY_STRICT,
-			   0, OFPP_NONE, idletime, hardtime, OFP_DEFAULT_PRIORITY,
-			   wildcards_); 
+    ofm.command = OFPFC_MODIFY_STRICT;
+    ofm.pack((ofp_flow_mod*) openflow_pack::get_pointer(of_raw));
     send_openflow_command(dpid, of_raw, false);
   }
 

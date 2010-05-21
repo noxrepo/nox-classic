@@ -5,6 +5,7 @@
 #include "network_graph.hh"
 #include "openflow/openflow.h"
 #include "openflow-pack.hh"
+#include "openflow-action.hh"
 #include "hash_map.hh"
 #include "routing/routing.hh"
 
@@ -115,12 +116,13 @@ namespace vigil
      * @param wildcards wildcard flags
      * @param idletime idle timeout value
      * @param hardtime hard timeout value
+     * @param cookie cookie for flow mod
      */
     void install_flow_entry(const datapathid& dpid,
 			    const Flow& flow, uint32_t buffer_id, uint16_t in_port,
 			    ofp_action_list act_list, uint32_t wildcards=0,
 			    uint16_t idletime=DEFAULT_FLOW_TIMEOUT, 
-			    uint16_t hardtime=0);
+			    uint16_t hardtime=0, uint64_t cookie=0);
 
   private:
     /** Install route, i.e., sending the route setup to a set of switches.

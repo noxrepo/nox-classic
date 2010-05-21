@@ -14,7 +14,10 @@ namespace vigil
   switchrtt::switchrtt(const Context* c, const json_object* node)
     : Component(c)
   {
-    ofpack::header(of_raw, OFPT_ECHO_REQUEST,sizeof(ofp_header));
+    of_raw.reset(new uint8_t[sizeof(ofp_header)]);
+    openflow_pack::header(OFPT_ECHO_REQUEST, 
+			  sizeof(ofp_header)).pack(openflow_pack::get_header(of_raw));
+
     interval = SWITCHRTT_DEFAULT_PROBE_INTERVAL;
   }
   
@@ -78,7 +81,8 @@ namespace vigil
   Disposition switchrtt::handle_openflow_msg(const Event& e)
   {
     const Openflow_msg_event& ome = assert_cast<const Openflow_msg_event&>(e);
-    ofp_header ofph = ofupack::header(*(ome.buf));
+    of_header ofph;
+    ofph.unpack(openflow_pack::get_header(*(ome.buf)));
     if (ofph.type == OFPT_ECHO_REPLY)
     {
       hash_map<uint64_t,pair<uint32_t,timeval> >::iterator i = \
@@ -128,12 +132,11 @@ namespace vigil
       //Record send time
       timeval now;
       gettimeofday(&now, NULL);
-      uint32_t currxid = ofpack::xid(of_raw);
+      uint32_t currxid = openflow_pack::xid(of_raw);
       echoSent.insert(make_pair(dpi->second.datapath_id.as_host(), 
 				make_pair(currxid,now)));
       //Send echo request
-      send_openflow_command(dpi->second.datapath_id,
-			    ofpack::get_ofph(of_raw), false);
+      send_openflow_command(dpi->second.datapath_id,of_raw, false);
       dpi++;
     }
     
