@@ -33,6 +33,8 @@ libnoxcore_la_SOURCES = \
 	netinet++/ethernetaddr.cc \
 	openflow-event.cc \
 	openflow-pack.cc \
+	openflow-pack-raw.cc \
+	openflow-action.cc \
 	openflow.cc \
 	packetgen.cc \
 	poll-loop.cc \

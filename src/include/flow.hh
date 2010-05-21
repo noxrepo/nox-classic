@@ -24,6 +24,7 @@
 #include <iosfwd>
 #include "netinet++/ethernetaddr.hh"
 #include "openflow/openflow.h"
+#include "openflow-pack-raw.hh"
 
 namespace vigil {
 
@@ -63,7 +64,11 @@ struct Flow {
         tp_src(tp_src_), tp_dst(tp_dst_) { }
     static bool matches(const Flow&, const Flow&);
     const std::string to_string() const;
-
+    /** \brief Return of_match that is exact match to flow.
+     *
+     * @return of_match with exact match
+     */
+    const of_match get_exact_match() const;
     uint64_t hash_code() const;
 };
 bool operator==(const Flow& lhs, const Flow& rhs);

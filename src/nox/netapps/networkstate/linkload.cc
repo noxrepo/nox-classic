@@ -85,9 +85,18 @@ namespace vigil
 
   void linkload::send_stat_req(const datapathid& dpid, uint16_t port)
   {
-    ofpack::port_stat_req(of_raw);
-    send_openflow_command(dpi->second.datapath_id,
-			  ofpack::get_ofph(of_raw), false);
+    size_t size = sizeof(ofp_stats_request)+sizeof(ofp_port_stats_request);
+    of_raw.reset(new uint8_t[size]);
+
+    of_stats_request osr(openflow_pack::header(OFPT_STATS_REQUEST, size),
+			 OFPST_PORT, 0); 
+    of_port_stats_request opsr;
+    opsr.port_no = OFPP_NONE;
+
+    osr.pack((ofp_stats_request*) openflow_pack::get_pointer(of_raw));
+    opsr.pack((ofp_port_stats_request*) openflow_pack::get_pointer(of_raw, sizeof(ofp_stats_request)));
+
+    send_openflow_command(dpi->second.datapath_id,of_raw, false);
   }
 
   timeval linkload::get_next_time()
