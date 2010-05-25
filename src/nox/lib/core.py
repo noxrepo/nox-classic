@@ -81,7 +81,9 @@ HW_ADDR     = 'hw_addr'
 ###########################################################################
 
 class Component: 
-    """Abstract class to inherited by all Python components."""
+    """Abstract class to inherited by all Python components.
+    \ingroup noxapi
+    """
     def __init__(self, ctxt):
         self.ctxt = ctxt
         self.component_names = None 
