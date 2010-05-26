@@ -4,6 +4,7 @@ import os.path
 import sys
 import getopt
 import commands
+import simplejson
 ## \ingroup utility
 # @class nox_new_c_app
 # nox-new-c-app.py utility creates a new C/C++ component in NOX.
@@ -133,13 +134,14 @@ else:
 #Create application
 if (newdir):
     run("mkdir "+appdirname, dryrun, verbose)
-    #meta.xml and Makefile.am
+    #meta.json
     run("sed -e 's:"+samplefile+":"+appname+":g'"+\
         " -e 's:"+samplefile.replace("_"," ")+":"+\
         appname.replace("_"," ")+":g'"+\
-        " < "+sampledir+"meta.xml"+\
-        " > "+appdirname+"/meta.xml",
+        " < "+sampledir+"meta.json"+\
+        " > "+appdirname+"/meta.json",
         dryrun, verbose)
+    #Makefile.am
     run("sed -e 's:"+samplefile+":"+appdirname+":g'"+\
         " -e 's:coreapps:"+appcategory+":g'"+\
         " < "+sampledir+"Makefile.am"+\
@@ -162,16 +164,21 @@ if (newdir):
         " > "+appdirname+"/"+appname+".cc",
         dryrun, verbose)
 else:
-    #meta.xml and Makefile.am
-    run("head -n -1 meta.xml > meta.xml.tmp", dryrun, verbose)
-    run("head -n -1 "+sampledir+"meta.xml | tail -4 | "+\
-        "sed -e 's:"+samplefile+":"+appname+":g'"+\
-        " -e 's:"+samplefile.replace("_"," ")+":"+\
-        appname.replace("_"," ")+":g'"+\
-        " >> meta.xml.tmp",
-        dryrun, verbose)
-    run("tail -1 meta.xml >> meta.xml.tmp", dryrun, verbose)
-    run("mv meta.xml.tmp meta.xml",dryrun, verbose)
+    #meta.json
+    fileRef = open("meta.json","r")
+    metafile = ""
+    for line in fileRef:
+        metafile += line
+    fileRef.close()
+    metainfo = simplejson.loads(metafile)
+    appinfo = {}
+    appinfo["name"] = appname.replace("_"," ")
+    appinfo["library"] = appname
+    metainfo["components"].append(appinfo)
+    fileRef = open("meta.json","w")
+    fileRef.write(simplejson.dumps(metainfo, indent=4))
+    fileRef.close()
+    #Makefile.am
     appMake = commands.getoutput("grep "+samplefile+"_la "+sampledir+"Makefile.am")\
               .replace("\n","\\n").replace(samplefile, appname)\
               .replace("coreapps",appcategory)+"\\n\\n"
