@@ -3,15 +3,13 @@ import os
 import commands
 import sys
 import getopt
-import xml.dom.minidom
+import simplejson
 ## \ingroup utility
 # @class nox_draw_dependencies
-# Build dependency graph from meta.xml
+# Build dependency graph from meta.json
 # Color called and its dependencies
 #
 # Run nox-draw-dependencies.py --help to see help on usage
-#
-# Dependency: python-xml in Debian 
 #
 # @author ykk
 # @date April 2009
@@ -27,25 +25,27 @@ class component:
         self.dependencies = []
         self.called = 0
 
-def getTag(tag,name):
-    """Shorthand for get Tag by name
+def readfile(filename):
+    """Read file
     """
-    return tag.getElementsByTagName(name)
+    fileRef = open(filename, "r")
+    content = ""
+    for line in fileRef:
+        content += line
+    fileRef.close()
+    return content
 
-def getName(tag):
-    """Shorthand for get name tag
+def parse_meta_json(filename,components):
+    """Parse meta.json file
     """
-    return getTag(tag, "name")[0].firstChild.data
-
-def parse_meta_xml(filename,components):
-    """Parse meta.xml file
-    """
-    dom = xml.dom.minidom.parse(filename)
-    comps = dom.getElementsByTagName("component")
-    for comp in comps:
-        com = component(getName(comp))
-        for dep in getTag(comp, "dependency"):
-            com.dependencies.append(getName(dep))
+    meta = simplejson.loads(readfile(filename))
+    for comp in meta["components"]:
+        com = component(comp["name"])
+        try:
+            for dep in comp["dependencies"]:
+                com.dependencies.append(dep)
+        except KeyError:
+            pass
         components.append(com)
         
 def draw_components(filename, components):
@@ -87,7 +87,7 @@ def usage():
           "-f/--format <valid format for Graphviz>\n\tSpecify format to draw in (default=ps)\n"+\
           "-p/--program <valid Graphviz program>\n\tSpecify program to draw with (default=dot)\n"+\
           "-d/--dir <root directory>\n\tSpecify root directory to find meta.xml in (default=PWD)\n"+\
-          "-o/--output <filename>\n\tfilename of outputs (default=nox-component-dependency)\n"+\
+          "-o/--output <filename>\n\tfilename of outputs (default=nox-component-dependency)\n"
 
 #Parse options and arguments
 try:
@@ -133,11 +133,11 @@ if not (os.path.isdir("nox/coreapps") and
     print "Not in nox's src directory!"
     sys.exit(2)
     
-#Find all meta.xml
-cmd='find '+dir+' -name "meta.xml" -print'
+#Find all meta.json
+cmd='find '+dir+' -name "meta.json" -print'
 components=[]
 for metafile in os.popen(cmd).readlines():
-    parse_meta_xml(metafile.strip(),components)
+    parse_meta_json(metafile.strip(),components)
 highlight_called(components, args)
 draw_components(filename+".dot",components)    
 print commands.getoutput(program+" -T"+format+" "+\
