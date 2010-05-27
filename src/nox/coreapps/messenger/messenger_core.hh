@@ -16,7 +16,6 @@
 #define MESSENGER_MAX_CONNECTION 10
 
 #include "component.hh"
-#include "message.hh"
 #include "ssl-socket.hh"
 #include "tcp-socket.hh"
 #include "threads/cooperative.hh"
@@ -71,15 +70,14 @@ namespace vigil
   private:
   };
 
-  /** \ingroup noxevents
-   * \brief Structure holding message to and from messenger_core.
+  /** \brief Structure holding message to and from messenger_core.
    *
-   * Copyright (C) Stanford University, 2008.
+   * Copyright (C) Stanford University, 2010.
    * @author ykk
-   * @date December 2008
-   * @see messenger
+   * @date May 2010
+   * @see messenger_core
    */
-  struct Msg_event : public Event
+  struct core_message
   {
     /** Constructor.
      * Allocate memory for message.
@@ -87,32 +85,22 @@ namespace vigil
      * @param socket socket message is received with
      * @param size length of message received
      */
-    Msg_event(messenger_msg* message, Msg_stream* socket, ssize_t size);
+    core_message(uint8_t* message, Msg_stream* socket, ssize_t size);
+
+    /** Empty Constructor.
+     * Allocate memory for message.
+     * @param socket socket message is received with
+     */
+    core_message(Msg_stream* socket);
 
     /** Destructor.
      */
-    ~Msg_event();
-
-    /** Empty constructor.
-     * For use within python.
-     */
-    Msg_event() : Event(static_get_name()) 
-    { }
-
-    /** Static name required in NOX.
-     */
-    static const Event_name static_get_name() 
-    {
-      return "Msg_event";
-    }
+    ~core_message();
 
     /** Print array of bytes for debug.
      */
     void dumpBytes();
 
-    /** Array reference to hold message.
-     */
-    messenger_msg* msg;
     /** Length of message.
      */
     ssize_t len;
@@ -169,9 +157,17 @@ namespace vigil
     { return false; };
 
     /** Function to do processing for messages received.
+     * Uses code for special events as such.
+     * <UL>
+     * <LI>0 - Normal</LI>
+     * <LI>1 - New connection</LI>
+     * <LI>2 - Disconnection</LI>
+     * </UL>
+     *
      * @param msg message event for message received
+     * @param code code for special events
      */
-    virtual void process(const Msg_event* msg)
+    virtual void process(const core_message* msg, int code=0)
     {};
 
     /** Send echo request.
@@ -357,21 +353,23 @@ namespace vigil
 
     /** Function to check for disconnect messages.
      * @param msg message event for message received
+     * @param code code for special event
      */
-    void process(const Msg_event* msg);
+    void process(const core_message* msg, int code=0);
 
     /** Post disconnection message
+     * @param sock socket reference
      */
-    void post_disconnect();
+    void post_disconnect(Msg_stream* sock);
 
     /** Check idle time.
      */
     void check_idle();
 
     /** Send message for new connection.
-     * Only packet with type (i.e., length = 0)
+     * @param sock socket reference
      */
-    void send_new_connection_msg();
+    void send_new_connection_msg(Msg_stream* sock);
 
     /** Internal buffer for message.
      * @see MESSENGER_MAX_MSG_SIZE
@@ -427,7 +425,7 @@ namespace vigil
     /** Thread that listens to socket for packets.
      * Sends each message for processing.
      * Closes socket once terminated via message.
-     * @see process(const uint8_t* msg)
+     * @see process(const uint8_t* msg, int code)
      */
     void run();
 
@@ -462,7 +460,7 @@ namespace vigil
     /** Thread that listens to socket for packets.
      * Sends each message for processing.
      * Closes socket once terminated via message.
-     * @see process(const uint8_t* msg)
+     * @see process(const uint8_t* msg, int code)
      */
     void run();
 

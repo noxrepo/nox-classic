@@ -40,17 +40,22 @@ namespace vigil
    * @date February 2010
    * @see jsonmessenger
    */
-  struct JSONMsg_event : public Msg_event
+  struct JSONMsg_event : public Event
   {
     /** Constructor.
-     * @param msg Msg event use to initialize JSONMsg event
+     * @param cmsg core message use to initialize JSONMsg event
      */
-    JSONMsg_event(const Msg_event* msg);
+    JSONMsg_event(const core_message* cmsg);
 
     /** Destructor.
      */
     ~JSONMsg_event()
     {}
+
+    /** For use within python.
+     */
+    JSONMsg_event() : Event(static_get_name()) 
+    { }
 
     /** Static name required in NOX.
      */
@@ -58,6 +63,10 @@ namespace vigil
     {
       return "JSONMsg_event";
     }
+
+    /** Reference to socket.
+     */
+    Msg_stream* sock;
 
     /** Reference to JSON object
      */
@@ -127,8 +136,9 @@ namespace vigil
 
     /** Function to do processing for messages received.
      * @param msg message event for message received
+     * @param code code for special events
      */
-    void process(const Msg_event* msg);
+    void process(const core_message* msg, int code=0);
 
     /** Send echo request.
      * @param sock socket to send echo request over

@@ -11,6 +11,49 @@ namespace vigil
   static Vlog_module lg("messenger");
   static const std::string app_name("messenger");
 
+  Msg_event::Msg_event(messenger_msg* message, Msg_stream* socket, 
+		       ssize_t size):
+    Event(static_get_name())
+  {
+    sock = socket;
+
+    //Allocate memory and copy message
+    if (size < sizeof(messenger_msg) && size != 0)
+      size = sizeof(messenger_msg);
+    len = size;
+    raw_msg.reset(new uint8_t[size]);
+    memcpy(raw_msg.get(), message, size);
+    msg = (messenger_msg*) raw_msg.get();
+    VLOG_DBG(lg, "Received packet of length %zu", size);
+  }
+
+  Msg_event::Msg_event(const core_message* cmsg):
+    Event(static_get_name())
+  {
+    sock = cmsg->sock;
+    len = cmsg->len;
+    raw_msg.reset(new uint8_t[len]);
+    memcpy(raw_msg.get(), cmsg->raw_msg.get(), len);
+    msg = (messenger_msg*) raw_msg.get();
+    VLOG_DBG(lg, "Received packet of length %zu", len);
+  }
+
+  Msg_event::~Msg_event()
+  {  }
+
+  void Msg_event::dumpBytes()
+  {
+    uint8_t* readhead =  (uint8_t*) raw_msg.get();
+    fprintf(stderr,"messenger_core Msg_event of size %zu\n\t",
+	    len);
+    for (int i = 0; i < len; i++)
+    {
+      fprintf(stderr, "%"PRIx8" ", *readhead);
+      readhead++;
+    }
+    fprintf(stderr,"\n");
+  }
+
   messenger::messenger(const Context* c, const json_object* node): 
     message_processor(c,node)
   { 
@@ -24,6 +67,7 @@ namespace vigil
     resolve(msg_core);
     resolve(msger);
 
+    register_event(Msg_event::static_get_name());
     register_handler<Msg_event>
       (boost::bind(&messenger::handle_message, this, _1));
 
@@ -93,16 +137,41 @@ namespace vigil
     return (size==currSize) && (currSize > 2);
   }
 
-  void messenger::process(const Msg_event* msg)
+  void messenger::process(const core_message* msg, int code)
   {
-    VLOG_DBG(lg, "Message posted as Msg_event");
-    post((Msg_event*) msg);
+    core_message cmsg(msg->sock);
+    cmsg.raw_msg.reset(new uint8_t[sizeof(messenger_msg)]);
+    cmsg.len = sizeof(messenger_msg);
+    messenger_msg* mmsg = (messenger_msg*) cmsg.raw_msg.get();
+    mmsg->length = htons(cmsg.len);
+
+    switch (code)
+    {
+    case 0:
+      VLOG_DBG(lg, "Message posted as Msg_event");
+      post(new Msg_event(msg));
+      return;
+    case 1:
+      //New connection
+      mmsg->type = 0;
+      mmsg->length = 0;
+      break;
+    case 2:
+      //Disconnection
+      mmsg->type = MSG_DISCONNECT;
+      break;
+    }
+
+    post(new Msg_event(&cmsg));
   }
 
   void messenger::send_echo(Async_stream* sock)
   {
     VLOG_DBG(lg, "Sending echo on idle socket");
-    msger->init(raw_msg, sizeof(messenger_msg), MSG_ECHO);
+    msger->init(raw_msg, sizeof(messenger_msg));
+    messenger_msg* mmsg = (messenger_msg*) raw_msg.get();
+    mmsg->length = htons(sizeof(messenger_msg));
+    mmsg->type = MSG_ECHO;
     msger->send(raw_msg, sock);	
   }
 
@@ -143,7 +212,10 @@ namespace vigil
 
   void messenger::reply_echo(const Msg_event& echoreq)
   {
-    msger->init(raw_msg, sizeof(messenger_msg), MSG_ECHO_RESPONSE);
+    msger->init(raw_msg, sizeof(messenger_msg));
+    messenger_msg* mmsg = (messenger_msg*) raw_msg.get();
+    mmsg->length = htons(sizeof(messenger_msg));
+    mmsg->type = MSG_ECHO_RESPONSE;
     msger->send(raw_msg, echoreq.sock->stream);	
   }
 

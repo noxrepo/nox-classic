@@ -48,9 +48,8 @@ namespace vigil
     /** Initialize packet with length and type.
      * @param msg_raw message buffer reference
      * @param size size of buffer to allocate
-     * @param type type of packet
      */
-    void init(boost::shared_array<uint8_t>& msg_raw, ssize_t size, uint8_t type);
+    void init(boost::shared_array<uint8_t>& msg_raw, ssize_t size);
 
     /** Initialize JSON string with type and length.
      * @param msg_raw message buffer reference

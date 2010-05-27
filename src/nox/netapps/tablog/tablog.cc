@@ -1,5 +1,5 @@
 #include "tablog.hh"
-#include "messenger/messenger_core.hh"
+#include "messenger/messenger.hh"
 #include "assert.hh"
 #include <boost/bind.hpp>
 #include <stdlib.h>
