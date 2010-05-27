@@ -29,7 +29,9 @@ jsonmessenger_la_LDFLAGS = -module -export-dynamic
 NOX_RUNTIMEFILES = meta.json \
 	serverkey.pem \
 	cacert.pem \
-	servercert.pem
+	servercert.pem \
+	messenger.py \
+	__init__.py
 
 EXTRA_DIST = \
 	meta.json 
