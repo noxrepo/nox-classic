@@ -152,7 +152,7 @@ namespace vigil
    * for storing the messages.
    *
    * TCP and SSL port can be changed at commandline using
-   * tcpport and sslport arguments for golems respectively. 
+   * tcpport and sslport arguments for messenger respectively. 
    * port 0 is interpreted as disabling the server socket.  
    * E.g.,
    * ./nox_core -i ptcp:6633 messenger=tcpport=11222,sslport=0

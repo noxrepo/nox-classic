@@ -77,7 +77,7 @@ namespace vigil
    * \brief Class through which to interact with NOX using JSON.
    *
    * TCP and SSL port can be changed at commandline using
-   * tcpport and sslport arguments for golems respectively. 
+   * tcpport and sslport arguments for jsonmessenger respectively. 
    * port 0 is interpreted as disabling the server socket.  
    * E.g.,
    * ./nox_core -i ptcp:6633 jsonmessenger=tcpport=11222,sslport=0
