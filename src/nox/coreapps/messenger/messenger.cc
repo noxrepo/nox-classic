@@ -147,16 +147,16 @@ namespace vigil
 
     switch (code)
     {
-    case 0:
+    case msg_code_normal:
       VLOG_DBG(lg, "Message posted as Msg_event");
       post(new Msg_event(msg));
       return;
-    case 1:
+    case msg_code_new_connection:
       //New connection
       mmsg->type = 0;
       mmsg->length = 0;
       break;
-    case 2:
+    case msg_code_disconnection:
       //Disconnection
       mmsg->type = MSG_DISCONNECT;
       break;

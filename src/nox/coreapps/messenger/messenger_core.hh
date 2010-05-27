@@ -125,6 +125,15 @@ namespace vigil
   class message_processor: public Component
   {
   public:
+    /** \brief Code for special event
+     */
+    enum message_code
+    {
+      msg_code_normal,
+      msg_code_new_connection,
+      msg_code_disconnection,
+    };
+
     /** Constructor.
      * @param c context as required by Component
      * @param node JSON object
@@ -157,13 +166,8 @@ namespace vigil
     { return false; };
 
     /** Function to do processing for messages received.
-     * Uses code for special events as such.
-     * <UL>
-     * <LI>0 - Normal</LI>
-     * <LI>1 - New connection</LI>
-     * <LI>2 - Disconnection</LI>
-     * </UL>
      *
+     * @see #message_code
      * @param msg message event for message received
      * @param code code for special events
      */

@@ -149,18 +149,18 @@ namespace vigil
  
     switch (code)
     {
-    case 0:
+    case msg_code_normal:
       post(new JSONMsg_event(msg));
       VLOG_DBG(lg, "Message posted as JSONMsg_event");
       return;
-    case 1:
+    case msg_code_new_connection:
       //New connection
       cmsg.raw_msg.reset(new uint8_t[19]);
       cmsg.len = 18;
       strcpy((char *) cmsg.raw_msg.get(),"{\"type\":\"connect\"}");
       VLOG_DBG(lg, "JSON message of length %zu (connect)", cmsg.len); 
       break;
-    case 2:
+    case msg_code_disconnection:
       //Disconnection
       cmsg.raw_msg.reset(new uint8_t[22]);
       cmsg.len = 21;

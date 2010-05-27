@@ -263,7 +263,7 @@ namespace vigil
 
   void messenger_connection::send_new_connection_msg(Msg_stream* sock)
   {
-    process(new core_message(sock), 1);
+    process(new core_message(sock), message_processor::msg_code_new_connection);
   }
 
   void messenger_connection::check_idle()
@@ -299,7 +299,7 @@ namespace vigil
 
   void messenger_connection::post_disconnect(Msg_stream* sock)
   {
-    process(new core_message(sock), 2);
+    process(new core_message(sock), message_processor::msg_code_disconnection);
   }
 
   void messenger_connection::processBlock(Array_buffer& buf, ssize_t& dataSize, 
