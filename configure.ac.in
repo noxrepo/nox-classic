@@ -68,7 +68,7 @@ ACI_PACKAGE([netapps],[misc network apps],
                	bindings_storage switchstats flow_fetcher data
                	switch_management networkstate hoststate tablog 
                	routeinstaller
-                #add netapps component here
+                lavi #add netapps component here
 		],
                [TURN_ON_NETAPPS])
 ACI_PACKAGE([webapps],[misc ui apps],
