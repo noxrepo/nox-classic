@@ -51,12 +51,9 @@
             "Port_stats_in_event": [
                 "linkload"
                 ],
-            "Msg_event": [
-                "jsonmesssenger"
-                ],
             "JSONMsg_event": [
-                "sepl_enforcer",
-                "routing"
+                "jsonmesssenger",
+                "tablog"
                 ],
             "Shutdown_event": [
                 "flowlog",
