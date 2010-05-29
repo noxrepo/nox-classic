@@ -10,6 +10,15 @@
             ], 
             "name": "lavi nodes", 
             "library": "lavi_nodes"
+        }, 
+        {
+            "dependencies": [
+                "lavi nodes",
+	        "msgpacket",
+		"datapathmem"
+            ], 
+            "name": "lavi_switches", 
+            "library": "lavi_switches"
         }
     ]
 }

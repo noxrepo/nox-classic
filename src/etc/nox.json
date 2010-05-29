@@ -7,12 +7,14 @@
             "Datapath_join_event": [
                 "datapathmem",
                 "linkload",
-                "authenticator"
+                "authenticator",
+		"lavi_switches"
                 ],
             "Datapath_leave_event": [
                 "datapathmem",
                 "linkload",
-                "noop"
+                "noop",
+		"lavi_switches"
                 ],
             "Openflow_msg_event": [
                 "switchrtt"
@@ -53,6 +55,7 @@
                 ],
             "JSONMsg_event": [
                 "jsonmesssenger",
+                "lavi_switches",
                 "lavi nodes",
                 "tablog"
                 ],
