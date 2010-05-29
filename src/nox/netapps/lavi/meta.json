@@ -1,8 +1,15 @@
 {
     "components": [
         {
-            "name": "lavi" ,
-            "library": "lavi" 
+            "name": "lavi", 
+            "library": "lavi"
+        }, 
+        {
+            "dependencies": [
+                "jsonmessenger"
+            ], 
+            "name": "lavi nodes", 
+            "library": "lavi_nodes"
         }
     ]
 }
