@@ -60,6 +60,8 @@ namespace vigil
    * only node_type:node_id is globally unique.
    *
    * @see lavi_nodes
+   * @see datapathmem
+   * @see msgpacket
    * @author ykk
    * @date May 2010
    */

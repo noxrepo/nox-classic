@@ -99,6 +99,8 @@ namespace vigil
    * @author ykk
    * @date Feburary 2010
    * @see messenger_core
+   * @see json_object
+   * @see msgpacket
    */
   class jsonmessenger : public message_processor
   {
