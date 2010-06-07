@@ -202,7 +202,8 @@ namespace vigil
       i++;
     }
     
-    tree->next_hops.push_front(*routeOut);
+    if (routeOut != route->next_hops.end())
+      tree->next_hops.push_front(*routeOut);
   }
 
   void routeinstaller::getInstance(const container::Context* ctxt, 
