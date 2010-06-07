@@ -8,6 +8,7 @@ AM_CPPFLAGS += $(PYTHON_CPPFLAGS)
 endif # PY_ENABLED 
 
 pkglib_LTLIBRARIES =\
+	lavi_links.la \
 	lavi_nodes.la \
 	lavi_switches.la \
 	lavi.la
@@ -23,6 +24,10 @@ lavi_nodes_la_LDFLAGS = -module -export-dynamic
 lavi_switches_la_CPPFLAGS = $(AM_CPPFLAGS) -I $(top_srcdir)/src/nox -I $(top_srcdir)/src/nox/netapps/ -I $(top_srcdir)/src/nox/coreapps/
 lavi_switches_la_SOURCES = lavi_switches.hh lavi_switches.cc
 lavi_switches_la_LDFLAGS = -module -export-dynamic
+
+lavi_links_la_CPPFLAGS = $(AM_CPPFLAGS) -I $(top_srcdir)/src/nox -I $(top_srcdir)/src/nox/netapps/ -I $(top_srcdir)/src/nox/coreapps/
+lavi_links_la_SOURCES = lavi_links.hh lavi_links.cc
+lavi_links_la_LDFLAGS = -module -export-dynamic
 
 NOX_RUNTIMEFILES = meta.json	
 

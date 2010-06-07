@@ -57,6 +57,7 @@
                 "jsonmesssenger",
                 "lavi_switches",
                 "lavi nodes",
+                "lavi links",
                 "tablog"
                 ],
             "Shutdown_event": [

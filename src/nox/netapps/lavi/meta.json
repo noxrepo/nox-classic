@@ -1,6 +1,9 @@
 {
     "components": [
         {
+            "dependencies": [
+                "lavi_switches"
+            ], 
             "name": "lavi", 
             "library": "lavi"
         }, 
@@ -13,12 +16,19 @@
         }, 
         {
             "dependencies": [
-                "lavi nodes",
-	        "msgpacket",
-		"datapathmem"
+                "lavi nodes", 
+                "msgpacket", 
+                "datapathmem"
             ], 
             "name": "lavi_switches", 
             "library": "lavi_switches"
+        }, 
+        {
+            "dependencies": [
+                "jsonmessenger"
+            ], 
+            "name": "lavi links", 
+            "library": "lavi_links"
         }
     ]
 }
