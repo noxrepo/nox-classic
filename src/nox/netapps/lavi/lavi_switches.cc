@@ -52,7 +52,7 @@ namespace vigil
     list<Msg_stream*>::iterator i = interested.begin();
     while(i != interested.end())
     {
-      send_swlist(*(*i), dpidlist);
+      send_swlist(*(*i), dpidlist, false);
       i++;
     }
 
@@ -75,7 +75,8 @@ namespace vigil
     send_swlist(stream, dpidlist);
   }
 
-  void lavi_switches::send_swlist(const Msg_stream& stream, list<uint64_t> dpid_list)
+  void lavi_switches::send_swlist(const Msg_stream& stream, list<uint64_t> dpid_list,
+				  bool add)
   {
     VLOG_DBG(lg, "Sending switch list of %zu to %p", dpid_list.size(), &stream);
 
@@ -93,7 +94,10 @@ namespace vigil
 
     //Add command
     jo = new json_object(json_object::JSONT_STRING);
-    jo->object = new string("reply");
+    if (add)
+      jo->object = new string("add");
+    else
+      jo->object = new string("delete");      
     jd->insert(make_pair("command", jo));
 
     //Add node_type

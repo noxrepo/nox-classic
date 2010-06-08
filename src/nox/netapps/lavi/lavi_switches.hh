@@ -51,7 +51,7 @@ namespace vigil
    * <PRE>
    * {
    *   "type" : "lavi"
-   *   "command" : "reply"
+   *   "command" : <string | "add", "delete">
    *   "node_type" : "switch"
    *   "node_id" : [ <string in hex>, ...]
    * }
@@ -123,8 +123,10 @@ namespace vigil
     /** \brief Send list of switches
      * @param stream socket to send list over
      * @param dpid_list list of datapathid to send
+     * @param add indicate if add or delete
      */
-    void send_swlist(const Msg_stream& stream, list<uint64_t> dpid_list);
+    void send_swlist(const Msg_stream& stream, list<uint64_t> dpid_list,
+		     bool add=true);
 
     /** \brief Reference to datapathmem.
      */
