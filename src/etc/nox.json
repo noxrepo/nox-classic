@@ -2,25 +2,34 @@
     "nox": {
         "events": {
             "Bootstrap_complete_event": [
-                "role_config_manager",
+                "authenticator",
+		"routing",
+		"tests",
+		"role_config_manager",
                 "sepl_enforcer"],
             "Datapath_join_event": [
+	        "topology",
                 "datapathmem",
                 "linkload",
                 "authenticator",
-		"lavi_switches"
+		"lavi_switches",
+		"cswitchstats"
                 ],
             "Datapath_leave_event": [
+	        "topology",
                 "datapathmem",
                 "linkload",
+		"switchrtt",
                 "noop",
-		"lavi_switches"
+                "authenticator",
+		"lavi_switches",
+		"cswitchstats"
                 ],
             "Openflow_msg_event": [
                 "switchrtt"
                 ],
             "Packet_in_event": [
-                "hostrack_pktin",
+                "trackhost_pktin",
                 "hostip",
                 "authenticator",
                 "dwh",
@@ -28,7 +37,9 @@
                 "counter",
                 "packetdump",
                 "ctlflood",
-                "switch"
+                "switch",
+		"hub",
+		"cswitchstats"
                 ],
             "Flow_in_event": [
                 "sepl_enforcer",
@@ -38,7 +49,9 @@
                 "flow_cache"
                 ],
             "Link_event": [
-                "authenticator"
+	        "topology",
+                "authenticator",
+		"routing_module"
                 ],
             "Flow_mod_event": [
                 "authenticator"
@@ -48,13 +61,20 @@
                 "dwh"
                 ],
             "Port_status_event": [
-                "linkload"
+	        "datapathmem",
+                "linkload",
+		"cswitchstats",
+		"topology",
+		"authenticator"
                 ],
             "Port_stats_in_event": [
                 "linkload"
                 ],
+            "Msg_event": [
+	        "messenger"
+                ],
             "JSONMsg_event": [
-                "jsonmesssenger",
+                "jsonmessenger",
                 "lavi_switches",
                 "lavi nodes",
                 "lavi links",
@@ -63,7 +83,13 @@
             "Shutdown_event": [
                 "flowlog",
                 "rttlog"
-                ]
+                ],
+	    "Host_auth_event": [
+	    	"authenticator"
+	        ],
+	    "User_auth_event": [
+	    	"authenticator"
+	        ]
         }
     }
 }
