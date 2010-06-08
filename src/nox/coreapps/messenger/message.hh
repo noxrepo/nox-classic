@@ -22,9 +22,14 @@
  * </PRE>
  * will run TCP server on port 11222 and SSL server will be disabled.
  *
+ * The client side script are the following.
+ * <UL>
+ * <LI>nox_console</LI>
+ * </UL>
  * Server side components of the console includes the following.
  * <UL>
  * <LI>vigil::lavi_switches</LI>
+ * <LI>vigil::lavi_swlinks</LI>
  * </UL>
  * 
  */

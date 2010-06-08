@@ -29,6 +29,16 @@
             ], 
             "name": "lavi links", 
             "library": "lavi_links"
+        }, 
+        {
+            "dependencies": [
+                "lavi links", 
+                "msgpacket", 
+		"datapathmem",
+                "topology"
+            ], 
+            "name": "lavi_swlinks", 
+            "library": "lavi_swlinks"
         }
     ]
 }

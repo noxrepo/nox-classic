@@ -27,16 +27,17 @@ def usage():
     print "-h/--help\n\tPrint this usage guide"
     print "-n/--noxhost\n\tSpecify where NOX is hosted (default:localhost)"
     print "-p/--port\n\tSpecify port number for messenger (default:2703)"
-    print "-r/--reply\n\tSpecify if reply is expected (default:False)"
+    print "-r/--no-reply\n\tSpecify if reply is expected (default:True)"
     print "-v/--verbose\n\tVerbose output"
     print  "Commands:"
     print "getnodes [node_type]\n\tGet nodes (of type if specified)"
+    print "getlinks [node_type]\n\tGet links (of type if specified)"
 
 #Parse options and arguments
 try:
     opts, args = getopt.getopt(sys.argv[1:], "hvn:p:r",
                                ["help","verbose","noxhost=","port=",
-                                "reply"])
+                                "noreply"])
 except getopt.GetoptError:
     print "Option error!"
     usage()
@@ -50,7 +51,7 @@ nox_host = "localhost"
 ##Port number
 port_no = 2703
 ##Wait for reply
-expectReply = False
+expectReply = True
 for opt,arg in opts:
     if (opt in ("-h","--help")):
         usage()
@@ -59,8 +60,8 @@ for opt,arg in opts:
         debug=True
     elif (opt in ("-n","--noxhost")):
         nox_host=arg
-    elif (opt in ("-r","--reply")):
-        expectReply = True
+    elif (opt in ("-r","--no-reply")):
+        expectReply = False
     elif (opt in ("-p","--port")):
         port_no=int(arg)
     else:
@@ -81,6 +82,13 @@ if (args[0] == "getnodes"):
         cmd["node_type"] = "all"
     else:
         cmd["node_type"] = args[1]
+elif (args[0] == "getlinks"):
+    cmd["type"] = "lavi"
+    cmd["command"] = "request"
+    if (len(args) == 1):
+        cmd["link_type"] = "all"
+    else:
+        cmd["link_type"] = args[1]
 else:
     print "Unknown command: "+args[0]
     sys.exit(2)
