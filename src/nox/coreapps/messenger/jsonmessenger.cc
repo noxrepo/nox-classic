@@ -11,38 +11,13 @@ namespace vigil
   static Vlog_module lg("jsonmessenger");
   static const std::string app_name("jsonmessenger");
 
-  JSONMsg_event::JSONMsg_event(const Msg_event* mmsg):
-    Msg_event(mmsg->msg, mmsg->sock, mmsg->len)
+  JSONMsg_event::JSONMsg_event(const core_message* cmsg):
+    Event(static_get_name())
   {
-    msg = NULL;
     set_name(static_get_name());
-
-    switch (len)
-    {
-    case 0:
-      //New connection
-      raw_msg.reset(new uint8_t[19]);
-      len = 18;
-      strcpy((char *) raw_msg.get(),"{\"type\":\"connect\"}");
-      VLOG_DBG(lg, "JSON message of length %zu (connect)", len); 
-      break;
-    case 3:
-      //New connection
-      if (mmsg->msg->type == MSG_DISCONNECT)
-      {
-	raw_msg.reset(new uint8_t[22]);
-	len = 21;
-	strcpy((char *) raw_msg.get(),"{\"type\":\"disconnect\"}");
-	VLOG_DBG(lg, "JSON message of length %zu (disconnect)", len); 
-	break;
-      }
-    default:
-      raw_msg.reset(new uint8_t[len+1]);
-      memcpy(raw_msg.get(), mmsg->raw_msg.get(), len);
-      VLOG_DBG(lg, "JSON message of length %zu", len); 
-    }
-
-    jsonobj.reset(new json_object(raw_msg.get(), len));
+    sock = cmsg->sock;
+    jsonobj.reset(new json_object((const uint8_t*)cmsg->raw_msg.get(), (ssize_t&) cmsg->len));
+    VLOG_DBG(lg, "JSON message of length %zu", cmsg->len); 
   }
 
   jsonmessenger::jsonmessenger(const Context* c, const json_object* node): 
@@ -168,10 +143,33 @@ namespace vigil
     return ((currSize > 1) && i->second.balanced());
   }
 
-  void jsonmessenger::process(const Msg_event* msg)
+  void jsonmessenger::process(const core_message* msg, int code)
   {
-    VLOG_DBG(lg, "Message posted as JSONMsg_event");
-    post(new JSONMsg_event(msg));
+    core_message cmsg(msg->sock);
+ 
+    switch (code)
+    {
+    case msg_code_normal:
+      post(new JSONMsg_event(msg));
+      VLOG_DBG(lg, "Message posted as JSONMsg_event");
+      return;
+    case msg_code_new_connection:
+      //New connection
+      cmsg.raw_msg.reset(new uint8_t[19]);
+      cmsg.len = 18;
+      strcpy((char *) cmsg.raw_msg.get(),"{\"type\":\"connect\"}");
+      VLOG_DBG(lg, "JSON message of length %zu (connect)", cmsg.len); 
+      break;
+    case msg_code_disconnection:
+      //Disconnection
+      cmsg.raw_msg.reset(new uint8_t[22]);
+      cmsg.len = 21;
+      strcpy((char *) cmsg.raw_msg.get(),"{\"type\":\"disconnect\"}");
+      VLOG_DBG(lg, "JSON message of length %zu (disconnect)", cmsg.len); 
+      break;
+    }
+
+    post(new JSONMsg_event(&cmsg));
   }
 
   Disposition jsonmessenger::handle_message(const Event& e)

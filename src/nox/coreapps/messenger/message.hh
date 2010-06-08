@@ -1,59 +1,35 @@
-#ifndef MESSAGE_HH__
-#define MESSAGE_HH__
-
-/** Types of messages.
- * Type value 0x00 to 0x09 are reserved for internal use.
- */
-enum msg_type
-{
-  /** Disconnection message.
-   * Need to be consistent.
-   */
-  MSG_DISCONNECT = 0x00,
-  /** Echo message.
-   * Need to be consistent.
-   */
-  MSG_ECHO = 0x01,
-  /** Response message.
-   * Need to be consistent.
-   */
-  MSG_ECHO_RESPONSE = 0x02,
-  /** Authentication.
-   * Need to be consistent.
-   */
-  MSG_AUTH = 0x03,
-  /** Authenication response.
-   * Need to be consistent.
-   */
-  MSG_AUTH_RESPONSE = 0x04,
-  /** Authentication status.
-   * Need to be consistent.
-   */
-  MSG_AUTH_STATUS = 0x05,
-
-  /** Plain string.
-   */
-  MSG_NOX_STR_CMD = 0x0A,
-};
-
-/** \brief Basic structure of message in \ref vigil::messenger.
+/** \page console NOX Console/Messaging
+ * 
+ * NOX console is powered by vigil::jsonmessenger, which also allows other 
+ * components to receive commands from external sources using vigil::JSONMsg_event.
  *
- * Copyright (C) Stanford University, 2008.
- * @author ykk
- * @date December 2008
- * @see messenger
+ * The basic structure of the JSON message is
+ * <PRE>
+ * {  
+ *   "type" : <string | connect, disconnect, ping, echo>
+ *   <content>
+ * }
+ * </PRE>
+ * Content is application specific and the types connect, disconnect, ping and 
+ * echo are reserved for use by vigil::jsonmessenger.
+ * 
+ * A user can can the TCP and SSL port for vigil::jsonmessenger at commandline using
+ * tcpport and sslport arguments for jsonmessenger respectively. 
+ * port 0 is interpreted as disabling the server socket.  
+ * E.g.,
+ * <PRE>
+ * ./nox_core -i ptcp:6633 jsonmessenger=tcpport=11222,sslport=0
+ * </PRE>
+ * will run TCP server on port 11222 and SSL server will be disabled.
+ *
+ * The client side script are the following.
+ * <UL>
+ * <LI>nox_console</LI>
+ * </UL>
+ * Server side components of the console includes the following.
+ * <UL>
+ * <LI>vigil::lavi_switches</LI>
+ * <LI>vigil::lavi_swlinks</LI>
+ * </UL>
+ * 
  */
-struct messenger_msg
-{
-  /** Length of message, including this header.
-   */
-  uint16_t length;
-  /** Type of message, as defined in \ref msg_type.
-   */
-  uint8_t type;
-  /** Reference to body of message.
-   */
-  uint8_t body[0];
-} __attribute__ ((packed));
-
-#endif

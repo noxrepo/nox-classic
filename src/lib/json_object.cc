@@ -105,7 +105,8 @@ namespace vigil
 	retStr += (*j)->get_string()+",";
 	j++;
       }
-      retStr = retStr.substr(0,retStr.length()-1);
+      if (retStr.length() > 1)
+	retStr = retStr.substr(0,retStr.length()-1);
       retStr += "]";
       break;
     case JSONT_DICT:

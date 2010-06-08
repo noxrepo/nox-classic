@@ -7,13 +7,9 @@ namespace vigil
   void msgpacket::configure(const Configuration* config)
   { }
 
-  void msgpacket::init(boost::shared_array<uint8_t>& msg_raw, ssize_t size, 
-		       uint8_t type)
+  void msgpacket::init(boost::shared_array<uint8_t>& msg_raw, ssize_t size)
   {
     msg_raw.reset(new uint8_t[size]);
-    messenger_msg* mmsg = (messenger_msg*) msg_raw.get();
-    mmsg->length = htons(size);
-    mmsg->type = type;
   }
 
   void msgpacket::init(boost::shared_array<uint8_t>& msg_raw, const char* str, 
@@ -41,11 +37,6 @@ namespace vigil
   void msgpacket::send(boost::shared_array<uint8_t>& msg, Async_stream* sock,
 		       ssize_t size)
   {
-    if (size == 0)
-    {
-      messenger_msg* mmsg = (messenger_msg*) msg.get();
-      size = ntohs(mmsg->length);
-    }
     Nonowning_buffer buf(msg.get(), size);
     sock->write(buf, 0);
     VLOG_DBG(lg, "Sent message %p of length %zu socket %p",

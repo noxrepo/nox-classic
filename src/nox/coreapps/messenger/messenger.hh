@@ -29,7 +29,121 @@
 namespace vigil
 {
   using namespace vigil::container; 
+
+  /** Types of messages.
+   * Type value 0x00 to 0x09 are reserved for internal use.
+   */
+  enum msg_type
+  {
+    /** Disconnection message.
+     * Need to be consistent.
+     */
+    MSG_DISCONNECT = 0x00,
+    /** Echo message.
+     * Need to be consistent.
+     */
+    MSG_ECHO = 0x01,
+    /** Response message.
+     * Need to be consistent.
+     */
+    MSG_ECHO_RESPONSE = 0x02,
+    /** Authentication.
+     * Need to be consistent.
+     */
+    MSG_AUTH = 0x03,
+    /** Authenication response.
+     * Need to be consistent.
+     */
+    MSG_AUTH_RESPONSE = 0x04,
+    /** Authentication status.
+     * Need to be consistent.
+     */
+    MSG_AUTH_STATUS = 0x05,
+    
+    /** Plain string.
+     */
+    MSG_NOX_STR_CMD = 0x0A,
+  };
+
+  /** \brief Basic structure of message in \ref vigil::messenger.
+   *
+   * Copyright (C) Stanford University, 2008.
+   * @author ykk
+   * @date December 2008
+   * @see messenger
+   */
+  struct messenger_msg
+  {
+    /** Length of message, including this header.
+     */
+    uint16_t length;
+    /** Type of message, as defined in \ref msg_type.
+     */
+    uint8_t type;
+    /** Reference to body of message.
+     */
+    uint8_t body[0];
+  } __attribute__ ((packed));
   
+  /** \ingroup noxevents
+   * \brief Structure holding message to and from messenger.
+   *
+   * Copyright (C) Stanford University, 2008.
+   * @author ykk
+   * @date December 2008
+   * @see messenger
+   */
+  struct Msg_event : public Event
+  {
+    /** Constructor.
+     * Allocate memory for message.
+     * @param message message
+     * @param socket socket message is received with
+     * @param size length of message received
+     */
+    Msg_event(messenger_msg* message, Msg_stream* socket, ssize_t size);
+
+    /** Constructor.
+     * Allocate memory for message.
+     * @param cmsg core message to construct event from
+     */
+    Msg_event(const core_message* message);
+
+    /** Destructor.
+     */
+    ~Msg_event();
+
+    /** Empty constructor.
+     * For use within python.
+     */
+    Msg_event() : Event(static_get_name()) 
+    { }
+
+    /** Static name required in NOX.
+     */
+    static const Event_name static_get_name() 
+    {
+      return "Msg_event";
+    }
+
+    /** Print array of bytes for debug.
+     */
+    void dumpBytes();
+
+    /** Array reference to hold message.
+     */
+    messenger_msg* msg;
+    /** Length of message.
+     */
+    ssize_t len;
+    /** Memory allocated for message.
+     */
+    boost::shared_array<uint8_t> raw_msg;
+    /** Reference to socket.
+     */
+    Msg_stream* sock;
+  };   
+
   /** \ingroup noxcomponents
    * \brief Class through which to interact with NOX.
    *
@@ -38,7 +152,7 @@ namespace vigil
    * for storing the messages.
    *
    * TCP and SSL port can be changed at commandline using
-   * tcpport and sslport arguments for golems respectively. 
+   * tcpport and sslport arguments for messenger respectively. 
    * port 0 is interpreted as disabling the server socket.  
    * E.g.,
    * ./nox_core -i ptcp:6633 messenger=tcpport=11222,sslport=0
@@ -89,8 +203,9 @@ namespace vigil
 
     /** Function to do processing for messages received.
      * @param msg message event for message received
+     * @param code code for special events
      */
-    void process(const Msg_event* msg);
+    void process(const core_message* msg, int code=0);
 
     /** Send echo request.
      * @param sock socket to send echo request over

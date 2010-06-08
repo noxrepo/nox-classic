@@ -22,6 +22,8 @@ namespace vigil
    * Copyright (C) Stanford University, 2010.
    * @author ykk
    * @date February 2010
+   * @see json_dict
+   * @see json_array
    * @see jsonmessenger
    */
   class json_object

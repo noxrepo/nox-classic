@@ -1,0 +1,44 @@
+{
+    "components": [
+        {
+            "dependencies": [
+                "lavi_switches"
+            ], 
+            "name": "lavi", 
+            "library": "lavi"
+        }, 
+        {
+            "dependencies": [
+                "jsonmessenger"
+            ], 
+            "name": "lavi nodes", 
+            "library": "lavi_nodes"
+        }, 
+        {
+            "dependencies": [
+                "lavi nodes", 
+                "msgpacket", 
+                "datapathmem"
+            ], 
+            "name": "lavi_switches", 
+            "library": "lavi_switches"
+        }, 
+        {
+            "dependencies": [
+                "jsonmessenger"
+            ], 
+            "name": "lavi links", 
+            "library": "lavi_links"
+        }, 
+        {
+            "dependencies": [
+                "lavi links", 
+                "msgpacket", 
+		"datapathmem",
+                "topology"
+            ], 
+            "name": "lavi_swlinks", 
+            "library": "lavi_swlinks"
+        }
+    ]
+}

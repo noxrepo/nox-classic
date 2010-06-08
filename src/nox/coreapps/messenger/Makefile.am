@@ -15,7 +15,7 @@ messenger_la_SOURCES = messenger.cc messenger.hh
 messenger_la_LDFLAGS = -module -export-dynamic
 
 messenger_core_la_CPPFLAGS = $(AM_CPPFLAGS) -I $(top_srcdir)/src/nox -I $(top_srcdir)/src/nox/coreapps/
-messenger_core_la_SOURCES = messenger_core.cc messenger_core.hh message.hh
+messenger_core_la_SOURCES = messenger_core.cc messenger_core.hh
 messenger_core_la_LDFLAGS = -module -export-dynamic
 
 msgpacket_la_CPPFLAGS = $(AM_CPPFLAGS) -I $(top_srcdir)/src/nox -I $(top_srcdir)/src/nox/coreapps/
@@ -29,7 +29,9 @@ jsonmessenger_la_LDFLAGS = -module -export-dynamic
 NOX_RUNTIMEFILES = meta.json \
 	serverkey.pem \
 	cacert.pem \
-	servercert.pem
+	servercert.pem \
+	messenger.py \
+	__init__.py
 
 EXTRA_DIST = \
 	meta.json 

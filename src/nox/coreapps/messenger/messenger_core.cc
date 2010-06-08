@@ -30,29 +30,32 @@ namespace vigil
     isSSL = stream_.isSSL;
   }
 
-  Msg_event::Msg_event(messenger_msg* message, Msg_stream* socket, 
-		       ssize_t size):
-    Event(static_get_name())
+  core_message::core_message(Msg_stream* socket)
+  {
+    sock = socket;
+  }
+
+  core_message::core_message(uint8_t* message, Msg_stream* socket, 
+			     ssize_t size)
   {
     sock = socket;
 
     //Allocate memory and copy message
-    if (size < sizeof(messenger_msg) && size != 0)
-      size = sizeof(messenger_msg);
     len = size;
     raw_msg.reset(new uint8_t[size]);
     memcpy(raw_msg.get(), message, size);
-    msg = (messenger_msg*) raw_msg.get();
     VLOG_DBG(lg, "Received packet of length %zu", size);
   }
 
-  Msg_event::~Msg_event()
+
+
+  core_message::~core_message()
   {  }
 
-  void Msg_event::dumpBytes()
+  void core_message::dumpBytes()
   {
     uint8_t* readhead =  (uint8_t*) raw_msg.get();
-    fprintf(stderr,"messenger_core Msg_event of size %zu\n\t",
+    fprintf(stderr,"core_message of size %zu\n\t",
 	    len);
     for (int i = 0; i < len; i++)
     {
@@ -64,7 +67,6 @@ namespace vigil
 
   void messenger_core::configure(const Configuration* config)
   {
-    register_event(Msg_event::static_get_name());
   }
   
   void messenger_core::getInstance(const container::Context* ctxt, 
@@ -168,7 +170,7 @@ namespace vigil
   { 
     msgstream=new Msg_stream(sock.get(), false);
     if (messenger->newConnectionMsg)
-      send_new_connection_msg();
+      send_new_connection_msg(msgstream);
     start(boost::bind(&messenger_tcp_connection::run, this));
   }
     
@@ -189,7 +191,7 @@ namespace vigil
       if (dataSize <= 0)
       {
 	//Terminating disconnected connection
-	post_disconnect();
+	post_disconnect(msgstream);
 	running = false;
         break;
       }
@@ -208,7 +210,7 @@ namespace vigil
   { 
     msgstream=new Msg_stream(sock.get(), false);
     if (messenger->newConnectionMsg)
-      send_new_connection_msg();
+      send_new_connection_msg(msgstream);
     start(boost::bind(&messenger_ssl_connection::run, this));
   }
 
@@ -229,7 +231,7 @@ namespace vigil
       if (dataSize <= 0)
       {
 	//Terminating disconnected connection
-	post_disconnect();
+	post_disconnect(msgstream);
 	running = false;
         break;
       }
@@ -259,13 +261,9 @@ namespace vigil
     }
   }
 
-  void messenger_connection::send_new_connection_msg()
+  void messenger_connection::send_new_connection_msg(Msg_stream* sock)
   {
-    messenger_msg* msgbuf = (messenger_msg*) &internalrecvbuf;
-    msgbuf->length = htons(0);
-    msgbuf->type = 0;
-    process(new Msg_event((messenger_msg*) internalrecvbuf, 
-			  msgstream, ntohs(msgbuf->length)));
+    process(new core_message(sock), message_processor::msg_code_new_connection);
   }
 
   void messenger_connection::check_idle()
@@ -278,7 +276,7 @@ namespace vigil
       if (echoMissed >= msger->thresholdEchoMissed)
       {
 	VLOG_WARN(lg, "Connection terminated due to idle");
-	post_disconnect();
+	post_disconnect(msgstream);
 	running = false;
 	msgstream->stream->close();
 	endpointer = &internalrecvbuf[0];
@@ -299,13 +297,9 @@ namespace vigil
     }
   }
 
-  void messenger_connection::post_disconnect()
+  void messenger_connection::post_disconnect(Msg_stream* sock)
   {
-    messenger_msg* msgbuf = (messenger_msg*) &internalrecvbuf;
-    msgbuf->length = htons(3);
-    msgbuf->type = MSG_DISCONNECT;
-    process(new Msg_event((messenger_msg*) internalrecvbuf, 
-			  msgstream, ntohs(msgbuf->length)));
+    process(new core_message(sock), message_processor::msg_code_disconnection);
   }
 
   void messenger_connection::processBlock(Array_buffer& buf, ssize_t& dataSize, 
@@ -350,27 +344,20 @@ namespace vigil
 	  fprintf(stderr,"\n");
 	}
 
-	process(new Msg_event((messenger_msg*) internalrecvbuf, sock,
-			      currSize));
+	process(new core_message((uint8_t*) internalrecvbuf, sock,
+				 currSize));
 	endpointer = &internalrecvbuf[0];
 	currSize=0;
       }
     }
   }
 
-  void messenger_connection::process(const Msg_event* msg)
+  void messenger_connection::process(const core_message* msg, int code)
   {
     lastActiveTime = time(NULL);
     echoMissed = 0;
 
-    switch (((Msg_event*)msg)->msg->type)
-    {
-    case MSG_DISCONNECT:
-      running = false;
-      VLOG_DBG(lg, "Received disconnection request");
-    default:
-      msger->process(msg);
-    }
+    msger->process(msg,code);
   }
 
 } // namespace vigil

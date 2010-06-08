@@ -1,5 +1,5 @@
 #include "tablog.hh"
-#include "messenger/messenger_core.hh"
+#include "messenger/jsonmessenger.hh"
 #include "assert.hh"
 #include <boost/bind.hpp>
 #include <stdlib.h>
@@ -38,7 +38,7 @@ namespace vigil
 
   void tablog::configure(const Configuration* c) 
   { 
-    register_handler<Msg_event>
+    register_handler<JSONMsg_event>
       (boost::bind(&tablog::handle_msg_event, this, _1));
   }
   
@@ -47,17 +47,25 @@ namespace vigil
 
   Disposition tablog::handle_msg_event(const Event& e)
   {
-    const Msg_event& me = assert_cast<const Msg_event&>(e);
-    
-    if (me.msg->type == MSG_NOX_STR_CMD)
+    const JSONMsg_event& jme = assert_cast<const JSONMsg_event&>(e);
+    json_dict::iterator i;
+   
+    //Filter all weird messages
+    if (jme.jsonobj->type != json_object::JSONT_DICT)
+      return STOP;
+
+    json_dict* jodict = (json_dict*) jme.jsonobj->object;
+    i = jodict->find("type");
+    if (i != jodict->end() &&
+	i->second->type == json_object::JSONT_STRING &&
+	*((string *) i->second->object) == "tablog" )
     {
-      char mstring[ntohs(me.msg->length)-sizeof(messenger_msg)+1];
-      memcpy(mstring, me.msg->body, ntohs(me.msg->length)-sizeof(messenger_msg));
-      mstring[ntohs(me.msg->length)-sizeof(messenger_msg)] = '\0';
-      if (strcmp(mstring,"LOG ROTATE") == 0)
+      i = jodict->find("command");
+      if (i != jodict->end() &&
+	  i->second->type == json_object::JSONT_STRING &&
+	  *((string *) i->second->object) == "rotate" )
 	rotate_logs();
     }
-
     
     return CONTINUE;
   }

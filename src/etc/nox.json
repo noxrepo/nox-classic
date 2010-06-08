@@ -2,23 +2,34 @@
     "nox": {
         "events": {
             "Bootstrap_complete_event": [
-                "role_config_manager",
+                "authenticator",
+		"routing",
+		"tests",
+		"role_config_manager",
                 "sepl_enforcer"],
             "Datapath_join_event": [
+	        "topology",
                 "datapathmem",
                 "linkload",
-                "authenticator"
+                "authenticator",
+		"lavi_switches",
+		"cswitchstats"
                 ],
             "Datapath_leave_event": [
+	        "topology",
                 "datapathmem",
                 "linkload",
-                "noop"
+		"switchrtt",
+                "noop",
+                "authenticator",
+		"lavi_switches",
+		"cswitchstats"
                 ],
             "Openflow_msg_event": [
                 "switchrtt"
                 ],
             "Packet_in_event": [
-                "hostrack_pktin",
+                "trackhost_pktin",
                 "hostip",
                 "authenticator",
                 "dwh",
@@ -26,7 +37,9 @@
                 "counter",
                 "packetdump",
                 "ctlflood",
-                "switch"
+                "switch",
+		"hub",
+		"cswitchstats"
                 ],
             "Flow_in_event": [
                 "sepl_enforcer",
@@ -36,7 +49,10 @@
                 "flow_cache"
                 ],
             "Link_event": [
-                "authenticator"
+	        "topology",
+                "authenticator",
+		"lavi_swlinks",
+		"routing_module"
                 ],
             "Flow_mod_event": [
                 "authenticator"
@@ -46,22 +62,36 @@
                 "dwh"
                 ],
             "Port_status_event": [
-                "linkload"
+	        "datapathmem",
+                "linkload",
+		"cswitchstats",
+		"topology",
+		"authenticator"
                 ],
             "Port_stats_in_event": [
                 "linkload"
                 ],
             "Msg_event": [
-                "jsonmesssenger"
+	        "messenger"
                 ],
             "JSONMsg_event": [
-                "sepl_enforcer",
-                "routing"
+                "jsonmessenger",
+                "lavi_switches",  
+		"lavi_swlinks",
+                "lavi nodes",
+                "lavi links",
+                "tablog"
                 ],
             "Shutdown_event": [
                 "flowlog",
                 "rttlog"
-                ]
+                ],
+	    "Host_auth_event": [
+	    	"authenticator"
+	        ],
+	    "User_auth_event": [
+	    	"authenticator"
+	        ]
         }
     }
 }

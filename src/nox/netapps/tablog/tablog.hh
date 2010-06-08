@@ -44,6 +44,9 @@ namespace vigil
    * \ingroup noxcomponents
    * 
    * Component dumps data into one of the \ref tablog_dump format.
+   *
+   * Log rotate can be externally triggered using jsonmessenger.
+   * @see #handle_msg_event(const Event& e)
    * 
    * @author ykk
    * @date December 2009
@@ -108,9 +111,16 @@ namespace vigil
      */
     void install();
 
-    /** \brief Log rotate on LOG ROTATE message
+    /** \brief Log rotate on ROTATE message
      *
-     * @param e msg event
+     * <PRE>
+     * {
+     *   "type" : "tablog",
+     *   "command" : "rotate"
+     * }
+     * </PRE>
+     *
+     * @param e JSON msg event
      * @return CONTINUE;
      */
     Disposition handle_msg_event(const Event& e);
