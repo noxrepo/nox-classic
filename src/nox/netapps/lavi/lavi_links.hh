@@ -161,10 +161,14 @@ namespace vigil
 
     /** \brief Check if node matches all filters
      * @param filter filter
-     * @param nodetype node type
-     * @param nodeid node id
+     * @param nodetype1 node 1 type
+     * @param nodeid1 node 1 id
+     * @param nodetype2 node 2 type
+     * @param nodeid2 node 2 id
      */
-    bool match(const link_filters filter, string nodetype, string nodeid);
+    bool match(const link_filters filter, 
+	       string nodetype1, string nodeid1,
+	       string nodetype2, string nodeid2);
 
     /** \brief Unsubscribe stream
      *

@@ -175,12 +175,14 @@ namespace vigil
   }
 
   
-  bool lavi_links::match(const link_filters filter, string nodetype, string nodeid)
+  bool lavi_links::match(const link_filters filter, string nodetype1, string nodeid1,
+			 string nodetype2, string nodeid2)
   {
     link_filters::const_iterator i = filter.begin();
     while (i != filter.end())
     {
-      if (i->match(nodetype, nodeid))
+      if (i->match(nodetype1, nodeid1) ||
+	  i->match(nodetype2, nodeid2))
 	i++;
       else
 	return false;
