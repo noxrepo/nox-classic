@@ -11,10 +11,6 @@ import simplejson
 # Uses \ref jsonmessenger to proxy commands.
 # Individual components will execute the commands accordingly.
 #
-# This can only be run in the source directory of NOX
-# unless that directory is added to the PYTHONPATH
-# environment variable.
-#
 # Run nox-console --help for help on usage
 # 
 # @author ykk
