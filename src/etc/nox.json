@@ -51,6 +51,7 @@
             "Link_event": [
 	        "topology",
                 "authenticator",
+		"lavi_swlinks",
 		"routing_module"
                 ],
             "Flow_mod_event": [
@@ -75,7 +76,8 @@
                 ],
             "JSONMsg_event": [
                 "jsonmessenger",
-                "lavi_switches",
+                "lavi_switches",  
+		"lavi_swlinks",
                 "lavi nodes",
                 "lavi links",
                 "tablog"
