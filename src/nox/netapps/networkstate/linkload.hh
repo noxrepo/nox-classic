@@ -22,7 +22,7 @@
 #include "config.h"
 #include "hash_map.hh"
 #include "port-stats-in.hh"
-#include "routeinstaller/network_graph.hh"
+#include "network_graph.hh"
 #include "netinet++/datapathid.hh"
 #include "datapathmem.hh"
 #include <boost/shared_array.hpp>

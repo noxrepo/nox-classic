@@ -7,7 +7,7 @@ pkglib_LTLIBRARIES =		\
 	routeinstaller.la
 
 routeinstaller_la_CPPFLAGS = $(AM_CPPFLAGS) -I $(top_srcdir)/src/nox -I $(top_srcdir)/src/nox/netapps -I $(top_srcdir)/src/nox/coreapps
-routeinstaller_la_SOURCES = routeinstaller.cc routeinstaller.hh network_graph.hh
+routeinstaller_la_SOURCES = routeinstaller.cc routeinstaller.hh
 routeinstaller_la_LDFLAGS = -module -export-dynamic
 
 NOX_RUNTIMEFILES = meta.json	

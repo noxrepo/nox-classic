@@ -1,13 +1,15 @@
 #ifndef NETWORKGRAPH_HH_
 #define NETWORKGRAPH_HH_
 
+#include <stdint.h>
+#include <stdlib.h>
+#include <list>
 #include "netinet++/datapathid.hh"
 #include "hash_map.hh"
 #include "openssl/md5.h"
 
 namespace vigil
 {
-
   /** \brief Class to contain abstraction of network graph.
    * 
    * @author ykk
@@ -51,18 +53,7 @@ namespace vigil
       /** Generate hash code.
        * @return hash code
        */
-      uint64_t hash_code() const
-      {
-	uint64_t id = dpid.as_host();
-	unsigned char md[MD5_DIGEST_LENGTH];
-	MD5_CTX ctx;
-	MD5_Init(&ctx);
-	MD5_Update(&ctx, &port, sizeof(port));
-	MD5_Update(&ctx, &id, sizeof(id));
-	MD5_Final(md, &ctx);
-
-	return *((uint64_t*)md);
-      }
+      uint64_t hash_code() const;
 
       bool operator==(const switch_port& swp) const
       {

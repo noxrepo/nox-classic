@@ -31,6 +31,7 @@ libnoxcore_la_SOURCES = \
 	json_object.cc \
 	leak-checker.cc \
 	netinet++/ethernetaddr.cc \
+	network_graph.cc \
 	openflow-event.cc \
 	openflow-pack.cc \
 	openflow-pack-raw.cc \

@@ -50,6 +50,7 @@ netinet++/static_lib.hh				\
 netinet++/tcp.hh				\
 netinet++/vlan.hh				\
 netlink.hh					\
+network_graph.hh				\
 ofmp-config-update-ack.hh   \
 ofmp-config-update.hh       \
 ofmp-resources-update.hh    \
