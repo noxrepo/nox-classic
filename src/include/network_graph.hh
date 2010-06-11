@@ -41,6 +41,13 @@ namespace vigil
 	dpid(dpid_), port(port_)
       {}
 
+     /** Copy constructor.
+       * @param sp switch port to clone
+       */
+      switch_port(const switch_port& sp):
+	dpid(sp.dpid), port(sp.port)
+      {}
+
       /** Set value of switch_port.
        * @param val value to set to.
        */
@@ -83,6 +90,15 @@ namespace vigil
        */
       std::list<std::pair<uint16_t, hop*> > next_hops;
 
+      /** Empty constructor.
+       */
+      hop();
+
+      /** Copy constructor
+       * @param h hop to be cloned
+       */
+      hop(const hop& h);
+
       /** Constructor.
        * @param dpid_ switch datapathid
        * @param port_ port number
@@ -98,7 +114,7 @@ namespace vigil
       {
 	if (!in_switch_port.dpid.empty())
 	  next_hops.clear();
-      }
+      }      
     };
 
     /** List of next hops.

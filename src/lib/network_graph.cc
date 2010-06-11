@@ -14,4 +14,14 @@ namespace vigil
     
     return *((uint64_t*)md);
   }
+
+  network::hop::hop(const hop& h):
+    in_switch_port(h.in_switch_port)
+  {
+    for (nextHops::const_iterator i = h.next_hops.begin();
+	 i != h.next_hops.end(); i++)
+    {
+      next_hops.push_back(std::make_pair(i->first,new hop(*(i->second))));
+    }
+  }
 }
