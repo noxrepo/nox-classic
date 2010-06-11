@@ -143,6 +143,14 @@ const of_match Flow::get_exact_match() const
     return om;
 }
 
+Flow::Flow(const Flow& flow):
+    in_port(flow.in_port), dl_vlan(flow.dl_vlan), dl_vlan_pcp(flow.dl_vlan_pcp), 
+    dl_src(flow.dl_src), dl_dst(flow.dl_dst), dl_type(flow.dl_type),
+    nw_src(flow.nw_src), nw_dst(flow.nw_dst), 
+    nw_proto(flow.nw_proto), nw_tos(flow.nw_tos),
+    tp_src(flow.tp_src), tp_dst(flow.tp_dst) 
+{ }
+
 Flow::Flow(uint16_t in_port_, const Buffer& buffer)
     : in_port(in_port_),
       dl_vlan(), dl_vlan_pcp(0), dl_src(), dl_dst(), dl_type(0),

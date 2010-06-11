@@ -31,45 +31,88 @@ namespace vigil {
 class Buffer;
 
 struct Flow {
-    uint16_t in_port;       /* Input switch port. */
-    uint16_t dl_vlan;       /* Input VLAN. */
-    uint8_t dl_vlan_pcp;    /* Input VLAN priority. */
-    ethernetaddr dl_src;    /* Ethernet source address. */
-    ethernetaddr dl_dst;    /* Ethernet destination address. */
-    uint16_t dl_type;       /* Ethernet frame type. */
-    uint32_t nw_src;        /* IP source address. */
-    uint32_t nw_dst;        /* IP destination address. */
-    uint8_t nw_proto;       /* IP protocol. */
-    uint8_t nw_tos;         /* IP ToS (actually DSCP field, 6 bits). */
-    uint16_t tp_src;        /* TCP/UDP source port. */
-    uint16_t tp_dst;        /* TCP/UDP destination port. */
+  /** Input switch port. 
+   */
+  uint16_t in_port;       
+  /** Input VLAN. 
+   */
+  uint16_t dl_vlan;      
+  /** Input VLAN priority. 
+   */ 
+  uint8_t dl_vlan_pcp;   
+  /** Ethernet source address. 
+   */
+  ethernetaddr dl_src;    
+  /** Ethernet destination address. 
+   */
+  ethernetaddr dl_dst;    
+  /** Ethernet frame type. 
+   */
+  uint16_t dl_type;     
+  /** IP source address. 
+   */
+  uint32_t nw_src;     
+  /** IP destination address. 
+   */   
+  uint32_t nw_dst;   
+  /** IP protocol. 
+   */
+  uint8_t nw_proto;
+  /** IP ToS (actually DSCP field, 6 bits). 
+   */  
+  uint8_t nw_tos;
+  /** TCP/UDP source port. 
+   */
+  uint16_t tp_src;        
+  /** TCP/UDP destination port. 
+   */
+  uint16_t tp_dst;        
 
-    Flow() :
-        in_port(0), dl_vlan(0), dl_vlan_pcp(0), 
-        dl_src(), dl_dst(), dl_type(0),
-        nw_src(0), nw_dst(0), 
-	nw_proto(0), nw_tos(0),
-        tp_src(0), tp_dst(0) { }
-    Flow(uint16_t in_port_, const Buffer&);
-    Flow(const ofp_match& match);
-    Flow(const ofp_match* match);
-    Flow(uint16_t in_port_, uint16_t dl_vlan_, uint8_t dl_vlan_pcp_,
-            ethernetaddr dl_src_, ethernetaddr dl_dst_, uint16_t dl_type_, 
-            uint32_t nw_src_, uint32_t nw_dst_, uint8_t nw_proto_,
-            uint16_t tp_src_, uint16_t tp_dst_, uint8_t nw_tos_=0) :
-        in_port(in_port_), dl_vlan(dl_vlan_), dl_vlan_pcp(dl_vlan_pcp_), 
-        dl_src(dl_src_), dl_dst(dl_dst_), dl_type(dl_type_),
-        nw_src(nw_src_), nw_dst(nw_dst_), 
-	nw_proto(nw_proto_), nw_tos(nw_tos_),
-        tp_src(tp_src_), tp_dst(tp_dst_) { }
-    static bool matches(const Flow&, const Flow&);
-    const std::string to_string() const;
-    /** \brief Return of_match that is exact match to flow.
-     *
-     * @return of_match with exact match
-     */
-    const of_match get_exact_match() const;
-    uint64_t hash_code() const;
+  /** Empty constructor
+   */
+  Flow() :
+    in_port(0), dl_vlan(0), dl_vlan_pcp(0), 
+    dl_src(), dl_dst(), dl_type(0),
+    nw_src(0), nw_dst(0), 
+    nw_proto(0), nw_tos(0),
+    tp_src(0), tp_dst(0) { }
+  /** Copy constructor
+   */
+  Flow(const Flow& flow_);
+  /** Constructor from packet
+   */
+  Flow(uint16_t in_port_, const Buffer&);
+  /** Constructor from ofp_match
+   */
+  Flow(const ofp_match& match);
+  /** Constructor from ofp_match
+   */
+  Flow(const ofp_match* match);
+  /** Detail constructor
+   */
+  Flow(uint16_t in_port_, uint16_t dl_vlan_, uint8_t dl_vlan_pcp_,
+       ethernetaddr dl_src_, ethernetaddr dl_dst_, uint16_t dl_type_, 
+       uint32_t nw_src_, uint32_t nw_dst_, uint8_t nw_proto_,
+       uint16_t tp_src_, uint16_t tp_dst_, uint8_t nw_tos_=0) :
+    in_port(in_port_), dl_vlan(dl_vlan_), dl_vlan_pcp(dl_vlan_pcp_), 
+    dl_src(dl_src_), dl_dst(dl_dst_), dl_type(dl_type_),
+    nw_src(nw_src_), nw_dst(nw_dst_), 
+    nw_proto(nw_proto_), nw_tos(nw_tos_),
+    tp_src(tp_src_), tp_dst(tp_dst_) { }
+  /** Compare function
+   */
+  static bool matches(const Flow&, const Flow&);
+  /** String representation
+   */
+  const std::string to_string() const;
+  /** \brief Return of_match that is exact match to flow.
+   *
+   * @return of_match with exact match
+   */
+  const of_match get_exact_match() const;
+  /** Return hash code
+   */
+  uint64_t hash_code() const;
 };
 bool operator==(const Flow& lhs, const Flow& rhs);
 bool operator!=(const Flow& lhs, const Flow& rhs);
