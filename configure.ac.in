@@ -58,8 +58,8 @@ dnl Add your module here to have it grouped into a package
 
 ACI_PACKAGE([coreapps],[core application set],
                [testharness coretests pyrt simple_c_app simple_c_py_app
-               	hub switch examples messenger
-               	snmp #add coreapps component here
+               	hub switch examples messenger snmp
+               	#add coreapps component here
 		],
                [yes])
 ACI_PACKAGE([netapps],[misc network apps],
@@ -67,8 +67,8 @@ ACI_PACKAGE([netapps],[misc network apps],
                	routing user_event_log tests topology discovery 
                	bindings_storage switchstats flow_fetcher data
                	switch_management networkstate hoststate tablog 
-               	routeinstaller
-                lavi #add netapps component here
+               	route lavi
+                #add netapps component here
 		],
                [TURN_ON_NETAPPS])
 ACI_PACKAGE([webapps],[misc ui apps],
