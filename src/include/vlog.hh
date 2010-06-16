@@ -33,6 +33,9 @@
 #include <string>
 #include <sys/types.h>
 
+#include <sys/socket.h>
+#include <netdb.h>
+
 #ifdef LOG4CXX_ENABLED
 #include "log4cxx/logger.h"
 #endif
@@ -77,6 +80,7 @@ public:
     enum {
         FACILITY_SYSLOG,
         FACILITY_CONSOLE,
+        //FACILITY_UDPSOCK,
         N_FACILITIES,
         ANY_FACILITY = -1
     };
@@ -111,6 +115,8 @@ public:
 
 private:
     Vlog_impl* pimpl;
+    int hSock;
+	struct sockaddr_in addr;
 #endif
 public:
     Module get_module_val(const char* name, bool create = true);

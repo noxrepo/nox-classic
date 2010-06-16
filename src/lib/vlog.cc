@@ -270,6 +270,14 @@ Vlog::Vlog()
      * before the Vlog_module's constructor is called, then its 'module' will
      * be 0, so that its module name will be logged as "uninitialized". */
     get_module_val("uninitialized");
+        
+    /* Init socket to forward log msgs */
+	hSock = socket(AF_INET, SOCK_DGRAM, 0);	
+	struct hostent *pServer = gethostbyname("localhost");
+	memset(&addr, 0, sizeof(addr));
+	addr.sin_family = AF_INET;
+	memcpy(&addr.sin_addr.s_addr, pServer->h_addr, pServer->h_length);
+	addr.sin_port = htons(2222);
 }
 
 Vlog::~Vlog()
@@ -403,7 +411,7 @@ Vlog::output(Module module, Level level, const char* log_msg)
                : level == LEVEL_WARN ? LOG_WARNING
                : level == LEVEL_INFO ? LOG_INFO
                : LOG_DEBUG);
-        if(strlen(log_msg) < MAX_MSG_LEN) {  
+        if(strlen(log_msg) < MAX_MSG_LEN) { 
           ::syslog(priority, "%05d|%s:%s %s",
                  pimpl->msg_num, module_name, level_name, log_msg);
         } else {
@@ -420,6 +428,12 @@ Vlog::output(Module module, Level level, const char* log_msg)
           }  
         } 
     }
+    
+    /* Send log msg to socket */
+	char pWrite[MAX_MSG_LEN];
+	memset(pWrite, 0, sizeof(pWrite));
+	sprintf(pWrite,"%05d|%s|%s:%s\n",pimpl->msg_num,module_name,level_name,log_msg);
+	sendto(hSock,pWrite,strlen(pWrite),0,(sockaddr*)&addr,sizeof(addr));
 
     /* Restore errno (it's pretty unfriendly for a log function to change
      * errno). */
