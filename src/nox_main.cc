@@ -220,6 +220,22 @@ int daemon() {
     return 0;
 }
 
+int start_gui() {
+    switch (fork()) {
+    case -1:
+        /* Fork failed! */
+        return -1;
+    case 0:
+        /* Daemon process */
+        char *args[] = {"", (char *) 0 };
+        execv("../../src/gui/qt-nox.py", args);
+        cout<<"Starting GUI\n";
+        break;
+    }
+    return 0;
+}
+
+
 bool verbose = false;
 #ifndef LOG4CXX_ENABLED
 vector<string> verbosity;
@@ -273,6 +289,7 @@ int main(int argc, char *argv[])
     const char* info_file = "./nox.info";
     bool reliable = true;
     bool daemon_flag = false;
+    bool gui_flag = false;
     vector<string> interfaces;
 
     string conf = PKGSYSCONFDIR"/nox.json";
@@ -297,6 +314,7 @@ int main(int argc, char *argv[])
         };
         static struct option long_options[] = {
             {"daemon",      no_argument, 0, 'd'},
+            {"gui",      no_argument, 0, 'g'},
             {"unreliable",  no_argument, 0, 'u'},
 
             {"interface",   required_argument, 0, 'i'},
@@ -331,6 +349,10 @@ int main(int argc, char *argv[])
         switch (c) {
         case 'd':
             daemon_flag = true;
+            break;
+            
+        case 'g':
+            gui_flag = true;
             break;
 
         case 'u':
@@ -385,7 +407,7 @@ int main(int argc, char *argv[])
         case 'V':
             hello(program_name);
             exit(EXIT_SUCCESS);
-
+            
         case '?':
             exit(EXIT_FAILURE);
 
@@ -394,17 +416,21 @@ int main(int argc, char *argv[])
         }
     }
 
+    /* Spawn GUI if configured */
+    if (gui_flag && start_gui()) {
+        exit(EXIT_FAILURE);
+    }
+
     if (!verbose && !daemon_flag) {
         hello(program_name);
     }
-
+    
     /* Determine the end-user applications to run */
     Application_list applications = parse_application_list(optind, argc, argv);
     json_object* platform_configuration;
         
     try {
         /* Parse the platform configuration file */
-        //string platform_configuration_file_error;
         
         BOOST_FOREACH(string s, conf_dirs) {
             boost::filesystem::path confpath(s);
@@ -433,7 +459,7 @@ int main(int argc, char *argv[])
         printf("ERR: %s", e.what());
         exit(EXIT_FAILURE);
     }
-
+    
     /* Become a daemon before finishing the booting, if configured */
     if (daemon_flag && daemon()) {
         exit(EXIT_FAILURE);
