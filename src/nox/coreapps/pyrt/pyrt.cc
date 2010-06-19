@@ -20,9 +20,9 @@
 #include <signal.h>
 #include <stdexcept>
 
-#ifndef SWIG
+#ifndef SWIGPYTHON
 #include "swigpyrun.h"
-#endif // SWIG
+#endif // SWIGPYTHON
 
 #include <boost/bind.hpp>
 #include <boost/filesystem.hpp>
@@ -204,6 +204,7 @@ static void convert_table_stats_in(const Event& e, PyObject* proxy) {
     const Table_stats_in_event& tsi 
                 = dynamic_cast<const Table_stats_in_event&>(e);
 
+    pyglue_setattr_string(proxy, "xid", to_python(tsi.xid()));
     pyglue_setattr_string(proxy, "datapath_id", to_python(tsi.datapath_id));
     pyglue_setattr_string(proxy, "tables"    , to_python<vector<Table_stats> >(tsi.tables));
 
@@ -214,6 +215,7 @@ static void convert_aggregate_stats_in(const Event& e, PyObject* proxy) {
     const Aggregate_stats_in_event& asi 
                 = dynamic_cast<const Aggregate_stats_in_event&>(e);
 
+    pyglue_setattr_string(proxy, "xid", to_python(asi.xid()));
     pyglue_setattr_string(proxy, "datapath_id",  to_python(asi.datapath_id));
     pyglue_setattr_string(proxy, "packet_count", to_python(asi.packet_count));
     pyglue_setattr_string(proxy, "byte_count", to_python(asi.byte_count));
@@ -240,6 +242,7 @@ static void convert_port_stats_in(const Event& e, PyObject* proxy) {
     const Port_stats_in_event& psi 
                 = dynamic_cast<const Port_stats_in_event&>(e);
 
+    pyglue_setattr_string(proxy, "xid", to_python(psi.xid()));
     pyglue_setattr_string(proxy, "datapath_id", to_python(psi.datapath_id));
     pyglue_setattr_string(proxy, "ports"    , to_python<vector<Port_stats> >(psi.ports));
 
