@@ -56,13 +56,26 @@ for opt,arg in opts:
 
 #Get data for SNMP trap/inform
 data = []
+cmd = {}
+cmd["type"] = "snmptrap"
+i = 0
 for line in sys.stdin.readlines():
-    data.append(line.split())
+    if (i == 0):
+        cmd["host"] = line.strip()
+    elif (i == 1):
+        cmd["ip"] = line.strip()
+    else:
+        linedata = line.split()
+        if (len(linedata) == 2):
+            cmd[linedata[0]] = linedata[1]
+        elif (len(linedata) >= 2):
+            cmd[linedata[0]] = linedata[1:]
+        else:
+            if (len(linedata) > 0):
+                cmd[linedata[0]] = None
+    i+=1
 
 #Construct message
-cmd = {}
-cmd["content"] = data
-cmd["type"] = "snmptrap"
 
 #Sending content
 sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
