@@ -115,7 +115,7 @@ if (appdirname != None):
     sampledir="../"+sampledir
 check_file(sampledir+samplefile+".hh")
 check_file(sampledir+samplefile+".cc")
-check_file(sampledir+"meta.xml")
+check_file(sampledir+"meta.json")
 check_file(sampledir+"Makefile.am")
 
 #Check application not existing
