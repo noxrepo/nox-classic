@@ -1,18 +1,22 @@
 {
     "components": [
         {
-            "name": "routeinstaller" ,
-            "library": "routeinstaller" ,
             "dependencies": [
                 "routing_module"
-            ]
-        },
+            ], 
+            "name": "routeinstaller", 
+            "library": "routeinstaller"
+        }, 
         {
-            "name": "python routeinstaller" ,
+            "python": "nox.apps.routeinstaller.pyrouteinstaller", 
             "dependencies": [
                 "pyrouteinstaller"
-            ],
-            "python": "nox.apps.routeinstaller.pyrouteinstaller"
+            ], 
+            "name": "python routeinstaller"
+        }, 
+        {
+            "name": "flowroute record", 
+            "library": "flowroute_record"
         }
     ]
 }

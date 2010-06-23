@@ -4,11 +4,16 @@ if PY_ENABLED
 AM_CPPFLAGS += $(PYTHON_CPPFLAGS)
 
 pkglib_LTLIBRARIES =		\
-	routeinstaller.la
+	routeinstaller.la	\
+	flowroute_record.la
 
 routeinstaller_la_CPPFLAGS = $(AM_CPPFLAGS) -I $(top_srcdir)/src/nox -I $(top_srcdir)/src/nox/netapps -I $(top_srcdir)/src/nox/coreapps
 routeinstaller_la_SOURCES = routeinstaller.cc routeinstaller.hh
 routeinstaller_la_LDFLAGS = -module -export-dynamic
+
+flowroute_record_la_CPPFLAGS = $(AM_CPPFLAGS) -I $(top_srcdir)/src/nox -I $(top_srcdir)/src/nox/netapps/
+flowroute_record_la_SOURCES = flowroute_record.hh flowroute_record.cc
+flowroute_record_la_LDFLAGS = -module -export-dynamic
 
 NOX_RUNTIMEFILES = meta.json	
 
