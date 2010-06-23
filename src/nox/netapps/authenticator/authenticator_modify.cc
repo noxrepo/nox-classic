@@ -930,7 +930,7 @@ Authenticator::remove_user(UserEntry *user, HostEntry *host,
                 data_cache->get_unauthenticated_id(datatypes->user_type())
                 && uentry->entry->name != 0)
             {
-                poison = true;
+ 	        poison = poison_allowed;
                 int64_t userid = uentry->entry->name;
                 int64_t hostid = host->entry->name;
                 const std::string& username = get_user_name(userid);

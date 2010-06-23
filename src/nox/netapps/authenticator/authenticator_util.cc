@@ -110,6 +110,8 @@ Authenticator::configure(const container::Configuration*)
     register_event(User_join_event::static_get_name());
     register_event(Switch_bind_event::static_get_name());
 
+    poison_allowed = true;
+
     resolve(datatypes);
     resolve(data_cache);
     resolve(bindings);

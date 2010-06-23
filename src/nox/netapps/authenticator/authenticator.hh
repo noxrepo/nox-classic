@@ -226,6 +226,11 @@ public:
 
     void add_endpoint_updated_fn(const EndpointUpdatedFn& fn);
 
+    /** \brief Option to allow poisoning or not
+     * Defaulted to true
+     */
+    bool poison_allowed;
+
 private:
     typedef hash_map<uint64_t, DLEntry>      DLMap;
     typedef hash_map<uint32_t, NWEntry>      NWMap;
