@@ -143,6 +143,19 @@ namespace vigil
     void add_location(ethernetaddr host, datapathid dpid, uint16_t port,
 		      time_t tv=0);
 
+    /** \brief Unset location
+     * @param host host as identified by ethernet address
+     * @param dpid switch datapath id
+     * @param port port of switch host is connected to
+     */
+    void remove_location(ethernetaddr host, datapathid dpid, uint16_t port);
+
+    /** \brief Unset location
+     * @param host host as identified by ethernet address
+     * @param loc location host is detached from
+     */
+    void remove_location(ethernetaddr host, location loc);
+
     /** \brief Get locations
      * @param host ethernet address of host
      * @return locations

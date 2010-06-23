@@ -142,6 +142,34 @@ namespace vigil
     }
   }
 
+  void hosttracker::remove_location(ethernetaddr host, datapathid dpid, uint16_t port)
+  {
+    remove_location(host, hosttracker::location(dpid,port,0));
+  }
+
+  void hosttracker::remove_location(ethernetaddr host, hosttracker::location loc)
+  {
+    hash_map<ethernetaddr,list<hosttracker::location> >::iterator i =	\
+      hostlocation.find(host);
+    if (i != hostlocation.end())
+    {
+      list<location>::iterator k = i->second.begin();
+      while (k != i->second.end())
+      {
+	if (k->dpid == loc.dpid || k->port == loc.port)
+	{
+	  k = i->second.erase(k);
+	  if (i->second.size() == 0)
+	    hostlocation.erase(i);
+	}
+	else
+	  k++;
+      } 
+    }
+    else
+      VLOG_DBG(lg, "Host %"PRIx64" has no location, cannot unset.");
+  }
+
   const hosttracker::location hosttracker::get_latest_location(ethernetaddr host)
   {
     list<hosttracker::location> locs = \
