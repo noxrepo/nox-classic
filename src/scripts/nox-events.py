@@ -118,7 +118,7 @@ def usage():
     print "-v/--verbose\n\tVerbose"
     print  "Commands:"
     print "list\n\tList all C/C++ events"
-    print "list\n\tCheck nox.json"
+    print "check\n\tCheck nox.json"
 
 #Parse options and arguments
 ##Verbose or not
