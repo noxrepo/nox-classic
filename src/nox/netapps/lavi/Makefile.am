@@ -8,6 +8,7 @@ AM_CPPFLAGS += $(PYTHON_CPPFLAGS)
 endif # PY_ENABLED 
 
 pkglib_LTLIBRARIES =\
+	lavi_flows.la \
 	lavi_swlinks.la \
 	lavi_links.la \
 	lavi_nodes.la \
@@ -33,6 +34,10 @@ lavi_links_la_LDFLAGS = -module -export-dynamic
 lavi_swlinks_la_CPPFLAGS = $(AM_CPPFLAGS) -I $(top_srcdir)/src/nox -I $(top_srcdir)/src/nox/netapps/ -I $(top_srcdir)/src/nox/coreapps/
 lavi_swlinks_la_SOURCES = lavi_swlinks.hh lavi_swlinks.cc
 lavi_swlinks_la_LDFLAGS = -module -export-dynamic
+
+lavi_flows_la_CPPFLAGS = $(AM_CPPFLAGS) -I $(top_srcdir)/src/nox -I $(top_srcdir)/src/nox/netapps/ -I $(top_srcdir)/src/nox/coreapps/
+lavi_flows_la_SOURCES = lavi_flows.hh lavi_flows.cc
+lavi_flows_la_LDFLAGS = -module -export-dynamic
 
 NOX_RUNTIMEFILES = meta.json	
 

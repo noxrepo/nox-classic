@@ -1,9 +1,6 @@
 {
     "components": [
         {
-            "dependencies": [
-                "lavi_switches"
-            ], 
             "name": "lavi", 
             "library": "lavi"
         }, 
@@ -34,11 +31,15 @@
             "dependencies": [
                 "lavi links", 
                 "msgpacket", 
-		"datapathmem",
+                "datapathmem", 
                 "topology"
             ], 
             "name": "lavi_swlinks", 
             "library": "lavi_swlinks"
+        }, 
+        {
+            "name": "lavi flows", 
+            "library": "lavi_flows"
         }
     ]
 }
