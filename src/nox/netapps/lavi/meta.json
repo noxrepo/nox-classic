@@ -38,8 +38,20 @@
             "library": "lavi_swlinks"
         }, 
         {
+           "dependencies": [
+                "jsonmessenger"
+            ], 
             "name": "lavi flows", 
             "library": "lavi_flows"
+        }, 
+        {
+           "dependencies": [
+                "lavi flows",
+                "msgpacket", 
+		"flowroute record"
+            ], 
+            "name": "lavi networkflow", 
+            "library": "lavi_networkflow"
         }
     ]
 }
