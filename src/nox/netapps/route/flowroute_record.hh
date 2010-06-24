@@ -98,6 +98,10 @@ namespace vigil
     : public Component 
   {
   public:
+    /** \brief Map of flows and route
+     */
+    hash_map<Flow, network::route> routeMap;
+
     /** \brief Constructor of flowroute_record.
      *
      * @param c context
@@ -156,9 +160,6 @@ namespace vigil
 			    flowroute_record*& component);
 
   private:
-    /** \brief Map of flows and route
-     */
-    hash_map<Flow, network::route> routeMap;
   };
 }
 
