@@ -48,6 +48,22 @@ namespace vigil
     return false;
   }
 
+  list<pair<Flow, network::route> > 
+  flowroute_record::getFlow2Host(ethernetaddr host)
+  {
+    list<pair<Flow, network::route> > result;
+    hash_map<Flow, network::route>::iterator i = routeMap.begin();
+    while (i != routeMap.end())
+    {
+      if (i->first.dl_dst == host)
+      	result.push_back(make_pair(*(new Flow(i->first)),
+				   *(new network::route(i->second))));
+      i++;
+    }
+
+    return result;
+  }
+
   void flowroute_record::getInstance(const Context* c,
 				  flowroute_record*& component)
   {

@@ -126,6 +126,12 @@ namespace vigil
      */
     bool unset(const Flow& flow, bool throwEvent=true);
 
+    /** \brief Get flows/route directed at host
+     * @param host ethernet address of host
+     * @return list of flows and routes associated with host
+     */
+    list<pair<Flow,network::route> > getFlow2Host(ethernetaddr host);
+
     /** \brief Configure flowroute_record.
      * 
      * Parse the configuration, register event handlers, and
