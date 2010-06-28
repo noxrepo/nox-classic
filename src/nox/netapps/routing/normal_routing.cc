@@ -17,6 +17,7 @@
  */
 #include "normal_routing.hh"
 #include "openflow-default.hh"
+#include "openflow-pack.hh"
 
 #include <boost/bind.hpp>
 #include <sstream>
@@ -42,7 +43,7 @@ Normal_routing::Normal_routing(const container::Context *c, const json_object* d
     ofm->header.version = OFP_VERSION;
     ofm->header.type = OFPT_FLOW_MOD;
     ofm->header.length = htons(size);
-    ofm->header.xid = 0;
+    ofm->header.xid = openflow_pack::get_xid();
     ofm->match.wildcards = 0;
     ofm->cookie = 0;
     ofm->command = htons(OFPFC_ADD);

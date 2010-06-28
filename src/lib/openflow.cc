@@ -42,6 +42,7 @@
 #include "ssl-config.hh"
 #include "timeval.hh"
 #include "vlog.hh"
+#include "openflow-pack.hh"
 
 namespace vigil {
 
@@ -80,7 +81,7 @@ Openflow_connection::s_send_hello()
     hello.version = OFP_VERSION;
     hello.type = OFPT_HELLO;
     hello.length = htons(sizeof hello);
-    hello.xid = 0;
+    hello.xid = openflow_pack::get_xid();
 
     int retval = call_send_openflow(&hello);
     if (!retval) {
@@ -508,7 +509,7 @@ int Openflow_connection::send_features_request()
     ofr.type = OFPT_FEATURES_REQUEST;
     ofr.version = OFP_VERSION;
     ofr.length = htons(sizeof ofr);
-    ofr.xid = 0;         /* xxx Do we want to set this? */
+    ofr.xid = openflow_pack::get_xid();
     return send_openflow(&ofr, false);
 } 
 
@@ -524,7 +525,7 @@ int Openflow_connection::send_ofmp_capability_request()
     ocr.header.header.header.type = OFPT_VENDOR;
     ocr.header.header.header.version = OFP_VERSION;
     ocr.header.header.header.length = htons(sizeof ocr);
-    ocr.header.header.header.xid = 0;
+    ocr.header.header.header.xid = openflow_pack::get_xid();
 
     /* Nicira header */
     ocr.header.header.vendor = htonl(NX_VENDOR_ID);
@@ -548,7 +549,7 @@ int Openflow_connection::send_ofmp_resources_request()
     orr.header.header.header.type = OFPT_VENDOR;
     orr.header.header.header.version = OFP_VERSION;
     orr.header.header.header.length = htons(sizeof orr);
-    orr.header.header.header.xid = 0;
+    orr.header.header.header.xid = openflow_pack::get_xid();
 
     /* Nicira header */
     orr.header.header.vendor = htonl(NX_VENDOR_ID);
@@ -570,7 +571,7 @@ int Openflow_connection::send_ofmp_config_request()
     ocr.header.header.header.type = OFPT_VENDOR;
     ocr.header.header.header.version = OFP_VERSION;
     ocr.header.header.header.length = htons(sizeof ocr);
-    ocr.header.header.header.xid = 0;
+    ocr.header.header.header.xid = openflow_pack::get_xid();
 
     /* Nicira header */
     ocr.header.header.vendor = htonl(NX_VENDOR_ID);
@@ -595,7 +596,7 @@ int Openflow_connection::send_switch_config() {
     osc.header.type = OFPT_SET_CONFIG;
     osc.header.version = OFP_VERSION;
     osc.header.length = htons(sizeof osc);
-    osc.header.xid = 0;
+    osc.header.xid = openflow_pack::get_xid();
     osc.flags =  0;
     osc.miss_send_len = htons(OFP_DEFAULT_MISS_SEND_LEN);
 
@@ -614,7 +615,7 @@ int Openflow_connection::send_stats_request(ofp_stats_types type)
     osr.header.type    = OFPT_STATS_REQUEST;
     osr.header.version = OFP_VERSION;
     osr.header.length  = htons(sizeof osr);
-    osr.header.xid     = 0;
+    osr.header.xid     = openflow_pack::get_xid();
     osr.type           = type;
     osr.flags          = htons(0); /* CURRENTLY NONE DEFINED */ 
 
@@ -631,7 +632,7 @@ int Openflow_connection::send_echo_request()
     oer.type = OFPT_ECHO_REQUEST;
     oer.version = OFP_VERSION;
     oer.length = htons(sizeof oer);
-    oer.xid = 0;
+    oer.xid = openflow_pack::get_xid();
     return send_openflow(&oer, false);
 }
 
@@ -662,7 +663,7 @@ int Openflow_connection::send_barrier_request()
     obr.type = OFPT_BARRIER_REQUEST;
     obr.version = OFP_VERSION;
     obr.length = htons(sizeof obr);
-    obr.xid = 0;
+    obr.xid = openflow_pack::get_xid();
     return send_openflow(&obr, false);
 }
 
@@ -688,7 +689,7 @@ int Openflow_connection::send_add_snat(uint16_t port,
     nac.header.header.type    = OFPT_VENDOR;
     nac.header.header.version = OFP_VERSION;
     nac.header.header.length  = htons(nac_size);
-    nac.header.header.xid     = 0;       /* xxx Do we want to set this? */
+    nac.header.header.xid     = openflow_pack::get_xid();
 
     nac.header.vendor         = htonl(NX_VENDOR_ID);
     nac.header.subtype        = htonl(NXT_ACT_SET_CONFIG);
@@ -730,7 +731,7 @@ int Openflow_connection::send_del_snat(uint16_t port)
     nac.header.header.type    = OFPT_VENDOR;
     nac.header.header.version = OFP_VERSION;
     nac.header.header.length  = htons(nac_size);
-    nac.header.header.xid     = 0;       /* xxx Do we want to set this? */
+    nac.header.header.xid     = openflow_pack::get_xid();
 
     nac.header.vendor         = htonl(NX_VENDOR_ID);
     nac.header.subtype        = htonl(NXT_ACT_SET_CONFIG);
@@ -754,7 +755,7 @@ Openflow_connection::send_remote_command(const std::string& command,
     nicira_header* nh = &b.at<nicira_header>(0);
     nh->header.type = OFPT_VENDOR;
     nh->header.version = OFP_VERSION;
-    nh->header.xid = 0;
+    nh->header.xid = openflow_pack::get_xid();
     nh->vendor = htonl(NX_VENDOR_ID);
     nh->subtype = htonl(NXT_COMMAND_REQUEST);
 

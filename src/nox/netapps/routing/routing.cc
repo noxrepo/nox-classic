@@ -24,6 +24,7 @@
 #include "assert.hh"
 #include "openflow/nicira-ext.h"
 #include "vlog.hh"
+#include "openflow-pack.hh"
 
 namespace vigil {
 namespace applications {
@@ -568,7 +569,7 @@ Routing_module::init_openflow(uint16_t actions_len)
 
     ofm->header.version = OFP_VERSION;
     ofm->header.type = OFPT_FLOW_MOD;
-    ofm->header.xid = 0;
+    ofm->header.xid = openflow_pack::get_xid();
 
     ofm->match.wildcards = 0;
     memset(&ofm->match.pad1, 0, sizeof(ofm->match.pad1));

@@ -25,6 +25,7 @@
 #include "port-status.hh"
 #include "switch_event.hh"
 #include "openflow-default.hh"
+#include "openflow-pack.hh"
 
 #if AUTH_WITH_ROUTING
 #include "discovery/link-event.hh"
@@ -80,7 +81,7 @@ Authenticator::Authenticator(const container::Context* c,
     ofm->header.version = OFP_VERSION;
     ofm->header.type = OFPT_FLOW_MOD;
     ofm->header.length = htons(sizeof *ofm);
-    ofm->header.xid = 0;
+    ofm->header.xid = openflow_pack::get_xid();
     ofm->cookie = 0;
     ofm->command = htons(OFPFC_DELETE);
     ofm->idle_timeout = htons(OFP_FLOW_PERMANENT);
