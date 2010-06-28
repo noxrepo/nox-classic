@@ -34,14 +34,20 @@ namespace vigil
     case OPENFLOW_PACK_XID_METHOD_RANDOM:
       while ((value = rand_uint32()) < OPENFLOW_PACK_MIN_XID);
       return value;
+
     case OPENFLOW_PACK_XID_METHOD_INCREMENT:
-    default:
       if (nextxid == 0)
       {
       	VLOG_INFO(lg, "OpenFlow transaction id wrapped around");
 	nextxid = OPENFLOW_PACK_MIN_XID;
       }
       return nextxid++;
+
+    case OPENFLOW_PACK_XID_METHOD_PRIVSPACE:
+    default:
+      if (nextxid >= (1 << 31))
+	nextxid = 0;
+      return nextxid++;      
     }
   }
 
