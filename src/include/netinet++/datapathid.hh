@@ -53,8 +53,7 @@ public:
 private:
     uint64_t id;                /* In host byte order. */
 
-    static const uint64_t mask = (UINT64_C(1) << 48) - 1;
-    datapathid(uint64_t id_) : id(id_ & mask) { }
+    datapathid(uint64_t id_) : id(id_) { }
 };
 
 inline
