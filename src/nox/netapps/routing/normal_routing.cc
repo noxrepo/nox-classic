@@ -27,8 +27,6 @@
 
 #define FLOW_TIMEOUT         5
 
-#define DP_FROM_AP(loc) ((loc) & 0xffffffffffffULL)
-
 namespace vigil {
 namespace applications {
 

@@ -32,8 +32,6 @@
 #define SEPL_PROP_SECTION   "sepl"
 #define ENFORCE_POLICY_VAR  "enforce_policy"
 
-#define DP_FROM_AP(loc) ((loc) & 0xffffffffffffULL)
-
 namespace vigil {
 namespace applications {
 
