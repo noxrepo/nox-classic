@@ -23,8 +23,8 @@ from nox.netapps.switchstats.switchstats import switchstats
 
 from nox.webapps.webservice      import webservice
 
-from nox.webapps.webserver.webservice import json_parse_message_body
-from nox.webapps.webserver.webservice import NOT_DONE_YET 
+from nox.webapps.webservice.webservice import json_parse_message_body
+from nox.webapps.webservice.webservice import NOT_DONE_YET 
 
 from nox.lib.core import *
 
