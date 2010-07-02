@@ -189,7 +189,7 @@ Flow::Flow(uint16_t in_port_, const Buffer& buffer)
             const vlan_header *vh = pull_vlan(b);
             if (vh) {
                 dl_type = vh->vlan_next_type;
-                dl_vlan = htons(ntohs(vh->vlan_tci) & VLAN_VID);
+                dl_vlan = vh->vlan_tci & htons(VLAN_VID);
                 dl_vlan_pcp =(ntohs(vh->vlan_tci) & VLAN_PCP_MASK) >> 
 		  VLAN_PCP_SHIFT;
             }
