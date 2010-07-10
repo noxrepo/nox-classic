@@ -6,10 +6,10 @@ EXTRACT_PRIVATE=NO
 EXTRACT_STATIC=NO
 HAVE_DOT=NO
 
-.PHONY: help clean html latex images
+.PHONY: help clean html latex
 
 
-EXTRA_DIST=doxygen.conf.in customdoxygen.css header.html footer.html images
+EXTRA_DIST=doxygen.conf.in customdoxygen.css header.html footer.html
 
 help:
 	@echo "Please use \`make <target>' where <target> is one of"
