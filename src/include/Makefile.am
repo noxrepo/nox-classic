@@ -6,6 +6,7 @@ async_io.hh					\
 auto_array.hh					\
 auto_fd.hh					\
 auto_free.hh					\
+barrier-reply.hh				\
 bootstrap-complete.hh				\
 buffer.hh					\
 cfg.hh					\
@@ -13,6 +14,7 @@ classifier.hh					\
 cnode-result.hh					\
 cnode.hh					\
 command-line.hh					\
+core_events.hh					\
 datapath-join.hh				\
 datapath-leave.hh				\
 datapath.hh					\
@@ -60,8 +62,11 @@ openflow-pack.hh				\
 openflow-pack-raw.hh				\
 openflow-event.hh				\
 openflow-streamops.hh				\
+openflow-default.hh				\
+openflow-msg-in.hh				\
 openflow/openflow/nicira-ext.h			\
 openflow/openflow/openflow-netlink.h		\
+openflow/openflow/openflow-mgmt.h		\
 openflow/openflow/openflow.h			\
 openflow.hh					\
 packet-in.hh					\

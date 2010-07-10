@@ -5,6 +5,7 @@ EXTRA_DIST=\
 	meta.json \
 	webserver.py \
 	webauth.py \
+	static_www \
 	dummywebpage.py
 
 # Required for static_www build/install

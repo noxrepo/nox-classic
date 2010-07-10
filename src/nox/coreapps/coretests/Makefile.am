@@ -13,6 +13,7 @@ EXTRA_DIST = \
     test_basic_callback.sh \
 	test_async.sh \
 	test_ssl.sh \
+	ssl-test-str.hh \
 	TEST_DIRECTORY
 
 pkglib_LTLIBRARIES =		\

@@ -34,7 +34,12 @@ NOX_RUNTIMEFILES = meta.json \
 	__init__.py
 
 EXTRA_DIST = \
-	meta.json 
+	serverkey.pem \
+	cacert.pem \
+	servercert.pem \
+	meta.json \
+	messenger.py \
+	__init__.py
 
 all-local:  nox-all-local
 clean-local: nox-clean-local

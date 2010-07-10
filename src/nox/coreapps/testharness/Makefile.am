@@ -7,7 +7,8 @@ EXTRA_DIST =\
 	testharness.py\
 	testrunner.py\
 	testdefs.py\
-	testdefs.sh
+	testdefs.sh\
+	testdefs.hh
 
 NOX_RUNTIMEFILES = \
 	__init__.py \

@@ -1,7 +1,12 @@
 include ../../../Make.vars 
 
 EXTRA_DIST = \
-	meta.json
+	__init__.py \
+	meta.json \
+	datatypes_impl.py \
+	datacache_impl.py \
+	datatypes.i \
+	datacache.i
 
 if PY_ENABLED
 AM_CPPFLAGS += $(PYTHON_CPPFLAGS)
