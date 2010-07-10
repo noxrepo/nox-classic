@@ -6,12 +6,14 @@ endif # PY_ENABLED
 
 EXTRA_DIST =\
 	meta.json\
-	__init__.py\
-	pyswitch_management.py
+	__init__.py
 
-NOX_RUNTIMEFILES = meta.json	\
-	__init__.py		\
+NOX_RUNTIMEFILES = meta.json
+
+if PY_ENABLED
+NOX_RUNTIMEFILES += __init__.py	\
 	pyswitch_management.py
+endif # PY_ENABLED
 
 pkglib_LTLIBRARIES = \
 	switch_management.la		
