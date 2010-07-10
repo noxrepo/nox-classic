@@ -84,7 +84,7 @@ Ssl_config::init(Ssl_version version,
     static bool init = init_Ssl();
     assert(init);
 
-    ::SSL_METHOD* method = ::SSLv23_method();
+    SSL_CONST ::SSL_METHOD* method = ::SSLv23_method();
     if (method == NULL) {
         lg.err("SSLv23_method: %s", ::ERR_error_string(::ERR_get_error(),
                                                        NULL));
