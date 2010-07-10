@@ -10,8 +10,7 @@
             "dependencies": [
                 "hosttracker",
                 "topology"
-            ],
-            "python": "nox.coreapps.pyrt.componentws"
+            ]
         },
         {
             "name": "hostip" ,

@@ -24,8 +24,7 @@
                 "data_cache",
                 "bindings_storage",
                 "routing_module"
-            ],
-            "python": "nox.netapps.authenticator.pyflowutil"
+            ]
         },
         {
             "name": "pyauthenticator" ,

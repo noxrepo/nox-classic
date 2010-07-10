@@ -17,8 +17,8 @@
         },
         {
             "name": "nat" ,
-            "library": "nat_enforcer" ,
             "dependencies": [
+                "nat_enforcer",
                 "pyflow_util"
             ],
             "python": "nox.netapps.routing.pynatenforcer"
