@@ -24,6 +24,7 @@
 #include "netinet++/ethernet.hh"
 #include "port-status.hh"
 #include "vlog.hh"
+#include "kernel.hh"
 
 #if AUTH_WITH_ROUTING
 #include "discovery/link-event.hh"

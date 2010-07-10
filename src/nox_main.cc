@@ -56,6 +56,7 @@
 #include <fcntl.h>
 #include <getopt.h>
 #include <sys/types.h>
+#include <sys/stat.h>
 #include <netinet/in.h>
 #include <netinet/ip6.h>
 #include <inttypes.h>
