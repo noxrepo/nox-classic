@@ -105,7 +105,7 @@ struct Flow {
   /** String representation
    */
   const std::string to_string() const;
-  /** \brief Return of_match that is exact match to flow.
+  /** \brief Return of_match that is exact match to flow in host order
    *
    * @return of_match with exact match
    */

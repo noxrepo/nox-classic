@@ -127,19 +127,19 @@ Flow::Flow(const ofp_match* match)
 const of_match Flow::get_exact_match() const
 {
     of_match om;
-    om.wildcards = 0;
-    om.in_port = in_port;
+    om.wildcards = ntohl(0);
+    om.in_port = ntohs(in_port);
     memcpy(om.dl_src, dl_src.octet, ethernetaddr::LEN);
     memcpy(om.dl_dst, dl_dst.octet, ethernetaddr::LEN);
-    om.dl_vlan = dl_vlan;
+    om.dl_vlan = ntohs(dl_vlan);
     om.dl_vlan_pcp = dl_vlan_pcp;
-    om.dl_type = dl_type;
+    om.dl_type = ntohs(dl_type);
     om.nw_tos = nw_tos;
     om.nw_proto = nw_proto;
-    om.nw_src = nw_src;
-    om.nw_dst = nw_dst;
-    om.tp_src = tp_src;
-    om.tp_dst = tp_dst;
+    om.nw_src = ntohl(nw_src);
+    om.nw_dst = ntohl(nw_dst);
+    om.tp_src = ntohs(tp_src);
+    om.tp_dst = ntohs(tp_dst);
     return om;
 }
 
