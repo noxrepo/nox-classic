@@ -166,8 +166,10 @@ namespace vigil
 					  ofp_action_list act_list, uint32_t wildcards_,
 					  uint16_t idletime, uint16_t hardtime, uint64_t cookie)
   {
-    of_raw.reset(new uint8_t[sizeof(ofp_flow_mod)+act_list.mem_size()]);
+    ssize_t size = sizeof(ofp_flow_mod)+act_list.mem_size();
+    of_raw.reset(new uint8_t[size]);
     of_flow_mod ofm;
+    ofm.header = openflow_pack::header(OFPT_FLOW_MOD, size);
     ofm.match = flow.get_exact_match();
     ofm.match.wildcards = wildcards_;
     ofm.cookie = cookie;
@@ -179,6 +181,8 @@ namespace vigil
     ofm.out_port = OFPP_NONE;
     ofm.pack((ofp_flow_mod*) openflow_pack::get_pointer(of_raw));
     act_list.pack(openflow_pack::get_pointer(of_raw,sizeof(ofp_flow_mod)));
+    VLOG_DBG(lg,"Install flow entry %s with %zu actions", 
+	     flow.to_string().c_str(), act_list.action_list.size());
     send_openflow_command(dpid, of_raw, false);
 
     ofm.command = OFPFC_MODIFY_STRICT;

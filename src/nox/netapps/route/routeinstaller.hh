@@ -1,7 +1,6 @@
 #ifndef ROUTEINSTALLER_HH__
 #define ROUTEINSTALLER_HH__
 
-#include "component.hh"
 #include "network_graph.hh"
 #include "openflow/openflow.h"
 #include "openflow-pack.hh"
