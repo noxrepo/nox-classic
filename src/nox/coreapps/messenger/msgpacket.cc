@@ -47,8 +47,8 @@ namespace vigil
   {
     Nonowning_buffer buf(str.c_str(), str.size());
     sock->write(buf, 0);
-    VLOG_DBG(lg, "Sent string %s of length %zu socket %p",
-	     str.c_str(), str.size(), sock);
+    VLOG_DBG(lg, "Sent string of length %zu socket %p",
+	     str.size(), sock);
   }
 
   void msgpacket::getInstance(const container::Context* ctxt,

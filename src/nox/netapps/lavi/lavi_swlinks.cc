@@ -163,11 +163,9 @@ namespace vigil
       ja->push_back(jv);
     }
     jo->object = ja;
-    VLOG_DBG(lg, "Size %zu: %s",  ja->size(), jo->get_string().c_str());
     jd->insert(make_pair("links", jo));
     
     //Send
-    VLOG_DBG(lg, "Sending reply: %s", jm.get_string().c_str());
     mp->send(jm.get_string(),stream.stream);
   }
 
