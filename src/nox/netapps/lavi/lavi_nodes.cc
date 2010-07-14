@@ -80,12 +80,15 @@ namespace vigil
   {
     list<Msg_stream*>::iterator k = interested.begin();
     while (k != interested.end())
+    {
       if (*k == sock)
       {
 	VLOG_DBG(lg, "Removing %p from interested %s list", 
 		 sock->stream, nodetype.c_str());
 	k = interested.erase(k);
       }
+      k++;
+    }
   }
 
   void lavi_nodes::getInstance(const Context* c,

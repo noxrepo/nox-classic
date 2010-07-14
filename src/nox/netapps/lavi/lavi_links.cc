@@ -150,6 +150,7 @@ namespace vigil
 	  k = interested.erase(k);
 	}
       }
+      k++;
     }
   }
 
