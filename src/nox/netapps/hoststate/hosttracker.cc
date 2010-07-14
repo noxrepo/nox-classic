@@ -93,17 +93,18 @@ namespace vigil
     return oldest;
   } 
 
-  void hosttracker::add_location(ethernetaddr host, datapathid dpid, uint16_t port,
-				 time_t tv)
+  void hosttracker::add_location(ethernetaddr host, datapathid dpid, 
+				 uint16_t port, time_t tv, bool postEvent)
   {
     //Set default time as now
     if (tv == 0)
       time(&tv);
 
-    add_location(host, hosttracker::location(dpid,port,tv));
+    add_location(host, hosttracker::location(dpid,port,tv), postEvent);
   }
 
-  void hosttracker::add_location(ethernetaddr host, hosttracker::location loc)
+  void hosttracker::add_location(ethernetaddr host, hosttracker::location loc,
+				 bool postEvent)
   {
     hash_map<ethernetaddr,list<hosttracker::location> >::iterator i = \
       hostlocation.find(host);
@@ -113,6 +114,10 @@ namespace vigil
       list<location> j = list<location>();
       j.push_front(loc);
       hostlocation.insert(make_pair(host,j));
+
+      if (postEvent)
+	post(new Host_location_event(host,j,Host_location_event::ADD));
+
       VLOG_DBG(lg, "New host %"PRIx64" at %"PRIx64":%"PRIx16"",
 	       host.hb_long(), loc.dpid.as_host(), loc.port);
     }
@@ -135,6 +140,10 @@ namespace vigil
 	i->second.push_front(loc);
 	VLOG_DBG(lg, "Host %"PRIx64" at new location %"PRIx64":%"PRIx16"",
 		 i->first.hb_long(), loc.dpid.as_host(), loc.port);
+
+	if (postEvent)
+	  post(new Host_location_event(host,i->second,
+				       Host_location_event::MODIFY));
       }
       else
       {
@@ -142,7 +151,7 @@ namespace vigil
 	k->lastTime = loc.lastTime;
 	VLOG_DBG(lg, "Host %"PRIx64" at old location %"PRIx64":%"PRIx16"",
 		 i->first.hb_long(), loc.dpid.as_host(), loc.port);
-      }
+      }	
     }
 
     VLOG_DBG(lg, "Added host %"PRIx64" to location %"PRIx64":%"PRIx16"",
@@ -156,29 +165,41 @@ namespace vigil
     }
   }
 
-  void hosttracker::remove_location(ethernetaddr host, datapathid dpid, uint16_t port)
+  void hosttracker::remove_location(ethernetaddr host, datapathid dpid, 
+				    uint16_t port, bool postEvent)
   {
-    remove_location(host, hosttracker::location(dpid,port,0));
+    remove_location(host, hosttracker::location(dpid,port,0), postEvent);
   }
 
-  void hosttracker::remove_location(ethernetaddr host, hosttracker::location loc)
+  void hosttracker::remove_location(ethernetaddr host, 
+				    hosttracker::location loc,
+				    bool postEvent)
   {
     hash_map<ethernetaddr,list<hosttracker::location> >::iterator i =	\
       hostlocation.find(host);
     if (i != hostlocation.end())
     {
+      bool changed = false;
       list<location>::iterator k = i->second.begin();
       while (k != i->second.end())
       {
 	if (k->dpid == loc.dpid || k->port == loc.port)
 	{
 	  k = i->second.erase(k);
-	  if (i->second.size() == 0)
-	    hostlocation.erase(i);
+	  changed = true;
 	}
 	else
 	  k++;
-      } 
+      }
+
+      if (postEvent && changed)
+	post(new Host_location_event(host,i->second,
+				     (i->second.size() == 0)?
+				     Host_location_event::REMOVE:
+				     Host_location_event::MODIFY));
+
+      if (i->second.size() == 0)
+	hostlocation.erase(i);	
     }
     else
       VLOG_DBG(lg, "Host %"PRIx64" has no location, cannot unset.");

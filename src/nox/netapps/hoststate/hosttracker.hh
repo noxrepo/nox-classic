@@ -133,30 +133,36 @@ namespace vigil
     /** \brief Set location.
      * @param host host as identified by ethernet address
      * @param loc location host is detected
+     * @param postEvent indicate if Host_location_event should be posted
      */
-    void add_location(ethernetaddr host, location loc);
+    void add_location(ethernetaddr host, location loc, bool postEvent=true);
 
     /** \brief Set location.
      * @param host host as identified by ethernet address
      * @param dpid switch datapath id
      * @param port port of switch host is connected to
      * @param tv time of connection/detection (default to 0 == now)
+     * @param postEvent indicate if Host_location_event should be posted
      */
     void add_location(ethernetaddr host, datapathid dpid, uint16_t port,
-		      time_t tv=0);
+		      time_t tv=0, bool postEvent=true);
 
     /** \brief Unset location
      * @param host host as identified by ethernet address
      * @param dpid switch datapath id
      * @param port port of switch host is connected to
+     * @param postEvent indicate if Host_location_event should be posted
      */
-    void remove_location(ethernetaddr host, datapathid dpid, uint16_t port);
+    void remove_location(ethernetaddr host, datapathid dpid, uint16_t port,
+			 bool postEvent=true);
 
     /** \brief Unset location
      * @param host host as identified by ethernet address
      * @param loc location host is detached from
+     * @param postEvent indicate if Host_location_event should be posted
      */
-    void remove_location(ethernetaddr host, location loc);
+    void remove_location(ethernetaddr host, location loc,
+			 bool postEvent=true);
 
     /** \brief Get locations
      * @param host ethernet address of host
@@ -254,7 +260,7 @@ namespace vigil
     /** Reference to host
      */
     ethernetaddr host;
-    /** Location of host
+    /** Current/New location of host
      */
     list<hosttracker::location> loc;
     /** Type of event
