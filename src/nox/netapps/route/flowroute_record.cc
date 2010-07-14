@@ -6,6 +6,7 @@ namespace vigil
 
   void flowroute_record::configure(const Configuration* c) 
   {
+    register_event(Flow_route_event::static_get_name());
   }
   
   void flowroute_record::install()

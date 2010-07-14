@@ -91,7 +91,10 @@
 	        ],
 	    "User_auth_event": [
 	    	"authenticator"
-	        ]
-        }
+	        ],
+	    "Flow_route_event": [
+	    	"lavi_networkflow"
+	        ]        
+	    }
     }
 }

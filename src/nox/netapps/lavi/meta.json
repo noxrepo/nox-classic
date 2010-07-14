@@ -50,7 +50,7 @@
                 "msgpacket", 
 		"flowroute record"
             ], 
-            "name": "lavi networkflow", 
+            "name": "lavi_networkflow", 
             "library": "lavi_networkflow"
         }
     ]
