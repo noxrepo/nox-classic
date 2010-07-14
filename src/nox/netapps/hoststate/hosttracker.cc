@@ -5,6 +5,18 @@ namespace vigil
 {
   static Vlog_module lg("hosttracker");
   
+  Host_location_event::Host_location_event(const ethernetaddr host_,
+					   const list<hosttracker::location> loc_,
+					   enum type type_):
+    Event(static_get_name()), host(host_), eventType(type_)
+  {
+    for (list<hosttracker::location>::const_iterator i = loc_.begin();
+	 i != loc_.end(); i++)
+      loc.push_back(*(new hosttracker::location(i->dpid,
+						i->port,
+						i->lastTime)));
+  }
+
   hosttracker::location::location(datapathid dpid_, uint16_t port_, time_t tv):
     dpid(dpid_), port(port_), lastTime(tv)
   { }
@@ -20,6 +32,8 @@ namespace vigil
   {
     defaultnBindings = DEFAULT_HOST_N_BINDINGS;
     hostTimeout = DEFAULT_HOST_TIMEOUT;
+
+    register_event(Host_location_event::static_get_name());
   }
   
   void hosttracker::install()
@@ -45,7 +59,7 @@ namespace vigil
       //Remove old entry
       i->second.erase(j);
       if (i->second.size() == 0)
-	hostlocation.erase(i);
+      	hostlocation.erase(i);
 
       //Get next oldest
       i = hostlocation.find(oldest_host());
@@ -178,6 +192,20 @@ namespace vigil
       return hosttracker::location(datapathid(), 0, 0);
     else
       return *(get_newest(locs));
+  }
+
+  const list<ethernetaddr> hosttracker::get_hosts()
+  {
+    list<ethernetaddr> hostlist;
+    hash_map<ethernetaddr,list<hosttracker::location> >::iterator i = \
+      hostlocation.begin();
+    while (i != hostlocation.end())
+    {
+      hostlist.push_back(i->first);
+      i++;
+    }
+
+    return hostlist;
   }
 
   const list<hosttracker::location> hosttracker::get_locations(ethernetaddr host)

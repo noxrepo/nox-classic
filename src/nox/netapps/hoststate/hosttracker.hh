@@ -43,7 +43,9 @@ namespace vigil
   using namespace std;
   using namespace vigil::container;
 
-  /** \Brief hosttracker: Track locations of host (ethernet)
+  struct Host_location_event;
+
+  /** \brief hosttracker: Track locations of host (ethernet)
    * \ingroup noxcomponents
    * 
    * Track last n known locations of host attachment.
@@ -168,6 +170,11 @@ namespace vigil
      */
     const location get_latest_location(ethernetaddr host);
 
+    /** \brief Get all hosts
+     * @return list of all host mac
+     */
+    const list<ethernetaddr> get_hosts();
+
     /** \brief Configure hosttracker.
      * 
      * Parse the configuration, register event handlers, and
@@ -207,6 +214,53 @@ namespace vigil
      * @return pointer to newest item
      */
     list<location>::iterator get_newest(list<location>& loclist);
+  };
+
+  /** \ingroup noxevents
+   * \brief Structure to hold host and location change
+   */
+  struct Host_location_event : public Event
+  {
+    /** \brief Type of host-location event
+     */
+    enum type
+    {
+      ADD,
+      REMOVE,
+      MODIFY
+    };
+
+    /** \brief Constructor
+     * @param host_ mac address of host
+     * @param loc_ location of host
+     * @param type_ type of event
+     */
+    Host_location_event(const ethernetaddr host_,
+			const list<hosttracker::location> loc_,
+			enum type type_);
+
+    /** For use within python.
+     */
+    Host_location_event() : Event(static_get_name()) 
+    { }
+
+    /** Static name required in NOX.
+     */
+    static const Event_name static_get_name() 
+    {
+      return "Host_location_event";
+    }
+
+    /** Reference to host
+     */
+    ethernetaddr host;
+    /** Location of host
+     */
+    list<hosttracker::location> loc;
+    /** Type of event
+     * @see #type
+     */
+    enum type eventType;
   };
 }
 
