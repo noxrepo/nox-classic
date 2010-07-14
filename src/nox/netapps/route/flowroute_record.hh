@@ -54,9 +54,9 @@ namespace vigil
      * @param rte_ route of flow to record
      * @param eventType_ type of event
      */
-      Flow_route_event(const Flow& flow_, const network::route& rte_,
-		       enum type eventType_):
-	Event(static_get_name()), rte(rte_), flow(flow_), eventType(eventType_)
+    Flow_route_event(const Flow& flow_, const network::route& rte_,
+		     enum type eventType_):
+      Event(static_get_name()), rte(rte_), flow(flow_), eventType(eventType_)
     {}
 
     /** For use within python.
