@@ -11,12 +11,36 @@ namespace vigil
 
     resolve(ht);
     resolve(mp);
+
+     register_handler<Host_location_event>
+       (boost::bind(&lavi_hosts::handle_host_loc, this, _1));
   }
   
   void lavi_hosts::install()
   {
   }
-
+  
+  Disposition lavi_hosts::handle_host_loc(const Event& e)
+  {
+    const Host_location_event& hle = assert_cast<const Host_location_event&>(e);
+    
+    if (hle.eventType == Host_location_event::MODIFY)
+      return CONTINUE;
+    
+    list<ethernetaddr> hlist;
+    hlist.push_back(hle.host);
+    
+    list<Msg_stream*>::iterator i = interested.begin();
+    while(i != interested.end())
+    {
+      send_hostlist(*(*i), hlist, 
+		    (hle.eventType == Host_location_event::ADD));
+      i++;
+    }
+    
+    return CONTINUE;
+  }
+  
   void lavi_hosts::send_list(const Msg_stream& stream)
   {
     send_hostlist(stream, ht->get_hosts());

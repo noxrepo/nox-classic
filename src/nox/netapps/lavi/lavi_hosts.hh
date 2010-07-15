@@ -97,6 +97,12 @@ namespace vigil
      */
     void install();
 
+    /** \brief Handle host changes
+     * @param e event
+     * @return CONTINUE always
+     */
+    Disposition handle_host_loc(const Event& e);
+
     /** \brief Get instance of lavi_hosts.
      * @param c context
      * @param component reference to component
