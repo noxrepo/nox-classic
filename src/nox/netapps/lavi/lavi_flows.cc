@@ -84,7 +84,8 @@ namespace vigil
 		 sock->stream, flowtype.c_str());
 	k = interested.erase(k);
       }
-      k++;
+      else
+	k++;
     }
   }
 

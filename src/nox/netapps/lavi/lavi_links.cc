@@ -139,6 +139,8 @@ namespace vigil
 		   sock->stream, linktype.c_str());
 	  k = interested.erase(k);
 	}
+	else
+	  k++;
       }
       else
       {
@@ -149,8 +151,9 @@ namespace vigil
 		   sock->stream, linktype.c_str());
 	  k = interested.erase(k);
 	}
+	else
+	  k++;
       }
-      k++;
     }
   }
 
