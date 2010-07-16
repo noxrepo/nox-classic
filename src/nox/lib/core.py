@@ -230,12 +230,14 @@ class Component:
         inport - dp port to mark as source (defaults to Controller port)
         """
         if type(actions) == types.IntType:
-            self.ctxt.send_openflow_buffer(dp_id, buffer_id, actions, inport)
+            self.ctxt.send_openflow_buffer_port(dp_id, buffer_id, actions,
+                                                inport)
         elif type(actions) == types.ListType:
             oactions = self.make_action_array(actions)
             if oactions == None:
                 raise Exception('Bad action')
-            self.ctxt.send_openflow_buffer(dp_id, buffer_id, oactions, inport)
+            self.ctxt.send_openflow_buffer_acts(dp_id, buffer_id, oactions,
+                                                inport)
         else:
             raise Exception('Bad argument')
 
