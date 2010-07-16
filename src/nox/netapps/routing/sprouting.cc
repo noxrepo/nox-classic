@@ -230,6 +230,11 @@ SPRouting::route_flow(Flow_in_event& fi, const Buffer& actions,
     uint16_t inport, outport;
     check_nat = check_nat && fi.flow.dl_type == ethernet::IP;
     if (!set_route(fi, route, inport, outport, actions, check_nat)) {
+        //Cannot ignore packets, so flood.
+        routing->send_packet(fi.datapath_id, ntohs(fi.flow.in_port),
+			     OFPP_FLOOD, fi.buffer_id, *(fi.buf),
+                             Nonowning_buffer(), check_nat,
+                             fi.flow, NULL, NULL, NULL, NULL);
         return CONTINUE;
     }
 
