@@ -1,5 +1,6 @@
 #include "simplerouting.hh"
 #include "assert.hh"
+#include "netinet++/ethernet.hh"
 #include <boost/bind.hpp>
 
 namespace vigil
@@ -18,6 +19,10 @@ namespace vigil
   Disposition simplerouting::handle_pkt_in(const Event& e)
   {
     const Packet_in_event& pie = assert_cast<const Packet_in_event&>(e);
+
+    //Skip LLDP
+    if (pie.flow.dl_type == ethernet::LLDP)
+      return CONTINUE;
 
     const hosttracker::location sloc = ht->get_latest_location(pie.flow.dl_src);
     const hosttracker::location dloc = ht->get_latest_location(pie.flow.dl_dst);
