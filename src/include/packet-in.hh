@@ -28,6 +28,7 @@
 #include "netinet++/datapathid.hh"
 #include "ofp-msg-event.hh"
 #include "openflow.hh"
+#include "flow.hh"
 
 namespace vigil {
 
@@ -52,16 +53,16 @@ struct Packet_in_event
                     uint32_t buffer_id_, uint8_t reason_)
         : Event(static_get_name()), Ofp_msg_event((ofp_header*) NULL, buf_),
           datapath_id(datapath_id_), in_port(in_port_), total_len(total_len_),
-          buffer_id(buffer_id_), reason(reason_)
-        {}
+          buffer_id(buffer_id_), reason(reason_), flow(htons(in_port), *buf)
+        { }
 
     Packet_in_event(datapathid datapath_id_, uint16_t in_port_,
                     boost::shared_ptr<Buffer> buf_, size_t total_len_,
                     uint32_t buffer_id_, uint8_t reason_)
         : Event(static_get_name()), Ofp_msg_event((ofp_header*) NULL, buf_),
           datapath_id(datapath_id_), in_port(in_port_), total_len(total_len_),
-          buffer_id(buffer_id_), reason(reason_)
-        {}
+          buffer_id(buffer_id_), reason(reason_), flow(htons(in_port), *buf)
+        { }
 
     Packet_in_event(datapathid datapath_id_,
                     const ofp_packet_in *opi, std::auto_ptr<Buffer> buf_)
@@ -70,8 +71,8 @@ struct Packet_in_event
           in_port(ntohs(opi->in_port)),
           total_len(ntohs(opi->total_len)),
           buffer_id(ntohl(opi->buffer_id)),
-          reason(opi->reason)
-        {}
+          reason(opi->reason), flow(htons(in_port), *buf)
+        { }
 
     virtual ~Packet_in_event() { }
 
@@ -98,6 +99,10 @@ struct Packet_in_event
       </ul>
      */
     uint8_t  reason;
+
+    /** \brief Flow interpretation
+     */
+    Flow flow;
 
     Packet_in_event(const Packet_in_event&);
     Packet_in_event& operator=(const Packet_in_event&);
