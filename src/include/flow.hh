@@ -120,4 +120,13 @@ std::ostream& operator<<(std::ostream&, const Flow&);
 
 } // namespace vigil
 
+ENTER_HASH_NAMESPACE
+template <>
+struct hash<vigil::Flow> {
+  std::size_t operator() (const vigil::Flow& flow) const {
+    return HASH_NAMESPACE::hash<uint64_t>()(flow.hash_code());
+  }
+};
+EXIT_HASH_NAMESPACE
+
 #endif /* flow.hh */

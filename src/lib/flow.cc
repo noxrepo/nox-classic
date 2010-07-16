@@ -330,6 +330,5 @@ bool operator!=(const Flow& lhs, const Flow& rhs)
   return !(lhs == rhs);
 }
 
-
-
 } // namespace vigil
+
