@@ -17,6 +17,14 @@
         {
             "name": "flowroute record", 
             "library": "flowroute_record"
+        }, 
+        {
+            "dependencies": [
+                "routeinstaller",
+		"trackhost_pktin"
+            ], 
+            "name": "simplerouting", 
+            "library": "simplerouting"
         }
     ]
 }

@@ -36,6 +36,7 @@
                 "noop",
                 "counter",
                 "packetdump",
+		"simplerouting",
                 "ctlflood",
                 "switch",
 		"hub",
