@@ -309,4 +309,27 @@ Flow::hash_code() const
     return *((uint64_t*)md);
 }
 
+bool operator==(const Flow& lhs, const Flow& rhs)
+{
+  return (lhs.in_port == rhs.in_port) &&
+    (lhs.dl_vlan == rhs.dl_vlan) &&
+    (lhs.dl_vlan_pcp == rhs.dl_vlan_pcp) &&
+    (lhs.dl_src == rhs.dl_src) &&
+    (lhs.dl_dst == rhs.dl_dst) &&
+    (lhs.dl_type == rhs.dl_type) &&
+    (lhs.nw_src == rhs.nw_src) &&
+    (lhs.nw_dst == rhs.nw_dst) &&
+    (lhs.nw_proto == rhs.nw_proto) &&
+    (lhs.nw_tos == rhs.nw_tos) &&
+    (lhs.tp_src == rhs.tp_src) &&
+    (lhs.tp_dst == rhs.tp_dst);
+}
+
+bool operator!=(const Flow& lhs, const Flow& rhs)
+{
+  return !(lhs == rhs);
+}
+
+
+
 } // namespace vigil
