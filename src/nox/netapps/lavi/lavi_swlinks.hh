@@ -173,7 +173,7 @@ namespace vigil
 			    lavi_swlinks*& component);
 
   private:
-    /** \brief Send list of switches
+    /** \brief Send list of links between switches
      * @param stream socket to send list over
      * @param link_list list of links to send
      * @param add indicate if add or remove
