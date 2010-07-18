@@ -171,6 +171,7 @@ namespace vigil
     of_flow_mod ofm;
     ofm.header = openflow_pack::header(OFPT_FLOW_MOD, size);
     ofm.match = flow.get_exact_match();
+    ofm.match.in_port = in_port;
     ofm.match.wildcards = wildcards_;
     ofm.cookie = cookie;
     ofm.command = OFPFC_ADD;
