@@ -24,14 +24,13 @@ namespace vigil
     if (pie.flow.dl_type == ethernet::LLDP)
       return CONTINUE;
 
-    const hosttracker::location sloc = ht->get_latest_location(pie.flow.dl_src);
     const hosttracker::location dloc = ht->get_latest_location(pie.flow.dl_dst);
     bool routed = false;
 
     //Route or at least try
-    if (!sloc.dpid.empty() && !dloc.dpid.empty())
+    if (!dloc.dpid.empty())
     {      
-      network::route rte(sloc.dpid, sloc.port);
+      network::route rte(pie.datapath_id, pie.in_port);
       network::termination endpt(dloc.dpid, dloc.port);
       if (ri->get_shortest_path(endpt, rte))
       {
