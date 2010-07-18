@@ -13,11 +13,18 @@ namespace vigil
   {
     const Packet_in_event& pie = assert_cast<const Packet_in_event&>(e);
  
-    Flow flow(htons(pie.in_port), *(pie.buf));
+    if (pie.flow.dl_type == ethernet::LLDP)
+      return CONTINUE;
+
     if (!topo->is_internal(pie.datapath_id, pie.in_port) &&
-	flow.dl_type < ethernet::ETH2_CUTOFF &&
-	!flow.dl_src.is_multicast() && !flow.dl_src.is_broadcast())
-      ht->add_location(flow.dl_src, pie.datapath_id, pie.in_port);
+	!pie.flow.dl_src.is_multicast() && !pie.flow.dl_src.is_broadcast())
+      ht->add_location(pie.flow.dl_src, pie.datapath_id, pie.in_port);
+    else
+      VLOG_DBG(lg, "Host %"PRIx64" not registered, 'cos %s%s %s",
+	       pie.flow.dl_src.hb_long(),
+	       pie.flow.dl_src.is_multicast()?"multicast mac":"",
+	       pie.flow.dl_src.is_broadcast()?"broadcast mac":"",
+	       topo->is_internal(pie.datapath_id, pie.in_port)?"on internal port":"");
 
     return CONTINUE;
   } 
