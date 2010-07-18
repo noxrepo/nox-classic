@@ -61,6 +61,15 @@
             ], 
             "name": "lavi_hosts", 
             "library": "lavi_hosts"
+        }, 
+        {
+            "dependencies": [
+                "lavi links", 
+                "msgpacket", 
+                "hosttracker"
+            ], 
+            "name": "lavi_host2sw", 
+            "library": "lavi_host2sw"
         }
     ]
 }

@@ -80,6 +80,7 @@
                 "lavi_switches",  
 		"lavi_hosts",
                 "lavi_swlinks",
+                "lavi_host2sw",
 		"lavi nodes",
                 "lavi links",
                 "tablog"
@@ -98,7 +99,8 @@
 	    	"lavi_networkflow"
 	        ],
 	    "Host_location_event": [
-	    	"lavi_hosts"
+	    	"lavi_hosts",
+		"lavi_host2sw"
 	        ]        
 	    }
     }

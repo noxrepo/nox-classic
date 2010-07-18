@@ -8,6 +8,7 @@ AM_CPPFLAGS += $(PYTHON_CPPFLAGS)
 endif # PY_ENABLED 
 
 pkglib_LTLIBRARIES =\
+	lavi_host2sw.la \
 	lavi_hosts.la \
 	lavi_networkflow.la \
 	lavi_flows.la \
@@ -48,6 +49,10 @@ lavi_networkflow_la_LDFLAGS = -module -export-dynamic
 lavi_hosts_la_CPPFLAGS = $(AM_CPPFLAGS) -I $(top_srcdir)/src/nox -I $(top_srcdir)/src/nox/netapps/ -I $(top_srcdir)/src/nox/coreapps/
 lavi_hosts_la_SOURCES = lavi_hosts.hh lavi_hosts.cc
 lavi_hosts_la_LDFLAGS = -module -export-dynamic
+
+lavi_host2sw_la_CPPFLAGS = $(AM_CPPFLAGS) -I $(top_srcdir)/src/nox -I $(top_srcdir)/src/nox/netapps/ -I $(top_srcdir)/src/nox/coreapps/
+lavi_host2sw_la_SOURCES = lavi_host2sw.hh lavi_host2sw.cc
+lavi_host2sw_la_LDFLAGS = -module -export-dynamic
 
 NOX_RUNTIMEFILES = meta.json	
 
