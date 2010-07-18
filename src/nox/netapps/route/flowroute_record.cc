@@ -39,8 +39,6 @@ namespace vigil
 	post(new Flow_route_event(i->first, i->second,
 				  Flow_route_event::REMOVE));
 
-      delete &(i->first);
-      delete &(i->second);
       routeMap.erase(i);
       
       return true;
