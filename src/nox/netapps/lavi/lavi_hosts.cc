@@ -12,7 +12,9 @@ namespace vigil
     resolve(ht);
     resolve(mp);
 
-     register_handler<Host_location_event>
+    register_handler<JSONMsg_event>
+      (boost::bind(&lavi_hosts::handle_req, this, _1));
+    register_handler<Host_location_event>
        (boost::bind(&lavi_hosts::handle_host_loc, this, _1));
   }
   
@@ -23,13 +25,19 @@ namespace vigil
   Disposition lavi_hosts::handle_host_loc(const Event& e)
   {
     const Host_location_event& hle = assert_cast<const Host_location_event&>(e);
+
+    VLOG_DBG(lg, "host");
     
     if (hle.eventType == Host_location_event::MODIFY)
       return CONTINUE;
-    
+
+    VLOG_DBG(lg, "Host %"PRIx64" %s",
+	     hle.host.hb_long(), 
+	     (hle.eventType == Host_location_event::ADD)? "added":"removed");
+
     list<ethernetaddr> hlist;
     hlist.push_back(hle.host);
-    
+
     list<Msg_stream*>::iterator i = interested.begin();
     while(i != interested.end())
     {
@@ -89,11 +97,9 @@ namespace vigil
       ja->push_back(jv);
     }
     jo->object = ja;
-    VLOG_DBG(lg, "Size %zu: %s",  ja->size(), jo->get_string().c_str());
     jd->insert(make_pair("node_id", jo));
 
     //Send
-    VLOG_DBG(lg, "Sending reply: %s", jm.get_string().c_str());
     mp->send(jm.get_string(),stream.stream);
   }
 

@@ -78,8 +78,9 @@
             "JSONMsg_event": [
                 "jsonmessenger",
                 "lavi_switches",  
-		"lavi_swlinks",
-                "lavi nodes",
+		"lavi_hosts",
+                "lavi_swlinks",
+		"lavi nodes",
                 "lavi links",
                 "tablog"
                 ],

@@ -54,6 +54,11 @@
             "library": "lavi_networkflow"
         }, 
         {
+            "dependencies": [
+                "lavi nodes", 
+                "msgpacket", 
+                "hosttracker"
+            ], 
             "name": "lavi_hosts", 
             "library": "lavi_hosts"
         }
