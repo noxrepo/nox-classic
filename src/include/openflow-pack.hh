@@ -49,6 +49,7 @@ namespace vigil
    * @author ykk
    * @date May 2010
    * @file openflow-pack-raw.hh
+   * @file openflow.h
    */
 
   /** \brief Class to help pack OpenFlow messages
