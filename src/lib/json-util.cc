@@ -27,7 +27,7 @@ namespace vigil {
         json_object* load_document(const string& file) {
             
             // TODO: Add checks, return error etc
-            int len;
+            ssize_t len;
             char* jsonstr;
             ifstream in;
             json_object* jo;
