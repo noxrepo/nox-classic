@@ -339,6 +339,12 @@ def set_match(attrs):
     else:
         wildcards = wildcards | openflow.OFPFW_NW_PROTO
 
+    if attrs.has_key(core.NW_TOS):
+        m.nw_tos = attrs[core.NW_TOS]
+        num_entries += 1
+    else:
+        wildcards = wildcards | openflow.OFPFW_NW_TOS
+
     if attrs.has_key(core.TP_SRC):
         m.tp_src = htons(attrs[core.TP_SRC])
         num_entries += 1
