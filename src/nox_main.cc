@@ -158,9 +158,8 @@ void usage(const char* program_name)
 #ifdef HAVE_NETLINK
            "  -i nl:DP_ID             via netlink to local datapath DP_IDX\n"
 #endif
-           "  -i ptcp:[IP Address (optional):][PORT]\n"
-           "                           listen to TCP PORT (default: %d)\n"
-           "  -i pssl:[IP Address (optional):][PORT]:KEY:CERT:CONTROLLER_CA_CERT\n"        
+           "  -i ptcp:[PORT]          listen to TCP PORT (default: %d)\n"
+           "  -i pssl:[PORT]:KEY:CERT:CONTROLLER_CA_CERT\n"        
            "                          listen to SSL PORT (default: %d)\n"
            "  -i pcap:FILE[:OUTFILE]  via pcap from FILE (for testing) write to OUTFILE\n"
            "  -i pcapt:FILE[:OUTFILE] same as \"pcap\", but delay packets based on pcap timestamps\n"
