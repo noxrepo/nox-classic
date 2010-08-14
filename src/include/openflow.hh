@@ -284,15 +284,13 @@ class Passive_tcp_openflow_connection_factory
     : public Openflow_connection_factory
 {
 public:
-    Passive_tcp_openflow_connection_factory(const char* bind_ip,
-                                            uint16_t port);
+    Passive_tcp_openflow_connection_factory(uint16_t port);
     Openflow_connection* connect(int& error);
     void connect_wait();
     std::string to_string();
     bool passive() { return true; }
 private:
     Tcp_socket socket;
-    ipaddr bind_ip;
     uint16_t port;
 };
 
@@ -316,8 +314,7 @@ class Passive_ssl_openflow_connection_factory
     : public Openflow_connection_factory
 {
 public:
-    Passive_ssl_openflow_connection_factory(const char* bind_ip,
-                                            uint16_t port, const char *key,
+    Passive_ssl_openflow_connection_factory(uint16_t port, const char *key,
                                             const char *cert,
                                             const char *CAfile);
     Openflow_connection* connect(int& error);
@@ -327,7 +324,6 @@ public:
 private:
     boost::shared_ptr<Ssl_config> config;
     Ssl_socket socket;
-    ipaddr bind_ip;
     uint16_t port;
 };
 
