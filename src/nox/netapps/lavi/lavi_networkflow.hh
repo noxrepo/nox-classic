@@ -1,5 +1,4 @@
-/* Copyright 2008 (C) Nicira, Inc.
- * Copyright 2009 (C) Stanford University.
+/* Copyright 2010 (C) Stanford University.
  *
  * This file is part of NOX.
  *

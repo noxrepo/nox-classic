@@ -39,15 +39,21 @@ namespace vigil
     {
       if (fre.eventType == Flow_route_event::REMOVE ||
 	  fre.eventType == Flow_route_event::MODIFY)
+      {
+	VLOG_DBG(lg, "Send remove flow %s", fre.flow.to_string().c_str());
 	send_flow_list(fre.flow, fre.rte, *(*i), false);
+      }
       if (fre.eventType == Flow_route_event::ADD ||
 	  fre.eventType == Flow_route_event::MODIFY)
+      {
+	VLOG_DBG(lg, "Send add flow %s", fre.flow.to_string().c_str());
 	send_flow_list(fre.flow, fre.rte, *(*i), true);
+      }
       i++;
     }
-
+    
     return CONTINUE;
-  } 
+  }
 
   void lavi_networkflow::send_flow_list(const Flow& flow, 
 					const network::route& rte,
@@ -112,16 +118,20 @@ namespace vigil
     while (i != rte.next_hops.end())
     {
       jv = new json_object(json_object::JSONT_DICT);
-      lavi_swlinks::swlink sl("switch",
-			      rte.in_switch_port.dpid,
-			      i->first,
-			      "switch",
-			      i->second->in_switch_port.dpid,
-			      i->second->in_switch_port.port);
-      sl.get_json(jv);
-      ja->push_back(jv);
+      if (!i->second->in_switch_port.dpid.empty())
+      {
+	lavi_swlinks::swlink sl("switch",
+				rte.in_switch_port.dpid,
+				i->first,
+				"switch",
+				i->second->in_switch_port.dpid,
+				i->second->in_switch_port.port);
+	sl.get_json(jv);
+	ja->push_back(jv);
+      }
 
       serialize_route(ja, *(i->second));
+      i++;
     }
   }
 

@@ -46,7 +46,8 @@
         }, 
         {
             "dependencies": [
-                "lavi flows", 
+                "lavi flows",
+		"lavi_swlinks",
                 "msgpacket", 
                 "flowroute record"
             ], 
