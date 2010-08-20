@@ -16,6 +16,8 @@ namespace vigil
   void flowroute_record::set(const Flow& flow, const network::route& rte,
 			     bool throwEvent)
   {
+    VLOG_DBG(lg, "Set flow %s", flow.to_string().c_str());
+
     if (throwEvent)
     {
       if (unset(flow, false))
@@ -31,7 +33,10 @@ namespace vigil
 
   bool flowroute_record::unset(const Flow& flow, bool throwEvent)
   {
+    VLOG_DBG(lg, "Unset flow %s", flow.to_string().c_str());
+
     hash_map<Flow, network::route>::iterator i = routeMap.find(flow);
+
     //Existing flow
     if (i != routeMap.end())
     {
@@ -43,7 +48,7 @@ namespace vigil
       
       return true;
     }
-    
+   
     return false;
   }
 
