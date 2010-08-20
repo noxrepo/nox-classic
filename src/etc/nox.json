@@ -96,6 +96,7 @@
 	    	"authenticator"
 	        ],
 	    "Flow_route_event": [
+		"lavitest_showflow",
 	    	"lavi_networkflow"
 	        ],
 	    "Host_location_event": [

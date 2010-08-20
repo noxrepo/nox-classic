@@ -71,6 +71,18 @@
             ], 
             "name": "lavi_host2sw", 
             "library": "lavi_host2sw"
+        }, 
+        {
+	    "dependencies": [
+                "lavi_networkflow", 
+                "lavi_switches",
+		"lavi_hosts",
+		"lavi_host2sw",
+		"lavi_swlinks", 
+                "simplerouting"
+            ],  
+            "name": "lavitest_showflow", 
+            "library": "lavitest_showflow"
         }
     ]
 }
