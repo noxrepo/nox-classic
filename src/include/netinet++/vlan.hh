@@ -67,7 +67,7 @@ vlan::pcp() const
 //-----------------------------------------------------------------------------
 inline
 void
-vlan::set_pcp(uint16_t pcp)
+vlan::set_pcp(uint8_t pcp)
 { tci = (tci & ~htons(PCP_MASK)) |
         htons((((uint16_t)pcp) << PCP_SHIFT) & PCP_MASK); }
 //-----------------------------------------------------------------------------
