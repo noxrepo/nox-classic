@@ -11,9 +11,28 @@ namespace vigil
   {
     resolve(ht);
     resolve(ri);
+    resolve(frr);
+
+    post_flow_record = SIMPLEROUTING_POST_RECORD_DEFAULT;
 
     register_handler<Packet_in_event>
       (boost::bind(&simplerouting::handle_pkt_in, this, _1));
+
+    //Get commandline arguments
+    const hash_map<string, string> argmap = \
+      c->get_arguments_list();
+    hash_map<string, string>::const_iterator i = \
+      argmap.find("postrecord");
+    if (i != argmap.end())
+    {
+      if (i->second == "true")
+	post_flow_record = true;
+      else if (i->second == "false")
+	post_flow_record = false;
+      else
+	VLOG_WARN(lg, "Cannot parse argument postrecord=%s", 
+		  i->second.c_str());
+    }
   }
   
   Disposition simplerouting::handle_pkt_in(const Event& e)
@@ -35,6 +54,8 @@ namespace vigil
       if (ri->get_shortest_path(endpt, rte))
       {
       	ri->install_route(pie.flow, rte, pie.buffer_id);
+	if (post_flow_record)
+	  frr->set(pie.flow, rte);
 	routed = true;
       }
     }

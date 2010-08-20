@@ -18,10 +18,15 @@
 #ifndef simplerouting_HH
 #define simplerouting_HH
 
+/** Post in flowroute_record or not.
+ */
+#define SIMPLEROUTING_POST_RECORD_DEFAULT false
+
 #include "component.hh"
 #include "config.h"
 #include "hoststate/hosttracker.hh"
 #include "routeinstaller.hh"
+#include "flowroute_record.hh"
 
 #ifdef LOG4CXX_ENABLED
 #include <boost/format.hpp>
@@ -38,6 +43,15 @@ namespace vigil
   /** \brief simplerouting: routing with dependencies on authenticator
    * \ingroup noxcomponents
    *
+   * Can choose to set flow installed into flowroute_record with arguments
+   * <PRE>
+   *    simplerouting=postrecord=true
+   * </PRE>
+   * or
+   * <PRE>
+   *    simplerouting=postrecord=false
+   * </PRE>
+   *
    * 'cos this is easier to do than understand why authenticator does not
    * register some mac addresses 
    *
@@ -48,6 +62,10 @@ namespace vigil
     : public Component 
   {
   public:
+    /** \brief Post flow record or not
+     */
+    bool post_flow_record;
+
     /** \brief Constructor of simplerouting.
      *
      * @param c context
@@ -93,6 +111,9 @@ namespace vigil
     /** Reference to hosttracker
      */
     hosttracker* ht;
+    /** Reference to flowroute_record
+     */
+    flowroute_record* frr;
   };
 }
 

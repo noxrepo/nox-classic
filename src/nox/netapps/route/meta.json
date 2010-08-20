@@ -21,7 +21,8 @@
         {
             "dependencies": [
                 "routeinstaller",
-		"trackhost_pktin"
+		"trackhost_pktin",
+		"flowroute record"
             ], 
             "name": "simplerouting", 
             "library": "simplerouting"
