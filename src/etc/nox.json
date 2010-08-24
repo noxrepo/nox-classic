@@ -97,7 +97,8 @@
 	        ],
 	    "Flow_route_event": [
 		"lavitest_showflow",
-	    	"lavi_networkflow"
+	    	"lavi_networkflow",
+	    	"lavi_hostflow"
 	        ],
 	    "Host_location_event": [
 	    	"lavi_hosts",
