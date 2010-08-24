@@ -86,7 +86,7 @@ namespace vigil
 
     //Add flow_type
     jo = new json_object(json_object::JSONT_STRING);
-    sprintf(buf,"%"PRIx64"", flow.hash_code());
+    sprintf(buf,"%"PRIx64"", get_id(flow));
     jo->object = new string(buf);
     jd->insert(make_pair("flow_id", jo));
 

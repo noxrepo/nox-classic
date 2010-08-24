@@ -89,6 +89,14 @@ namespace vigil
     }
   }
 
+  uint64_t lavi_flows::get_id(const Flow& flow)
+  {
+   if (flow.cookie == 0)
+      return flow.hash_code();
+    else
+      return flow.cookie;
+  }
+
   void lavi_flows::getInstance(const Context* c,
 				  lavi_flows*& component)
   {

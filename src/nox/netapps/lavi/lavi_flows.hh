@@ -21,6 +21,7 @@
 #include "component.hh"
 #include "config.h"
 #include "messenger/jsonmessenger.hh"
+#include "flow.hh"
 
 #ifdef LOG4CXX_ENABLED
 #include <boost/format.hpp>
@@ -114,6 +115,13 @@ namespace vigil
      * @param sock socket to unsubscribe
      */
     virtual void unsubscribe(Msg_stream* sock);
+
+    /** \brief Return flow id
+     *
+     * @param flow reference to flow
+     * @return cookie, or hash code (if cookie==0)
+     */
+    uint64_t get_id(const Flow& flow);
   };
 }
 

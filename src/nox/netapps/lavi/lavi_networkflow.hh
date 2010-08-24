@@ -53,7 +53,7 @@ namespace vigil
    *   "type" : "lavi"
    *   "command" : <string | "add", "delete">
    *   "flow_type" : "network"
-   *   "flow_id" : <string: use hash code of flow>
+   *   "flow_id" : <string: use cookie (if cookie==0, use hash code) of flow>
    *   "flows" : [ { "src type": "switch",
    *                 "src id" : <string>,
    *                 "src port" : <string>,
@@ -64,6 +64,7 @@ namespace vigil
    * }
    * </PRE>
    * Note that flow_id is globally unique.
+   * Delete messages do not include the path of the flow.
    *
    * @author ykk
    * @date June 2010
