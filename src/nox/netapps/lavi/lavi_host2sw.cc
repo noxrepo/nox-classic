@@ -100,34 +100,12 @@ namespace vigil
   void lavi_host2sw::get_json(json_object* jo, const ethernetaddr host,
 			      const hosttracker::location link)
   {
-    char buf[20];
-
     jo->type = json_object::JSONT_DICT;
     json_dict* jd = new json_dict();
     jo->object = jd;
-    json_object* jv;
-
-    jv = new json_object(json_object::JSONT_STRING);
-    jv->object = new string("host");
-    jd->insert(make_pair("src type",jv));
     
-    jv = new json_object(json_object::JSONT_STRING);
-    sprintf(buf, "%"PRIx64"",host.hb_long());
-    jv->object = new string(buf);
-    jd->insert(make_pair("src id",jv));
-
-    jv = new json_object(json_object::JSONT_STRING);
-    jv->object = new string("switch");
-    jd->insert(make_pair("dst type",jv));
-    
-    jv = new json_object(json_object::JSONT_STRING);
-    jv->object = new string(link.dpid.string());
-    jd->insert(make_pair("dst id",jv));
-
-    jv = new json_object(json_object::JSONT_STRING);
-    sprintf(buf, "%"PRIx16"",link.port);
-    jv->object = new string(buf);
-    jd->insert(make_pair("dst port",jv)); 
+    json_add_host(jd, true, host);
+    json_add_switch(jd, false, link.dpid, link.port);
   }			     
 
   bool lavi_host2sw::match(const link_filters filter,

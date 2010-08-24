@@ -124,6 +124,38 @@ namespace vigil
      */
     void install();
 
+    /** \brief Add host to JSON dictionary
+     * @param jd reference to JSON dictionary
+     * @param src source or destination
+     * @param host ethernet address of host
+     */
+    static void json_add_host(json_dict* jd, bool src, const string& host);
+
+    /** \brief Add host to JSON dictionary
+     * @param jd reference to JSON dictionary
+     * @param src source or destination
+     * @param host ethernet address of host
+     */
+    static void json_add_host(json_dict* jd, bool src, const ethernetaddr host);
+
+    /** \brief Add switch to JSON dictionary
+     * @param jd reference to JSON dictionary
+     * @param src source or destination
+     * @param dpid datapath id of switch
+     * @param port port number of switch
+     */
+    static void json_add_switch(json_dict* jd, bool src, 
+			 const string& dpid, const string& port);
+
+    /** \brief Add switch to JSON dictionary
+     * @param jd reference to JSON dictionary
+     * @param src source or destination
+     * @param dpid datapath id of switch
+     * @param port port number of switch
+     */
+    static void json_add_switch(json_dict* jd, bool src, 
+			 const datapathid dpid, const uint16_t port);
+
     /** \brief Function to handle requests
      *
      * @param e json message event

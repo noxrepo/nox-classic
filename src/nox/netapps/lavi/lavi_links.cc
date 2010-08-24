@@ -195,6 +195,71 @@ namespace vigil
     return true;
   }
 
+  void lavi_links::json_add_host(json_dict* jd, bool src, 
+				 const ethernetaddr host)
+  {
+    char buf[20];
+    sprintf(buf, "%"PRIx64"",host.hb_long());
+    string host_(buf);
+    json_add_host(jd, src, host_);
+  }
+
+  void lavi_links::json_add_host(json_dict* jd, bool src, 
+				 const string& host)
+  {
+    json_object* jv;
+
+    jv = new json_object(json_object::JSONT_STRING);
+    jv->object = new string("host");
+    if (src)
+      jd->insert(make_pair("src type", jv));
+    else
+      jd->insert(make_pair("dst type", jv));
+
+    jv = new json_object(json_object::JSONT_STRING);
+    jv->object = new string(host);
+    if (src)
+      jd->insert(make_pair("src id",jv));
+    else
+      jd->insert(make_pair("dst id",jv));
+  }
+
+  void lavi_links::json_add_switch(json_dict* jd, bool src, 
+				   const datapathid dpid, const uint16_t port)
+  {
+    char buf[20];
+    sprintf(buf, "%"PRIx16"",port);
+    string dpid_(buf);
+    json_add_switch(jd, src, dpid.string(), dpid_);
+  }
+
+  void lavi_links::json_add_switch(json_dict* jd, bool src, 
+				   const string& dpid, const string& port)
+  {
+    json_object* jv;
+
+    jv = new json_object(json_object::JSONT_STRING);
+    jv->object = new string("switch");
+    if (src)
+      jd->insert(make_pair("src type", jv));
+    else
+      jd->insert(make_pair("dst type", jv));
+
+    jv = new json_object(json_object::JSONT_STRING);
+    jv->object = new string(dpid);
+    if (src)
+      jd->insert(make_pair("src id",jv));
+    else
+      jd->insert(make_pair("dst id",jv));
+
+    jv = new json_object(json_object::JSONT_STRING);
+    jv->object = new string(port);
+    if (src)
+      jd->insert(make_pair("src port",jv));
+    else
+      jd->insert(make_pair("dst port",jv));
+  }
+
   void lavi_links::getInstance(const Context* c,
 				  lavi_links*& component)
   {

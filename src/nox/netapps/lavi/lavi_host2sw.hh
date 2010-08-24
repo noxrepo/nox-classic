@@ -60,9 +60,9 @@ namespace vigil
    *   "type" : "lavi"
    *   "command" : <string | "add", "delete">
    *   "link_type" : "host2sw"
-   *   "links" : [ { "src type" : <string>,
+   *   "links" : [ { "src type" : "host",
    *                 "src id" : <string>,
-   *                 "dst type" : <string>,
+   *                 "dst type" : "switch",
    *                 "dst id" : <string>,
    *                 "dst port" : <string>
    *               }, ...]

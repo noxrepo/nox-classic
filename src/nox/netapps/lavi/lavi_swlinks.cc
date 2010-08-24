@@ -21,37 +21,14 @@ namespace vigil
     dst_port = buf;
   }
 
-
   void lavi_swlinks::swlink::get_json(json_object* jo)
   {
     jo->type = json_object::JSONT_DICT;
     json_dict* jd = new json_dict();
     jo->object = jd;
-    json_object* jv;
 
-    jv = new json_object(json_object::JSONT_STRING);
-    jv->object = new string(src_nodetype);
-    jd->insert(make_pair("src type",jv));
-    
-    jv = new json_object(json_object::JSONT_STRING);
-    jv->object = new string(src_nodeid);
-    jd->insert(make_pair("src id",jv));
-
-    jv = new json_object(json_object::JSONT_STRING);
-    jv->object = new string(src_port);
-    jd->insert(make_pair("src port",jv));
-
-    jv = new json_object(json_object::JSONT_STRING);
-    jv->object = new string(dst_nodetype);
-    jd->insert(make_pair("dst type",jv));
-    
-    jv = new json_object(json_object::JSONT_STRING);
-    jv->object = new string(dst_nodeid);
-    jd->insert(make_pair("dst id",jv));
-
-    jv = new json_object(json_object::JSONT_STRING);
-    jv->object = new string(dst_port);
-    jd->insert(make_pair("dst port",jv));
+    json_add_switch(jd, true, src_nodeid, src_port);
+    json_add_switch(jd, false, dst_nodeid, dst_port);
   }
 
   void lavi_swlinks::configure(const Configuration* c) 
