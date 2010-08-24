@@ -100,25 +100,26 @@ pull_vlan(Buffer& b)
     return b.try_pull<vlan_header>();
 }
 
-Flow::Flow(const ofp_match& match) 
+  Flow::Flow(const ofp_match& match, uint64_t cookie_) 
     : in_port(match.in_port), dl_vlan(match.dl_vlan), 
       dl_vlan_pcp(match.dl_vlan_pcp), 
       dl_src(), dl_dst(), dl_type(match.dl_type),
       nw_src(match.nw_src), nw_dst(match.nw_dst), 
       nw_proto(match.nw_proto), nw_tos(match.nw_tos),
-      tp_src(match.tp_src), tp_dst(match.tp_dst) 
+      tp_src(match.tp_src), tp_dst(match.tp_dst), cookie(cookie_)
 {
     memcpy(dl_src.octet, match.dl_src, ethernetaddr::LEN);
     memcpy(dl_dst.octet, match.dl_dst, ethernetaddr::LEN);
 }
 
-Flow::Flow(const ofp_match* match) 
+  Flow::Flow(const ofp_match* match, uint64_t cookie_) 
     : in_port(match->in_port), dl_vlan(match->dl_vlan), 
       dl_vlan_pcp(match->dl_vlan_pcp), 
       dl_src(), dl_dst(), dl_type(match->dl_type),
       nw_src(match->nw_src), nw_dst(match->nw_dst), 
       nw_proto(match->nw_proto), nw_tos(match->nw_tos),
-      tp_src(match->tp_src), tp_dst(match->tp_dst) 
+      tp_src(match->tp_src), tp_dst(match->tp_dst),
+      cookie(cookie_)
 {
     memcpy(dl_src.octet, match->dl_src, ethernetaddr::LEN);
     memcpy(dl_dst.octet, match->dl_dst, ethernetaddr::LEN);
@@ -143,19 +144,19 @@ const of_match Flow::get_exact_match() const
     return om;
 }
 
-Flow::Flow(const Flow& flow):
+  Flow::Flow(const Flow& flow, uint64_t cookie_):
     in_port(flow.in_port), dl_vlan(flow.dl_vlan), dl_vlan_pcp(flow.dl_vlan_pcp), 
     dl_src(flow.dl_src), dl_dst(flow.dl_dst), dl_type(flow.dl_type),
     nw_src(flow.nw_src), nw_dst(flow.nw_dst), 
     nw_proto(flow.nw_proto), nw_tos(flow.nw_tos),
-    tp_src(flow.tp_src), tp_dst(flow.tp_dst) 
+    tp_src(flow.tp_src), tp_dst(flow.tp_dst), cookie(cookie_)
 { }
 
-Flow::Flow(uint16_t in_port_, const Buffer& buffer)
+Flow::Flow(uint16_t in_port_, const Buffer& buffer, uint64_t cookie_)
     : in_port(in_port_),
       dl_vlan(), dl_vlan_pcp(0), dl_src(), dl_dst(), dl_type(0),
       nw_src(0), nw_dst(0), nw_proto(0), nw_tos(0),
-      tp_src(0), tp_dst(0)
+      tp_src(0), tp_dst(0), cookie(cookie_)
 {
     dl_vlan = htons(OFP_VLAN_NONE);
 

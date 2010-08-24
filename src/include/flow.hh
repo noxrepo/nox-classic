@@ -67,6 +67,9 @@ struct Flow {
   /** TCP/UDP destination port. 
    */
   uint16_t tp_dst;        
+  /** Cookie value
+   */
+  uint64_t cookie;
 
   /** Empty constructor
    */
@@ -75,34 +78,35 @@ struct Flow {
     dl_src(), dl_dst(), dl_type(0),
     nw_src(0), nw_dst(0), 
     nw_proto(0), nw_tos(0),
-    tp_src(0), tp_dst(0) { }
+    tp_src(0), tp_dst(0), cookie(0) { }
   /** Copy constructor
    */
-  Flow(const Flow& flow_);
+  Flow(const Flow& flow_, uint64_t cookie_=0);
   /** Constructor from packet
    */
-  Flow(uint16_t in_port_, const Buffer&);
+  Flow(uint16_t in_port_, const Buffer&, uint64_t cookie_=0);
   /** Constructor from ofp_match
    */
-  Flow(const ofp_match& match);
+  Flow(const ofp_match& match, uint64_t cookie_=0);
   /** Constructor from ofp_match
    */
-  Flow(const ofp_match* match);
+  Flow(const ofp_match* match, uint64_t cookie_=0);
   /** Detail constructor
    */
   Flow(uint16_t in_port_, uint16_t dl_vlan_, uint8_t dl_vlan_pcp_,
        ethernetaddr dl_src_, ethernetaddr dl_dst_, uint16_t dl_type_, 
        uint32_t nw_src_, uint32_t nw_dst_, uint8_t nw_proto_,
-       uint16_t tp_src_, uint16_t tp_dst_, uint8_t nw_tos_=0) :
+       uint16_t tp_src_, uint16_t tp_dst_, uint8_t nw_tos_=0, 
+       uint64_t cookie_=0) :
     in_port(in_port_), dl_vlan(dl_vlan_), dl_vlan_pcp(dl_vlan_pcp_), 
     dl_src(dl_src_), dl_dst(dl_dst_), dl_type(dl_type_),
     nw_src(nw_src_), nw_dst(nw_dst_), 
     nw_proto(nw_proto_), nw_tos(nw_tos_),
-    tp_src(tp_src_), tp_dst(tp_dst_) { }
+    tp_src(tp_src_), tp_dst(tp_dst_), cookie(cookie_) { }
   /** Compare function
    */
   static bool matches(const Flow&, const Flow&);
-  /** String representation
+  /** \brief String representation
    */
   const std::string to_string() const;
   /** \brief Return of_match that is exact match to flow in host order
@@ -110,9 +114,10 @@ struct Flow {
    * @return of_match with exact match
    */
   const of_match get_exact_match() const;
-  /** Return hash code
+  /** \brief Return hash code
    */
   uint64_t hash_code() const;
+  
 };
 bool operator==(const Flow& lhs, const Flow& rhs);
 bool operator!=(const Flow& lhs, const Flow& rhs);
