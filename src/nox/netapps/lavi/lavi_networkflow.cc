@@ -140,7 +140,7 @@ namespace vigil
   }
 
   void lavi_networkflow::getInstance(const Context* c,
-				  lavi_networkflow*& component)
+				     lavi_networkflow*& component)
   {
     component = dynamic_cast<lavi_networkflow*>
       (c->get_by_interface(container::Interface_description
