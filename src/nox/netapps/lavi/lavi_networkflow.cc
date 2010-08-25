@@ -11,6 +11,7 @@ namespace vigil
     resolve(mp);
     resolve(frr);
 
+    show_ongoing = false;
     flowtype = "network";
 
     register_handler<JSONMsg_event>
@@ -33,6 +34,8 @@ namespace vigil
   Disposition lavi_networkflow::handle_flow_route(const Event& e)
   {
     const Flow_route_event& fre = assert_cast<const Flow_route_event&>(e);
+
+    VLOG_ERR(lg, "Got flow %s", fre.flow.to_string().c_str());
 
     list<Msg_stream*>::iterator i = interested.begin();
     while (i != interested.end())

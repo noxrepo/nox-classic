@@ -57,6 +57,10 @@ namespace vigil
     : public Component 
   {
   public:
+    /** \brief Retrieve stored flows?
+     */
+    bool show_ongoing;
+
     /** \brief Constructor of lavi_flows.
      *
      * @param c context

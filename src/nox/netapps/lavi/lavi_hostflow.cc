@@ -11,6 +11,7 @@ namespace vigil
     resolve(frr);
     resolve(lh2s);
 
+    show_ongoing = false;
     flowtype = "host";
     send_remove_msg = LAVI_HOSTFLOW_SEND_REMOVE;
 
@@ -34,6 +35,8 @@ namespace vigil
   Disposition lavi_hostflow::handle_flow_route(const Event& e)
   {
     const Flow_route_event& fre = assert_cast<const Flow_route_event&>(e);
+
+    VLOG_ERR(lg, "Got flow %s", fre.flow.to_string().c_str());
 
     list<Msg_stream*>::iterator i = interested.begin();
     while (i != interested.end())

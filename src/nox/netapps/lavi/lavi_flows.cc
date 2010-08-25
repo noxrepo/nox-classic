@@ -7,7 +7,11 @@ namespace vigil
   
   void lavi_flows::configure(const Configuration* c) 
   {
+    show_ongoing = false;
     flowtype = "all";
+
+   register_handler<JSONMsg_event>
+     (boost::bind(&lavi_flows::handle_req, this, _1));
   }
   
   void lavi_flows::install()
@@ -51,10 +55,12 @@ namespace vigil
 	    (*((string *) j->second->object) == "all" ||
 	     *((string *) j->second->object) == flowtype))
 	{
-	  if (*((string *) i->second->object) == "request")
+	  if (*((string *) i->second->object) == "request" &&
+	      show_ongoing)
 	  {
-	    VLOG_DBG(lg, "Sending list of flows of type %s",
-		     ((string *) j->second->object)->c_str());
+	    VLOG_DBG(lg, "Sending list of flows of type %s %s",
+		     ((string *) j->second->object)->c_str(),
+		     show_ongoing?"true":"false");
 	    send_list(*jme.sock);
 	  }
 	  else if (*((string *) i->second->object) == "subscribe" )
