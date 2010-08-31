@@ -428,13 +428,12 @@ Vlog::output(Module module, Level level, const char* log_msg)
           }  
         } 
     }
-    
-    /* Send log msg to socket */
-	char pWrite[MAX_MSG_LEN];
-	memset(pWrite, 0, sizeof(pWrite));
-	sprintf(pWrite,"%05d|%s|%s:%s\n",pimpl->msg_num,module_name,level_name,log_msg);
-	sendto(hSock,pWrite,strlen(pWrite),0,(sockaddr*)&addr,sizeof(addr));
-
+/* 
+    // Send log msg to socket 
+    char pWrite[MAX_MSG_LEN];
+    snprintf(pWrite, MAX_MSG_LEN, "%05d|%s|%s:%s\n",pimpl->msg_num,module_name,level_name,log_msg);
+    sendto(hSock,pWrite,strlen(pWrite),0,(sockaddr*)&addr,sizeof(addr));
+*/
     /* Restore errno (it's pretty unfriendly for a log function to change
      * errno). */
     errno = save_errno;
