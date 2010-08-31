@@ -271,13 +271,15 @@ Vlog::Vlog()
      * be 0, so that its module name will be logged as "uninitialized". */
     get_module_val("uninitialized");
         
-    /* Init socket to forward log msgs */
+    /*    
+    // Init socket to forward log msgs 
 	hSock = socket(AF_INET, SOCK_DGRAM, 0);	
 	struct hostent *pServer = gethostbyname("localhost");
 	memset(&addr, 0, sizeof(addr));
 	addr.sin_family = AF_INET;
 	memcpy(&addr.sin_addr.s_addr, pServer->h_addr, pServer->h_length);
 	addr.sin_port = htons(2222);
+	*/
 }
 
 Vlog::~Vlog()

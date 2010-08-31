@@ -115,7 +115,7 @@ public:
 
 private:
     Vlog_impl* pimpl;
-    int hSock;
+    //int hSock;
 	struct sockaddr_in addr;
 #endif
 public:
