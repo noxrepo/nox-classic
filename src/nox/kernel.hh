@@ -285,7 +285,7 @@ protected:
     /* If has been instantianted, the actual component instance */
     container::Component* component;
 
-    /* Component XML description, typically loaded from disk */
+    /* Component description, typically loaded from disk */
     json_object* json_description;
 
     /* Configuration merging the static XML component description and

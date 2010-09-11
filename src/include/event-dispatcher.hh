@@ -26,7 +26,7 @@ namespace vigil {
 
 struct Event_dispatcher_impl;
 
-/* An event dispatcher.
+ /** \brief An event dispatcher.
  *
  * This class serves three purposes that could really be broken up into
  * separate classes, but that seems pointless right now:
