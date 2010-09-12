@@ -31,7 +31,6 @@ namespace vigil
   void jsonmessenger::configure(const Configuration* config)
   {
     resolve(msg_core);
-    resolve(msger);
 
     register_event(JSONMsg_event::static_get_name());
     register_handler<JSONMsg_event>
@@ -208,13 +207,13 @@ namespace vigil
     return CONTINUE;
   }
 
-  void jsonmessenger::send_echo(Async_stream* sock)
+  void jsonmessenger::send_echo(Msg_stream* sock)
   {
     const char* jsonmsg = "\"type\":\"ping\"";
 
     VLOG_DBG(lg, "Sending ping on idle socket");
-    msger->init(raw_msg, jsonmsg);
-    msger->send(raw_msg, sock, strlen(jsonmsg)+3);
+    sock->init(raw_msg, jsonmsg);
+    sock->send(raw_msg, strlen(jsonmsg)+3);
   }
 
   void jsonmessenger::reply_echo(const JSONMsg_event& echoreq)
@@ -222,8 +221,8 @@ namespace vigil
     const char* jsonmsg = "\"type\":\"echo\"";
 
     VLOG_DBG(lg, "Replying echo");
-    msger->init(raw_msg, jsonmsg);
-    msger->send(raw_msg, echoreq.sock->stream, strlen(jsonmsg)+3);
+    echoreq.sock->init(raw_msg, jsonmsg);
+    echoreq.sock->send(raw_msg, strlen(jsonmsg)+3);
   }
   
   void jsonmessenger::getInstance(const container::Context* ctxt, 

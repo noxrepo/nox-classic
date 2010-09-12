@@ -30,6 +30,53 @@ namespace vigil
     isSSL = stream_.isSSL;
   }
 
+  void Msg_stream::init(boost::shared_array<uint8_t>& msg_raw, 
+			       ssize_t size) const
+  {
+    msg_raw.reset(new uint8_t[size]);
+  }
+
+
+  void Msg_stream::init(boost::shared_array<uint8_t>& msg_raw, 
+			       const char* str, 
+			       ssize_t size, bool addbraces) const
+  {
+    if (size == 0)
+    {
+      size = strlen(str)+1;
+      if (addbraces)
+	size += 2;
+    }
+    msg_raw.reset(new uint8_t[size]);
+    char* msg = (char*) msg_raw.get();
+    if (addbraces)
+    {
+      msg[0] = '{';
+      strcpy(msg+1, str); 
+      msg[size-2] = '}';
+    }
+    else
+      strcpy(msg, str); 
+    msg[size-1] = '\0';
+  }
+
+  void Msg_stream::send(boost::shared_array<uint8_t>& msg,
+			       ssize_t size) const
+  {
+    Nonowning_buffer buf(msg.get(), size);
+    stream->write(buf, 0);
+    VLOG_DBG(lg, "Sent message %p of length %zu socket %p",
+	     msg.get(), size, stream);
+  }
+
+  void Msg_stream::send(const std::string& str) const
+  {
+    Nonowning_buffer buf(str.c_str(), str.size());
+    stream->write(buf, 0);
+    VLOG_DBG(lg, "Sent string of length %zu socket %p",
+	     str.size(), stream);
+  }
+
   core_message::core_message(Msg_stream* socket)
   {
     sock = socket;
@@ -46,8 +93,6 @@ namespace vigil
     memcpy(raw_msg.get(), message, size);
     VLOG_DBG(lg, "Received packet of length %zu", size);
   }
-
-
 
   core_message::~core_message()
   {  }
@@ -286,7 +331,7 @@ namespace vigil
       {
 	//Send echo
 	echoMissed++;
-	msger->send_echo(msgstream->stream);
+	msger->send_echo(msgstream);
       }
     }
 

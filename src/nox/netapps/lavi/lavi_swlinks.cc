@@ -35,7 +35,6 @@ namespace vigil
   {
     linktype = "sw2sw";
 
-    resolve(mp);
     resolve(dpm);
     resolve(topo);
 
@@ -100,7 +99,8 @@ namespace vigil
     send_linklist(stream, linklist);
   }
 
-  void lavi_swlinks::send_linklist(const Msg_stream& stream, list<swlink> link_list,
+  void lavi_swlinks::send_linklist(const Msg_stream& stream, 
+				   list<swlink> link_list,
 				   bool add)
   {
     VLOG_DBG(lg, "Sending link list of %zu to %p", link_list.size(), &stream);
@@ -143,7 +143,7 @@ namespace vigil
     jd->insert(make_pair("links", jo));
     
     //Send
-    mp->send(jm.get_string(),stream.stream);
+    stream.send(jm.get_string());
   }
 
   bool lavi_swlinks::match(const link_filters filter, swlink link)

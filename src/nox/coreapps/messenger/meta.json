@@ -8,21 +8,15 @@
             "name": "messenger" ,
             "library": "messenger" ,
             "dependencies": [
-                "messenger_core",
-                "msgpacket"
+                "messenger_core"
             ]
-        },
-        {
-            "name": "msgpacket" ,
-            "library": "msgpacket" 
         },
         {
             "name": "jsonmessenger" ,
             "library": "jsonmessenger" ,
             "dependencies": [
-                "messenger_core",
-                "msgpacket"
-            ]
+                "messenger_core"
+	    ]
         }
     ]
 }

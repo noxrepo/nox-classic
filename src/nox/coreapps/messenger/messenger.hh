@@ -24,7 +24,6 @@
 #define MESSENGER_ECHO_THRESHOLD 3
 
 #include "messenger_core.hh"
-#include "msgpacket.hh"
 
 namespace vigil
 {
@@ -147,7 +146,7 @@ namespace vigil
   /** \ingroup noxcomponents
    * \brief Class through which to interact with NOX.
    *
-   * In NOX, packets can be packed using msgpacket.  Note that each 
+   * In NOX, packets can be packed using Msg_stream.  Note that each 
    * component that sends messages via messenger should have an array
    * for storing the messages.
    *
@@ -210,7 +209,7 @@ namespace vigil
     /** Send echo request.
      * @param sock socket to send echo request over
      */
-    void send_echo(Async_stream* sock);
+    void send_echo(Msg_stream* sock);
 
     /** Function to do processing for block received.
      * @param buf pointer to block received
@@ -250,9 +249,6 @@ namespace vigil
     /** Memory allocated for \ref vigil::bookman messages.
      */
     boost::shared_array<uint8_t> raw_msg;
-    /** Reference to msgpacket
-     */
-    msgpacket* msger;
     /** TCP port number.
      */
     uint16_t tcpport;

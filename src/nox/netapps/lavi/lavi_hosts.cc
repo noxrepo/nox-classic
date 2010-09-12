@@ -10,7 +10,6 @@ namespace vigil
     nodetype = "host";
 
     resolve(ht);
-    resolve(mp);
 
     register_handler<JSONMsg_event>
       (boost::bind(&lavi_hosts::handle_req, this, _1));
@@ -100,7 +99,7 @@ namespace vigil
     jd->insert(make_pair("node_id", jo));
 
     //Send
-    mp->send(jm.get_string(),stream.stream);
+    stream.send(jm.get_string());
   }
 
   void lavi_hosts::getInstance(const Context* c,

@@ -23,7 +23,6 @@
 #include "lavi_links.hh"
 #include "topology/topology.hh"
 #include "networkstate/datapathmem.hh"
-#include "messenger/msgpacket.hh"
 
 #ifdef LOG4CXX_ENABLED
 #include <boost/format.hpp>
@@ -75,7 +74,6 @@ namespace vigil
    * @see lavi_links
    * @see datapathmem
    * @see vigil::applications::Topology
-   * @see msgpacket
    * @author ykk
    * @date June 2010
    */
@@ -193,9 +191,6 @@ namespace vigil
     /** \brief Reference to topology
      */
     Topology* topo;
-    /** \brief Reference to packetmsg
-     */
-    msgpacket* mp;
   };
 }
 

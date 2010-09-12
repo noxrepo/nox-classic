@@ -27,7 +27,9 @@ namespace vigil
 {
   using namespace vigil::container; 
 
-  /** Async_stream for messenger.
+  /** \brief Async_stream for messenger.
+   *
+   * Include sending function for stream.
    * 
    * Copyright (C) Stanford University, 2009.
    * @author ykk
@@ -57,6 +59,34 @@ namespace vigil
      */
     ~Msg_stream()
     { ; }
+
+    /** Initialize packet with length and type.
+     * @param msg_raw message buffer reference
+     * @param size size of buffer to allocate
+     */
+    void init(boost::shared_array<uint8_t>& msg_raw, 
+		     ssize_t size) const;
+
+    /** Initialize JSON string with type and length.
+     * @param msg_raw message buffer reference
+     * @param str string to contain
+     * @param size size of buffer to allocate (if 0, use min to contain string)
+     * @param addbraces indidcate if braces should be added
+     */
+    void init(boost::shared_array<uint8_t>& msg_raw, const char* str, 
+		     ssize_t size=0, bool addbraces=true) const;
+
+    /** Send packet on given socket.
+     * @param msg message buffer reference
+     * @param size size of messages (if 0, assume length-type)
+     */
+    void send(boost::shared_array<uint8_t>& msg, 
+		     ssize_t size=0) const;
+
+    /** Send packet on given socket.
+     * @param str string to send
+     */
+    void send(const std::string& str) const;
 
     /** Reference to Async
      */
@@ -177,7 +207,7 @@ namespace vigil
     /** Send echo request.
      * @param sock socket to send echo request over
      */
-    virtual void send_echo(Async_stream* sock)
+    virtual void send_echo(Msg_stream* sock)
     {};
 
     /** Periodic check interval (in terms idle time, in sec)

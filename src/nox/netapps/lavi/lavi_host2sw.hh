@@ -21,7 +21,6 @@
 #include "component.hh"
 #include "config.h"
 #include "hoststate/hosttracker.hh"
-#include "messenger/msgpacket.hh"
 #include "lavi_links.hh"
 
 #ifdef LOG4CXX_ENABLED
@@ -71,7 +70,6 @@ namespace vigil
    *
    * @see lavi_links
    * @see hosttracker
-   * @see msgpacket
    * @author ykk
    * @date July 2010
    */
@@ -156,9 +154,6 @@ namespace vigil
     /** \brief Reference to hosttracker
      */
     hosttracker* ht;
-    /** \brief Reference to packetmsg
-     */
-    msgpacket* mp;
   };
 }
 

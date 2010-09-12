@@ -14,7 +14,6 @@
         {
             "dependencies": [
                 "lavi nodes", 
-                "msgpacket", 
                 "datapathmem"
             ], 
             "name": "lavi_switches", 
@@ -30,7 +29,6 @@
         {
             "dependencies": [
                 "lavi links", 
-                "msgpacket", 
                 "datapathmem", 
                 "topology"
             ], 
@@ -48,7 +46,6 @@
             "dependencies": [
                 "lavi flows", 
                 "lavi_swlinks", 
-                "msgpacket", 
                 "flowroute record"
             ], 
             "name": "lavi_networkflow", 
@@ -57,7 +54,6 @@
         {
             "dependencies": [
                 "lavi nodes", 
-                "msgpacket", 
                 "hosttracker"
             ], 
             "name": "lavi_hosts", 
@@ -66,7 +62,6 @@
         {
             "dependencies": [
                 "lavi links", 
-                "msgpacket", 
                 "hosttracker"
             ], 
             "name": "lavi_host2sw", 
@@ -76,7 +71,6 @@
             "dependencies": [
                 "lavi flows", 
                 "lavi_host2sw", 
-                "msgpacket",
                 "flowroute record"
             ], 
             "name": "lavi_hostflow", 

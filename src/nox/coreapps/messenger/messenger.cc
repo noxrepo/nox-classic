@@ -65,7 +65,6 @@ namespace vigil
   void messenger::configure(const Configuration* config)
   {
     resolve(msg_core);
-    resolve(msger);
 
     register_event(Msg_event::static_get_name());
     register_handler<Msg_event>
@@ -165,14 +164,14 @@ namespace vigil
     post(new Msg_event(&cmsg));
   }
 
-  void messenger::send_echo(Async_stream* sock)
+  void messenger::send_echo(Msg_stream* sock)
   {
     VLOG_DBG(lg, "Sending echo on idle socket");
-    msger->init(raw_msg, sizeof(messenger_msg));
+    sock->init(raw_msg, sizeof(messenger_msg));
     messenger_msg* mmsg = (messenger_msg*) raw_msg.get();
     mmsg->length = htons(sizeof(messenger_msg));
     mmsg->type = MSG_ECHO;
-    msger->send(raw_msg, sock);	
+    sock->send(raw_msg);
   }
 
   Disposition messenger::handle_message(const Event& e)
@@ -212,14 +211,13 @@ namespace vigil
 
   void messenger::reply_echo(const Msg_event& echoreq)
   {
-    msger->init(raw_msg, sizeof(messenger_msg));
+    echoreq.sock->init(raw_msg, sizeof(messenger_msg));
     messenger_msg* mmsg = (messenger_msg*) raw_msg.get();
     mmsg->length = htons(sizeof(messenger_msg));
     mmsg->type = MSG_ECHO_RESPONSE;
-    msger->send(raw_msg, echoreq.sock->stream);	
+    echoreq.sock->send(raw_msg);	
   }
 
-  
   void messenger::getInstance(const container::Context* ctxt, 
 			      vigil::messenger*& scpa) 
   {

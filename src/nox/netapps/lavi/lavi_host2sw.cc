@@ -9,7 +9,6 @@ namespace vigil
   {
     linktype = "host2sw";
 
-    resolve(mp);
     resolve(ht);
 
     register_handler<JSONMsg_event>
@@ -94,7 +93,7 @@ namespace vigil
     jd->insert(make_pair("links", jo));
     
     //Send
-    mp->send(jm.get_string(),stream.stream);
+    stream.send(jm.get_string());
   }
   
   void lavi_host2sw::get_json(json_object* jo, const ethernetaddr host,

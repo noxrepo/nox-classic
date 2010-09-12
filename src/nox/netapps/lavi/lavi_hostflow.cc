@@ -7,7 +7,6 @@ namespace vigil
   
   void lavi_hostflow::configure(const Configuration* c) 
   {
-    resolve(mp);
     resolve(frr);
     resolve(lh2s);
 
@@ -107,7 +106,7 @@ namespace vigil
 
     //Send
     VLOG_DBG(lg, "Sending reply: %s", jm.get_string().c_str());
-    mp->send(jm.get_string(),stream.stream);
+    stream.send(jm.get_string());
   }
 
   void lavi_hostflow::get_host_route(json_array* ja, 

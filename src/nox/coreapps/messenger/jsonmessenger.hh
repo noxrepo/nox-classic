@@ -25,7 +25,6 @@
 
 #include "json_object.hh"
 #include "messenger_core.hh"
-#include "msgpacket.hh"
 #include <boost/shared_ptr.hpp>
 
 namespace vigil
@@ -100,7 +99,6 @@ namespace vigil
    * @date Feburary 2010
    * @see messenger_core
    * @see json_object
-   * @see msgpacket
    */
   class jsonmessenger : public message_processor
   {
@@ -145,7 +143,7 @@ namespace vigil
     /** Send echo request.
      * @param sock socket to send echo request over
      */
-    void send_echo(Async_stream* sock);
+    void send_echo(Msg_stream* sock);
 
     /** Function to do processing for block received.
      * @param buf pointer toblock received
@@ -206,9 +204,6 @@ namespace vigil
     /** Memory allocated for \ref vigil::bookman messages.
      */
     boost::shared_array<uint8_t> raw_msg;
-    /** Reference to msgpacket
-     */
-    msgpacket* msger;
     /** Counters for connections
      */
     hash_map<Msg_stream*, counters> sock_counters;

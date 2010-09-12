@@ -22,7 +22,6 @@
 #include "config.h"
 #include "lavi_nodes.hh"
 #include "networkstate/datapathmem.hh"
-#include "messenger/msgpacket.hh"
 
 #ifdef LOG4CXX_ENABLED
 #include <boost/format.hpp>
@@ -61,7 +60,6 @@ namespace vigil
    *
    * @see lavi_nodes
    * @see datapathmem
-   * @see msgpacket
    * @author ykk
    * @date May 2010
    */
@@ -131,9 +129,6 @@ namespace vigil
     /** \brief Reference to datapathmem.
      */
     datapathmem* dpm;
-    /** \brief Reference to packetmsg
-     */
-    msgpacket* mp;
   };
 }
 

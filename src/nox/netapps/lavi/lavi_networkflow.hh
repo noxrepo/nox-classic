@@ -20,7 +20,6 @@
 
 #include "component.hh"
 #include "config.h"
-#include "messenger/msgpacket.hh"
 #include "route/flowroute_record.hh"
 #include "lavi_flows.hh"
 
@@ -68,7 +67,6 @@ namespace vigil
    *
    * @author ykk
    * @date June 2010
-   * @see msgpacket
    * @see lavi_flows
    * @see flowroute_record
    */
@@ -121,9 +119,6 @@ namespace vigil
 			    lavi_networkflow*& component);
 
   private:
-    /** \brief Reference to packetmsg
-     */
-    msgpacket* mp;
     /** \brief Reference to flow/route record
      */
     flowroute_record* frr;

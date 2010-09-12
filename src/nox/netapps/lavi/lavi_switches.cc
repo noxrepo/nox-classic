@@ -11,7 +11,6 @@ namespace vigil
     nodetype = "switch";
 
     resolve(dpm);
-    resolve(mp);
 
     register_handler<JSONMsg_event>
       (boost::bind(&lavi_switches::handle_req, this, _1));
@@ -122,7 +121,7 @@ namespace vigil
 
     //Send
     VLOG_DBG(lg, "Sending reply: %s", jm.get_string().c_str());
-    mp->send(jm.get_string(),stream.stream);
+    stream.send(jm.get_string());
   }
 
   void lavi_switches::getInstance(const Context* c,

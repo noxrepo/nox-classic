@@ -22,7 +22,6 @@
 #include "config.h"
 #include "lavi_nodes.hh"
 #include "hoststate/hosttracker.hh"
-#include "messenger/msgpacket.hh"
 
 #ifdef LOG4CXX_ENABLED
 #include <boost/format.hpp>
@@ -123,9 +122,6 @@ namespace vigil
     /** \brief Reference to hosttracker
      */
     hosttracker* ht;
-    /** \brief Reference to packet sender
-     */
-    msgpacket* mp;
   };
 }
 
