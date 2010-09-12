@@ -81,6 +81,9 @@
 		"lavi_hosts",
                 "lavi_swlinks",
                 "lavi_host2sw",
+	    	"lavi_networkflow",
+	    	"lavi_hostflow",
+		"lavi flows",
 		"lavi nodes",
                 "lavi links",
                 "tablog"

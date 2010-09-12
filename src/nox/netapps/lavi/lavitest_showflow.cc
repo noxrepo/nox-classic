@@ -26,7 +26,8 @@ namespace vigil
     const Flow_route_event& fre = assert_cast<const Flow_route_event&>(e);
 
     //Check for ICMP type
-    if (ntohs(fre.flow.dl_type) == 0x0800 &&  fre.flow.nw_proto == 1) 
+    if (ntohs(fre.flow.dl_type) == 0x0800 &&  fre.flow.nw_proto == 1 &&
+	ntohl(fre.flow.nw_src) < ntohl(fre.flow.nw_dst)) 
     {
       VLOG_DBG(lg, "Got ICMP flow %s", fre.flow.to_string().c_str());
       return CONTINUE;

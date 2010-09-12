@@ -71,7 +71,17 @@
             ], 
             "name": "lavi_host2sw", 
             "library": "lavi_host2sw"
-        }, 
+        },
+        {
+            "dependencies": [
+                "lavi flows", 
+                "lavi_host2sw", 
+                "msgpacket",
+                "flowroute record"
+            ], 
+            "name": "lavi_hostflow", 
+            "library": "lavi_hostflow"
+        },
         {
             "dependencies": [
                 "lavi_networkflow", 
@@ -84,16 +94,6 @@
             ], 
             "name": "lavitest_showflow", 
             "library": "lavitest_showflow"
-        }, 
-        {
-            "dependencies": [
-                "lavi flows", 
-                "lavi_host2sw", 
-                "msgpacket",
-                "flowroute record"
-            ], 
-            "name": "lavi_hostflow", 
-            "library": "lavi_hostflow"
         }
     ]
 }
