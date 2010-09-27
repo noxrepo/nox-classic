@@ -1181,7 +1181,6 @@ class Monitoring(Component):
     
     
     def handle_link_util_reply_event(self, event):
-        lg.debug( "handling link_util_reply_event" )
         if len(event.pyevent.port_utils) > 0:
         
             portUtilsMsg = {}
@@ -1203,7 +1202,6 @@ class Monitoring(Component):
                     if proto.connected:
                         proto.send(portUtilsMsg)
             else:
-                lg.debug( "Sending periodic update" )
                 # send to subscribed listeners
                 if "linkutils" in self.subscribers:
                     for stream in self.subscribers["linkutils"]:
