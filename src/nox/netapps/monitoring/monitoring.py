@@ -204,7 +204,6 @@ class Monitoring(Component):
             if not msg["msg_type"] in self.subscribers:
                 self.subscribers[msg["msg_type"]] = []     
             self.subscribers[msg["msg_type"]].append(e)
-            print "ADDED"
             return CONTINUE
         
         # Store 

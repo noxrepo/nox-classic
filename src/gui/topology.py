@@ -658,27 +658,58 @@ class TopologyView(QtGui.QGraphicsView):
         '''
         Enable this for periodic topology updates (should be event triggered)
         '''
-        self.timer = QtCore.QTimer()
-        QtCore.QObject.connect(self.timer, QtCore.SIGNAL("timeout()"), self.get_topology)
-        self.timer.start(1000)
-		
-    def get_topology(self):
+        #self.timer = QtCore.QTimer()
+        #QtCore.QObject.connect(self.timer, QtCore.SIGNAL("timeout()"), self.get_topology)
+        #self.timer.start(1000)
+        
+        self.get_nodes()
+        self.get_links()
+        self.subscribe_to_topo_changes()
+        
+    def subscribe_to_topo_changes(self):
+        msg = {}
+        msg["type"] = "lavi"
+        msg["command"] = "subscribe"
+        msg["node_type"] = "all"
+        self.topologyInterface.send(msg)
+        
+        msg = {}
+        msg["type"] = "lavi"
+        msg["command"] = "subscribe"
+        msg["link_type"] = "all"
+        self.topologyInterface.send(msg)
+        
+    def get_nodes(self):
         '''
-        Ask lavi for an updated topology description and redraw
+        Ask lavi for an updated nodes set
         '''
         queryMsg = {}
         queryMsg["type"] = "lavi"
         queryMsg["command"] = "request"
         queryMsg["node_type"] = "all"
         self.topologyInterface.send(queryMsg)
-        
+		
+    def get_links(self):
+        '''
+        Ask lavi for an updated links set
+        '''
         queryMsg = {}
         queryMsg["type"] = "lavi"
         queryMsg["command"] = "request"
         queryMsg["link_type"] = "all"
         self.topologyInterface.send(queryMsg)
         
+    def get_topology(self):
+        '''
+        Ask lavi for updated nodes and links sets
+        '''
+        self.get_nodes()
+        self.get_links()
+        
     def got_topo_msg(self, msg):
+        '''
+        Handle received links/nodes message 
+        '''
         jsonmsg = json.loads(str(msg))
         if "node_id" in jsonmsg:
             nodes = jsonmsg["node_id"]
@@ -687,7 +718,6 @@ class TopologyView(QtGui.QGraphicsView):
             for nodeID in nodes:
                 # If nodeItem doesn't already exist
                 if int(nodeID) not in self.nodes.keys(): 
-                    #print "new node", nodeID      
                     dpid = int(nodeID)
                     nodeItem = Node(self, dpid)
                     self.nodes[dpid] = nodeItem
@@ -719,8 +749,7 @@ class TopologyView(QtGui.QGraphicsView):
                         int(link["dst port"]),\
                         link["src type"],\
                         link["dst type"],\
-                        linkid)
-                #print "new link", linkItem.source.id,"->", linkItem.dest.id   
+                        linkid) 
                 self.links[linkItem.uid] = linkItem
                 new_links.append(linkItem)
             self.addLinks(new_links)
