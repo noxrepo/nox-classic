@@ -30,4 +30,6 @@
 #include "switch-mgr-join.hh"
 #include "switch-mgr-leave.hh"
 #include "table-stats-in.hh"
+#include "flow-stats-in.hh"
+#include "queue-stats-in.hh"
 

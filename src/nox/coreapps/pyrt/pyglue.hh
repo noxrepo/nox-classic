@@ -77,7 +77,7 @@ class Port_stats;
 class datapathid;
 struct Flow;
 struct Flow_stats;
-
+struct Queue_stats;
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
 /* Note, this throws a runtime_error if the attribute does not
@@ -254,6 +254,14 @@ to_python(const std::vector<Table_stats>& p);
 template <>
 PyObject*
 to_python(const std::vector<Port_stats>& p);
+
+template <>
+PyObject*
+to_python(const std::vector<Flow_stats>& p);
+
+template <>
+PyObject*
+to_python(const std::vector<Queue_stats>& p);
 
 template <>
 PyObject*

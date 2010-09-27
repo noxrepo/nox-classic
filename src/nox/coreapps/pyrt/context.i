@@ -80,6 +80,9 @@ public:
 
     bool unregister_handler(uint32_t rule_id);
 
+    void send_openflow_command(uint64_t datapath_id,
+                              const Nonowning_buffer& buf);
+
     void send_openflow_packet(uint64_t datapath_id, const Nonowning_buffer&,
                               uint16_t out_port, uint16_t in_port);
 

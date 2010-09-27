@@ -38,6 +38,8 @@
 #include "desc-stats-in.hh"
 #include "table-stats-in.hh"
 #include "port-stats-in.hh"
+#include "flow-stats-in.hh"
+#include "queue-stats-in.hh"
 #include "flow-mod-event.hh"
 #include "flow-removed.hh"
 #include "packet-in.hh"
@@ -247,6 +249,30 @@ static void convert_port_stats_in(const Event& e, PyObject* proxy) {
     pyglue_setattr_string(proxy, "ports"    , to_python<vector<Port_stats> >(psi.ports));
 
     ((Event*)SWIG_Python_GetSwigThis(proxy)->ptr)->operator=(e);
+}
+
+static void convert_flow_stats_in(const Event& e, PyObject* proxy) {
+  const Flow_stats_in_event& fsi
+               = dynamic_cast<const Flow_stats_in_event&>(e);
+  
+  pyglue_setattr_string(proxy, "xid", to_python(fsi.xid()));
+  pyglue_setattr_string(proxy, "datapath_id", to_python(fsi.datapath_id));
+  pyglue_setattr_string(proxy, "more", to_python(fsi.more));
+  pyglue_setattr_string(proxy, "flows"    , to_python<vector<Flow_stats> >(fsi.flows));
+  // Check whether an empty flow list should really be empty
+  pyglue_setattr_string(proxy, "flowcount", to_python(fsi.flows.size()));
+
+  ((Event*)SWIG_Python_GetSwigThis(proxy)->ptr)->operator=(e);
+}
+
+static void convert_queue_stats_in(const Event& e, PyObject* proxy) {
+  const Queue_stats_in_event& qsi
+               = dynamic_cast<const Queue_stats_in_event&>(e);
+  pyglue_setattr_string(proxy, "xid", to_python(qsi.xid()));
+  pyglue_setattr_string(proxy, "datapath_id", to_python(qsi.datapath_id));
+  pyglue_setattr_string(proxy, "queues"    , to_python<vector<Queue_stats> >(qsi.queues));
+
+  ((Event*)SWIG_Python_GetSwigThis(proxy)->ptr)->operator=(e);
 }
 
 static void convert_datapath_leave(const Event&e, PyObject* proxy) {
@@ -460,6 +486,10 @@ PyRt::PyRt(const Context* c,
                              &convert_aggregate_stats_in);
     register_event_converter(Desc_stats_in_event::static_get_name(), 
                              &convert_desc_stats_in);
+    register_event_converter(Flow_stats_in_event::static_get_name(), 
+			     &convert_flow_stats_in);
+    register_event_converter(Queue_stats_in_event::static_get_name(),
+			     &convert_queue_stats_in);
 }
 
 void

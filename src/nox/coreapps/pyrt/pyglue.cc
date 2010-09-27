@@ -29,6 +29,7 @@
 #include "port.hh"
 #include "table-stats-in.hh"
 #include "port-stats-in.hh"
+#include "queue-stats-in.hh"
 #include "pycontext.hh"
 #include "pyrt.hh"
 #include "vlog.hh"
@@ -379,6 +380,40 @@ error:
 
 template <>
 PyObject*
+to_python(const Queue_stats& qs)
+{
+    PyObject *pyo_tx_bytes = 0;
+    PyObject *pyo_tx_packets = 0;
+    PyObject *pyo_tx_errors = 0; // Queue drops
+    PyObject *ret = 0;
+
+    CONVERT_SWITCH_STAT(qs.tx_bytes,pyo_tx_bytes)
+    CONVERT_CHECK(pyo_tx_bytes)
+    CONVERT_SWITCH_STAT(qs.tx_packets,pyo_tx_packets)
+    CONVERT_CHECK(pyo_tx_packets)
+    CONVERT_SWITCH_STAT(qs.tx_errors,pyo_tx_errors)
+    CONVERT_CHECK(pyo_tx_errors)
+
+    ret =  Py_BuildValue((char*)"{s:l, s:l, s:S, s:S, s:S}",
+			   "port_no",      (int)qs.port_no,
+			   "queue_id",     qs.queue_id,
+			   "tx_bytes",     pyo_tx_bytes,
+			   "tx_packets",   pyo_tx_packets,
+			   "tx_errors",    pyo_tx_errors );
+    
+    // references are held by the dictionary, so
+    // we can decref...  Fall through
+
+error:
+    Py_XDECREF(pyo_tx_bytes);
+    Py_XDECREF(pyo_tx_packets);
+    Py_XDECREF(pyo_tx_errors);
+
+    return ret; // will be NULL on error 
+}
+
+template <>
+PyObject*
 to_python(const Port_stats& ts)
 {
     PyObject *pyo_rx_packets = 0, *pyo_tx_packets = 0;
@@ -598,6 +633,40 @@ to_python(const std::vector<Port_stats>& p)
             return NULL;
         }
         Py_XDECREF(ts);
+    }
+    return list;
+}
+
+template <>
+PyObject*
+to_python(const std::vector<Flow_stats>& p)
+{
+  PyObject *list = PyList_New(0);
+  for (int i=0; i<p.size(); ++i) {
+    PyObject *ts = to_python(p[i]);
+    if (PyList_Append(list, ts) < 0) {
+      Py_XDECREF(list);
+      Py_XDECREF(ts);
+      return NULL;
+    }
+    Py_XDECREF(ts);
+  }
+  return list;
+}
+
+template <>
+PyObject*
+to_python(const std::vector<Queue_stats>& p)
+{
+    PyObject *list = PyList_New(0);
+    for (int i=0; i<p.size(); ++i) {
+      PyObject *ts = to_python(p[i]);
+      if (PyList_Append(list, ts) < 0) {
+	Py_XDECREF(list);
+	Py_XDECREF(ts);
+	return NULL;
+      }
+      Py_XDECREF(ts);
     }
     return list;
 }

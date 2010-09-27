@@ -44,6 +44,8 @@
 #include "desc-stats-in.hh"
 #include "table-stats-in.hh"
 #include "port-stats-in.hh"
+#include "flow-stats-in.hh"
+#include "queue-stats-in.hh"
 
 #include "echo-request.hh"
 #include "flow-mod-event.hh"
@@ -210,6 +212,20 @@ PyContext::register_handler_on_match(PyObject* callable,
         /* Unable to convert the arguments. */
         PyErr_SetString(PyExc_TypeError, e.what());
         return 0;
+    }
+}
+
+void
+PyContext::send_openflow_command(uint64_t datapath_id,
+                          const Nonowning_buffer& buf) {
+
+    int error = c->send_openflow_command(datapathid::from_host(datapath_id),
+                                   (ofp_header*)buf.data(), false);
+
+    if (error == EAGAIN) {
+        vlog().log(vlog().get_module_val("pyrt"), Vlog::LEVEL_ERR,
+                  "unable to send openflow command for dpid: %"PRIx64"\n",
+                   datapath_id);
     }
 }
 
