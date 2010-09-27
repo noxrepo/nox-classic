@@ -197,6 +197,18 @@ class Component:
         return self.ctxt.switch_update(dpid)
             
 
+    def send_openflow_command(self, dp_id, packet):
+        """
+        sends an openflow command packet to a datapath
+
+        dp_id - datapath to send packet to
+        packet - data to put in openflow packet
+        """
+        if type(packet) == type(array.array('B')):
+            packet = packet.tostring()
+
+        self.ctxt.send_openflow_command(dp_id, packet)
+
     def send_openflow_packet(self, dp_id, packet, actions, 
                              inport=openflow.OFPP_CONTROLLER):
         """
