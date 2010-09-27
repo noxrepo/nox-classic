@@ -1,0 +1,21 @@
+To test monitoring using mininet
+
+1) Start ripcord-nox with monitoring enabled
+
+a) Start monitoring component with default values
+./nox_core -v -i ptcp: routingengine hostmanager="appid=1" 
+topodb="topo=fattree4" monitoring pyrouting
+b) Start monitoring component with custom values
+./nox_core -v -i ptcp: routingenge hostmanager="appid=1" topodb="topo=fattree4" monitoring="table_poll=2,port_poll=3,aggregate_poll=4,epoch_duration=10,max_snapshots=20" pyrouting
+
+2) Run mininet
+sudo mn_run.py --controller nox_pysw ping_pair
+
+3) Things to look for:
+a) monitoring should display a message indicating that it has started
+b) monitoring will display messages about updating its logical clock, which
+tracks collection epochs
+c) as switches join and leave the network, monitoring will indicate that
+switches a specific dpid announced its arrival/departure
+d) monitoring will periodically indicate that table, port, and aggregate
+statistics were received from the switch

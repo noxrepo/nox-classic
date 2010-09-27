@@ -1,0 +1,44 @@
+Monitoring README
+
+Author/maintainer: Rean Griffith
+
+Module: monitoring
+How it works:
+- Subscribes to datapath join, leave and filter mod events
+- Whenever a switch joins the network, monitoring schedules a series of 
+timers to pull aggregate stats (#flows, bytes in flows, packets in flows) and 
+port stats (bytes received, bytes transmitted, packets dropped, send/receive 
+errors) and organize them into a snapshot for the switch.
+- Monitoring uses a logical clock (collection epochs) to group readings from 
+switches together. The end goal is to periodically annotate a topology 
+representation to present the state of the network as of a particular 
+collection epoch.
+- Snapshots also maintain the delta/change in counter values since the last 
+collection epoch.
+- Monitoring maintains a limited history of snapshots for each switch. Also 
+when a switch leaves the network its snapshots are discarded. When we want 
+to purge snapshots, due to hitting the history limit or due to switch 
+departures, we could write snapshots to disk/archival storage for 
+auditability and/or post-mortem diagnostics.
+
+API (draft):
+
+Monitoring queries (allow administrators to ask simple questions): 
+Filter queries - to allow boolean query operators for specific metrics e.g. 
+is my switch dropping more than x packets
+
+Monitoring commands (allow administrators to ask for more detailed statistics 
+beyond what is collected by default):
+getLatestSnapshot([dpid]) - returns a hash containing the most recent 
+snapshot for all switches or a specific switch
+
+Outstanding/open issues:
+-How should we support filtering queries?
+-We need support for targeted/directed monitoring e.g. give me statistics 
+for this specific flow. What would/should the API for per-flow monitoring 
+look like? How should we specify/target flows? Do we need the full path of 
+the flow in the network or would it be ok to look at statistics at the source 
+and destination e.g. how many of the packets make their way to the 
+destination. What per-flow stats would be useful?
+
+

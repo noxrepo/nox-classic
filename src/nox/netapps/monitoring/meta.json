@@ -1,0 +1,14 @@
+{
+    "components": [
+        {
+            "name": "monitoring" ,
+            "dependencies": [
+                "python",
+                "lavi_switches",
+                "lavi_swlinks",
+                "lavi nodes"
+            ],
+            "python": "nox.netapps.monitoring.monitoring" 
+        }
+    ]
+}
