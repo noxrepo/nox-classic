@@ -127,8 +127,8 @@ class Node(QtGui.QGraphicsItem):
     def paint(self, painter, option, widget):    
         if self.showNode:
             painter.setPen(QtCore.Qt.NoPen)
-            painter.setBrush(QtGui.QColor(QtCore.Qt.darkGray).light(10))
-            painter.drawEllipse(-7, -7, 20, 20)
+            painter.setBrush(QtGui.QColor(QtCore.Qt.darkGray).light(25))
+            painter.drawEllipse(-9, -9, 20, 20)
 
             gradient = QtGui.QRadialGradient(-3, -3, 10)
             
@@ -465,7 +465,7 @@ class Link(QtGui.QGraphicsItem):
             sy = self.sourcePoint.y()+self.destPoint.y()/12
             dx = self.sourcePoint.x()/12+self.destPoint.x()
             dy = self.sourcePoint.y()/12+self.destPoint.y()
-            painter.setPen(QtCore.Qt.darkGreen)
+            painter.setPen(QtCore.Qt.green)
             painter.drawText(sx, sy, str(self.sport))
             painter.drawText(dx, dy, str(self.dport))
             
@@ -647,6 +647,7 @@ class TopologyView(QtGui.QGraphicsView):
         self.setDragMode(self.ScrollHandDrag)
         self.setCursor(QtCore.Qt.ArrowCursor)        
         
+        # Connect signals to slots
         self.topologyInterface.topology_received_signal[str].connect \
                 (self.got_topo_msg)
         self.updateAllSignal.connect(self.updateAll)
@@ -655,18 +656,16 @@ class TopologyView(QtGui.QGraphicsView):
         self.nodes = {}
         self.links = {}
         
-        '''
-        Enable this for periodic topology updates (should be event triggered)
-        '''
-        #self.timer = QtCore.QTimer()
-        #QtCore.QObject.connect(self.timer, QtCore.SIGNAL("timeout()"), self.get_topology)
-        #self.timer.start(1000)
+        # Get an initial current snapshot of the topology
+        self.get_topology()
         
-        self.get_nodes()
-        self.get_links()
+        # Subscribe to LAVI for topology changes
         self.subscribe_to_topo_changes()
         
     def subscribe_to_topo_changes(self):
+        '''
+        Subscribe to LAVI for topology changes
+        '''
         msg = {}
         msg["type"] = "lavi"
         msg["command"] = "subscribe"
@@ -678,6 +677,8 @@ class TopologyView(QtGui.QGraphicsView):
         msg["command"] = "subscribe"
         msg["link_type"] = "all"
         self.topologyInterface.send(msg)
+        
+        #(see what else. eg. link/node removals?)
         
     def get_nodes(self):
         '''
@@ -831,12 +832,14 @@ class TopologyView(QtGui.QGraphicsView):
             self.toggleLinks()
         elif key == QtCore.Qt.Key_L:
             # LAVI counts a biderctional link as 2 separate links, so IDs overlap
-            pass
-            #self.toggleLinkIDs()
+            self.toggleLinkIDs()
+            self.updateAll()
         elif key == QtCore.Qt.Key_P:
             self.togglePorts()
+            self.updateAll()
         elif key == QtCore.Qt.Key_H:
             self.toggleHosts()
+            self.updateAll()
         elif key == QtCore.Qt.Key_R:
             # Refresh topology
             self.get_topology()
