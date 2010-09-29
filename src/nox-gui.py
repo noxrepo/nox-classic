@@ -89,6 +89,15 @@ class MainWindow(QtGui.QMainWindow):
         self.connect(exit, QtCore.SIGNAL('triggered()'), QtCore.SLOT('close()'))
         #self.connect(exit, QtCore.SIGNAL('triggered()'), self.graceful_close)
         
+        '''
+        switch_to_dark = QtGui.QAction('Dark',self)
+        switch_to_dark.setStatusTip('Switch to dark color theme')
+        self.connect(switch_to_dark, QtCore.SIGNAL('triggered()'), self.dark)     
+        switch_to_bright = QtGui.QAction('Bright',self)
+        switch_to_bright.setStatusTip('Switch to bright color theme')
+        self.connect(switch_to_bright, QtCore.SIGNAL('triggered()'), self.bright)        
+        '''
+        
         self.statusBar()
 
         # Configure Menubar
@@ -104,9 +113,14 @@ class MainWindow(QtGui.QMainWindow):
         components_menu = menubar.addMenu('&Components')
         components_menu.addAction('Installed Components')
         components_menu.addAction('Active Components')
-        components_menu.addAction('Install Component...')
+        '''
+        theme_menu = menubar.addMenu('&Theme')
+        theme_menu.addAction(switch_to_dark)
+        theme_menu.addAction(switch_to_bright)
+        '''
         help_menu = menubar.addMenu('&Help')
-        #file.addAction(About)
+        help_menu.addAction('Help')
+        help_menu.addAction('About')
 
         # Configure Toolbar
         toolbar = self.addToolBar('Exit')
@@ -126,7 +140,7 @@ class MainWindow(QtGui.QMainWindow):
         reply = QtGui.QMessageBox.question(self, 'Exit NOX',
             "Are you sure to quit?", QtGui.QMessageBox.Yes, QtGui.QMessageBox.No)
         if reply == QtGui.QMessageBox.Yes:
-            self.topoWidget.topologyView.topologyInterface.stop()
+            #self.topoWidget.topologyView.topologyInterface.listener.stop()
             event.accept()
         else:
             event.ignore()
@@ -149,7 +163,19 @@ class MainWindow(QtGui.QMainWindow):
     def show_split(self):
         self.right.show()
         self.left.show()
+    
+    '''
+    def dark(self):
+        self.logWidget.logDisplay.bgColor = QtCore.Qt.black
+        self.logWidget.logDisplay.textColor = QtGui.QColor(QtCore.Qt.green).light(65)
+        self.logWidget.logDisplay.setColors()
         
+    def bright(self):
+        self.logWidget.logDisplay.bgColor = QtCore.Qt.white
+        self.logWidget.logDisplay.textColor = QtCore.Qt.black
+        self.logWidget.logDisplay.setColors()
+    '''
+    
     def toggle_show_console(self):
         if self.consoleWidget.isHidden():
             self.consoleWidget.show()

@@ -32,7 +32,7 @@ class Node(QtGui.QGraphicsItem):
         self.topoWidget = self.graph.parent
         self.linkList = []
         self.id = str(_id)
-        self.dpid = _id
+        #self.dpid = _id
         self.layer = _layer
         self.newPos = QtCore.QPointF()
         self.setFlag(QtGui.QGraphicsItem.ItemIsMovable)
@@ -48,7 +48,7 @@ class Node(QtGui.QGraphicsItem):
         
         # Switch details menu
         self.switchDetails = QtGui.QMenu('&Switch Details')
-        self.switchDetails.addAction('Datapath ID: 0x%s' % int(self.id))
+        self.switchDetails.addAction('Datapath ID: 0x%s' % self.id)
         self.switchDetails.addAction('Links: ' + str(len(self.linkList)))
         self.switchDetails.addAction('Table Size: 0')
 
@@ -163,7 +163,7 @@ class Node(QtGui.QGraphicsItem):
         if self.showID:
             # Text.
             textRect = self.boundingRect()
-            message = self.id
+            message = "0x"+self.id.lstrip("0")
 
 
             font = painter.font()
@@ -713,47 +713,69 @@ class TopologyView(QtGui.QGraphicsView):
         '''
         jsonmsg = json.loads(str(msg))
         if "node_id" in jsonmsg:
-            nodes = jsonmsg["node_id"]
-            new_nodes = []
-	        # Populate nodes
-            for nodeID in nodes:
-                # If nodeItem doesn't already exist
-                if int(nodeID) not in self.nodes.keys(): 
-                    dpid = int(nodeID)
-                    nodeItem = Node(self, dpid)
-                    self.nodes[dpid] = nodeItem
-                    new_nodes.append(nodeItem)                          
-            self.addNodes(new_nodes)
-            self.positionNodes(new_nodes, "random")
+            if jsonmsg["command"] == "add":
+                nodes = jsonmsg["node_id"]
+                new_nodes = []
+	            # Populate nodes
+                for nodeID in nodes:
+                    # prepend 0s until len = 12 "CHECK"
+                    while len(nodeID) < 12 :
+                        nodeID = "0"+nodeID
+                    # If nodeItem doesn't already exist
+                    if nodeID not in self.nodes.keys():
+                        nodeItem = Node(self, nodeID)
+                        self.nodes[nodeID] = nodeItem
+                        new_nodes.append(nodeItem)  
+                self.addNodes(new_nodes)
+                self.positionNodes(new_nodes, "random")
+            '''
+            elif jsonmsg["command"] == "delete":
+                nodes = jsonmsg["node_id"]
+                deleted_nodes = []
+                for nodeID in deleted_nodes:
+                    if int(nodeID) in self.nodes.keys():
+                        print "deleting node", nodeID 
+                        dpid = int(nodeID)
+                        del self.nodes[dpid]
+            '''
         elif "links" in msg:
-            links = jsonmsg["links"]
-            new_links = []
-	        # Populate Links
-            linkid = len(self.links)
-            for link in links:
-                # If linkItem doesn't already exist
-                # (stupid, expensive full match check as there is no linkID)
-                exists = False
-                for l in self.links.values():
-                    if int(link["src id"])==int(l.source.id):
-                        if int(link["dst id"])==int(l.dest.id):
-                            if int(link["src port"])==int(l.sport):
-                                if int(link["dst port"])==int(l.dport) :
-                                    exists = True
-                if exists:
-                    continue   
-                linkid = linkid+1
-                linkItem = Link(self,\
-                        self.nodes[int(link["src id"])],\
-                        self.nodes[int(link["dst id"])],\
-                        int(link["src port"]),\
-                        int(link["dst port"]),\
-                        link["src type"],\
-                        link["dst type"],\
-                        linkid) 
-                self.links[linkItem.uid] = linkItem
-                new_links.append(linkItem)
-            self.addLinks(new_links)
+            if jsonmsg["command"] == "add":
+                links = jsonmsg["links"]
+                new_links = []
+	            # Populate Links
+                linkid = len(self.links)
+                for link in links:
+                    # If linkItem doesn't already exist
+                    # (stupid, expensive full match check as there is no linkID)
+                    exists = False
+                    for l in self.links.values():
+                        if int(link["src id"])==int(l.source.id):
+                            if int(link["dst id"])==int(l.dest.id):
+                                if int(link["src port"])==int(l.sport):
+                                    if int(link["dst port"])==int(l.dport) :
+                                        exists = True
+                    if exists:
+                        continue   
+                    linkid = linkid+1
+                    print self.nodes
+                    linkItem = Link(self,\
+                            self.nodes[link["src id"]],\
+                            self.nodes[link["dst id"]],\
+                            link["src port"],\
+                            link["dst port"],\
+                            link["src type"],\
+                            link["dst type"],\
+                            linkid) 
+                    self.links[linkItem.uid] = linkItem
+                    new_links.append(linkItem)
+                self.addLinks(new_links)
+            '''
+            elif jsonmsg["command"] == "delete":
+                links = jsonmsg["links"]
+                for link in links:
+                    print "deleting link" 
+            '''
+                
         
         self.updateAll()
     
@@ -957,11 +979,11 @@ class TopologyView(QtGui.QGraphicsView):
         line = f.readLine()
         while not line.isNull():
             nodeid,x,y = str(line).split()
-            if not int(nodeid) in self.nodes:
+            if not nodeid in self.nodes:
                 print "Layout mismatch"
                 return
-            self.nodes[int(nodeid)].setX(float(x))
-            self.nodes[int(nodeid)].setY(float(y))
+            self.nodes[nodeid].setX(float(x))
+            self.nodes[nodeid].setY(float(y))
             line = f.readLine()
         f.close()
         self.updateAll()

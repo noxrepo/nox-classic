@@ -118,16 +118,23 @@ class LogDisplay(QtGui.QTextEdit):
         
         # Configure Widget
         self.parent = parent
+        
         # Colors
+        self.bgColor = QtCore.Qt.black
+        self.textColor = QtGui.QColor(QtCore.Qt.green).light(65)
+        
         self.p = QtGui.QPalette()
-        self.p.setColor(QtGui.QPalette.Active, QtGui.QPalette.Base, QtCore.Qt.black)
-        self.p.setColor(QtGui.QPalette.Inactive, QtGui.QPalette.Base, QtCore.Qt.black)
-        self.setPalette(self.p)
-        self.setTextColor(QtGui.QColor(QtCore.Qt.green).light(65))
+        self.setColors()
         
         self.setReadOnly(True)
         self.setText("Ready.\n")
         
+    def setColors(self):
+        self.p.setColor(QtGui.QPalette.Active, QtGui.QPalette.Base, self.bgColor)
+        self.p.setColor(QtGui.QPalette.Inactive, QtGui.QPalette.Base, self.bgColor)
+        self.setPalette(self.p)
+        self.setTextColor(self.textColor)
+    
     def append_message(self, msg):
         '''
         Appends message to the current widget's output 
@@ -135,7 +142,7 @@ class LogDisplay(QtGui.QTextEdit):
         self.moveCursor(QtGui.QTextCursor.End)
         # looks like TextColor is reset with filter()  (???  check and fix, or
         # at least find where reset occurs and re-setcolor(green) there instead)
-        self.setTextColor(QtGui.QColor(QtCore.Qt.green).light(65))
+        self.setTextColor(self.textColor)
         self.textCursor().insertText(msg)
         
                     

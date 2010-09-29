@@ -42,9 +42,9 @@ import simplejson as json
 #DEFAULT_POLL_AGGREGATE_STATS_PERIOD = 0.04
 
 # For testing, poll less aggressively
-DEFAULT_POLL_TABLE_STATS_PERIOD     = 1 # seconds
-DEFAULT_POLL_PORT_STATS_PERIOD      = 1 # seconds
-DEFAULT_POLL_AGGREGATE_STATS_PERIOD = 1 # seconds
+DEFAULT_POLL_TABLE_STATS_PERIOD     = 3 # seconds
+DEFAULT_POLL_PORT_STATS_PERIOD      = 3 # seconds
+DEFAULT_POLL_AGGREGATE_STATS_PERIOD = 3 # seconds
 
 # Arbitrary limits on how much stats history we keep per switch
 DEFAULT_COLLECTION_EPOCH_DURATION = 10 # seconds
