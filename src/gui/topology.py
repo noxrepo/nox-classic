@@ -749,10 +749,10 @@ class TopologyView(QtGui.QGraphicsView):
                     # (stupid, expensive full match check as there is no linkID)
                     exists = False
                     for l in self.links.values():
-                        if int(link["src id"])==int(l.source.id):
-                            if int(link["dst id"])==int(l.dest.id):
-                                if int(link["src port"])==int(l.sport):
-                                    if int(link["dst port"])==int(l.dport) :
+                        if link["src id"]==l.source.id:
+                            if link["dst id"]==l.dest.id:
+                                if link["src port"]==l.sport:
+                                    if link["dst port"]==l.dport:
                                         exists = True
                     if exists:
                         continue   
