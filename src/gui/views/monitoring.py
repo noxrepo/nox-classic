@@ -328,13 +328,15 @@ class Monitoring_View(View):
         
     def node_color(self, node):
         #print "node color in monitoring view" 
+        '''
         if node.dpid in self.service_subset:
             if self.service_name == "serviceB":
                 return QtGui.QColor(QtCore.Qt.yellow)
             else:
                 return QtGui.QColor(QtCore.Qt.blue)
         else:
-            return QtGui.QColor(QtCore.Qt.green)
+        '''
+        return QtGui.QColor(QtCore.Qt.green)
         
     def show_map_reduce_cluster(self):
         for b in self.buttons:
