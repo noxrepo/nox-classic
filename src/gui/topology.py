@@ -167,10 +167,11 @@ class Node(QtGui.QGraphicsItem):
 
 
             font = painter.font()
-            font.setPointSize(4)
+            font.setBold(True)
+            font.setPointSize(2)
             painter.setFont(font)
             painter.setPen(QtCore.Qt.gray)
-            painter.drawText(textRect.translated(0.3, 0.3), message)
+            painter.drawText(textRect.translated(0.1, 0.1), message)
             painter.setPen(QtGui.QColor(QtCore.Qt.gray).light(130))
             painter.drawText(textRect.translated(0, 0), message)
         
@@ -757,7 +758,6 @@ class TopologyView(QtGui.QGraphicsView):
                     if exists:
                         continue   
                     linkid = linkid+1
-                    print self.nodes
                     linkItem = Link(self,\
                             self.nodes[link["src id"]],\
                             self.nodes[link["dst id"]],\
@@ -980,8 +980,8 @@ class TopologyView(QtGui.QGraphicsView):
         while not line.isNull():
             nodeid,x,y = str(line).split()
             if not nodeid in self.nodes:
-                print "Layout mismatch"
-                return
+                print "Layout mismatch (node", nodeid, "does not exist)"
+                continue
             self.nodes[nodeid].setX(float(x))
             self.nodes[nodeid].setY(float(y))
             line = f.readLine()

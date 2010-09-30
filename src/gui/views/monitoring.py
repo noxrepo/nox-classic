@@ -86,7 +86,7 @@ class Monitoring_View(View):
             self.show_stats_reply(jsonmsg)
 
     def get_port_stats( self, dpid ):
-        self.logDisplay.setText( "Query port stats from dpid: 0x%x" % (dpid) )
+        self.logDisplay.setText( "Query port stats from dpid: 0x%s" % (dpid) )
         self.get_stats(dpid, "portstats")
 
     def get_table_stats( self, dpid ):
