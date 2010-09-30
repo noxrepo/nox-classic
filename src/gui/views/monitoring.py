@@ -288,9 +288,15 @@ class Monitoring_View(View):
         # Co-opted from the elastictree view
         # reflected by shades of colors based on utilizations
         # assumes 1 GB links
+        '''
         srcID = link.source.dpid
         srcPort = link.sport
         dstID = link.dest.dpid
+        dstPort = link.dport
+        '''
+        srcID = link.source.id
+        srcPort = link.sport
+        dstID = link.dest.id
         dstPort = link.dport
 
         if not (srcID, srcPort) in self.stats and \

@@ -59,39 +59,39 @@ class Node(QtGui.QGraphicsItem):
     def query_port_stats(self):
         self.graph.parent.logDisplay.parent.freezeLog = True
         self.graph.parent.logDisplay\
-            .setText( 'Querying port stats for switch: 0x%x' % int(self.id) )
-        self.topoWidget.monitoring_view.get_port_stats( int(self.id) )
+            .setText( 'Querying port stats for switch: 0x%s' % self.id )
+        self.topoWidget.monitoring_view.get_port_stats( self.id )
 
     def query_table_stats(self):
         self.graph.parent.logDisplay.parent.freezeLog = True
         self.graph.parent.logDisplay\
-            .setText( 'Querying table stats for switch: 0x%x' % int(self.id) )
-        self.topoWidget.monitoring_view.get_table_stats( int(self.id) )
+            .setText( 'Querying table stats for switch: 0x%s' % self.id )
+        self.topoWidget.monitoring_view.get_table_stats( self.id )
 
     def query_agg_stats(self):
         self.graph.parent.logDisplay.parent.freezeLog = True
         self.graph.parent.logDisplay\
-            .setText( 'Querying agg stats for switch: 0x%x' % int(self.id) )
-        self.topoWidget.monitoring_view.get_aggregate_stats( int(self.id) )
+            .setText( 'Querying agg stats for switch: 0x%s' % self.id )
+        self.topoWidget.monitoring_view.get_aggregate_stats( self.id )
 
     def query_latest_snapshot(self):
         self.graph.parent.logDisplay.parent.freezeLog = True
         self.graph.parent.logDisplay\
-            .setText( 'Querying latest snapshot stats for switch: 0x%x' %\
-                          int(self.id) )
-        self.topoWidget.monitoring_view.get_latest_snapshot( int(self.id) )
+            .setText( 'Querying latest snapshot stats for switch: 0x%s' %\
+                          self.id )
+        self.topoWidget.monitoring_view.get_latest_snapshot( self.id )
 
     def query_flow_stats(self):
         self.graph.parent.logDisplay.parent.freezeLog = True
         self.graph.parent.logDisplay\
-            .setText( 'Querying flow stats for switch: 0x%x' % int(self.id) )
-        self.topoWidget.monitoring_view.get_flow_stats( int(self.id) )
+            .setText( 'Querying flow stats for switch: 0x%s' % self.id )
+        self.topoWidget.monitoring_view.get_flow_stats( self.id )
 
     def query_queue_stats(self):
         self.graph.parent.logDisplay.parent.freezeLog = True
         self.graph.parent.logDisplay\
-            .setText( 'Querying queue stats for switch: 0x%x' % int(self.id) )
-        self.topoWidget.monitoring_view.get_queue_stats( int(self.id) )
+            .setText( 'Querying queue stats for switch: 0x%s' % self.id )
+        self.topoWidget.monitoring_view.get_queue_stats( self.id )
 
     def filter_map_reduce(self):
         self.filter_topology( "serviceA" )
