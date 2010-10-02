@@ -42,18 +42,19 @@ import simplejson as json
 #DEFAULT_POLL_AGGREGATE_STATS_PERIOD = 0.04
 
 # For testing, poll less aggressively
-DEFAULT_POLL_TABLE_STATS_PERIOD     = 3 # seconds
-DEFAULT_POLL_PORT_STATS_PERIOD      = 3 # seconds
-DEFAULT_POLL_AGGREGATE_STATS_PERIOD = 3 # seconds
+DEFAULT_POLL_TABLE_STATS_PERIOD     = 1 # seconds
+DEFAULT_POLL_PORT_STATS_PERIOD      = 1 # seconds
+DEFAULT_POLL_AGGREGATE_STATS_PERIOD = 1 # seconds
 
 # Arbitrary limits on how much stats history we keep per switch
 DEFAULT_COLLECTION_EPOCH_DURATION = 10 # seconds
 DEFAULT_MAX_STATS_SNAPSHOTS_PER_SWITCH = 10
 
+'''
 # Get around temporary LB4 stats limitation by estimating bytes from pkts
 FAKE_BPS_FROM_PKTS = False
 AVG_PKT_SIZE = 1000 * 8 # bits
-
+'''
 # Static log handle
 lg = logging.getLogger('monitoring')
 
@@ -168,8 +169,8 @@ class Monitoring(Component):
         # Add handlers for the events we're interested in
         #self.register_handler( Flow_in_event.static_get_name(), \
         #                 lambda event: self.handle_flow_in(event))
-        self.register_handler( Flow_mod_event.static_get_name(), \
-                         lambda event: self.handle_flow_mod(event))
+        #self.register_handler( Flow_mod_event.static_get_name(), \
+        #                 lambda event: self.handle_flow_mod(event))
         self.register_handler( Datapath_join_event.static_get_name(), \
                          lambda event: self.handle_datapath_join(event))
         self.register_handler( Datapath_leave_event.static_get_name(), \
@@ -231,7 +232,6 @@ class Monitoring(Component):
             if dpid in self.switches:
                 self.pending_switch_queries.add( msg["xid"] )
                 latest_snapshot = self.get_latest_switch_stats(dpid)
-                print latest_snapshot
                 if latest_snapshot != None:
                     reply = SwitchQueryReplyEvent( msg["xid"], dpid, \
                                 SwitchQueryReplyEvent.QUERY_LATEST_SNAPSHOT,\
@@ -294,7 +294,6 @@ class Monitoring(Component):
                 lg.debug( "got queue stats reply" )
                 msg["msg_type"] = "queuestats"
                                           
-            print "msg to gui:", msg
             stream = self.pending_gui_queries.pop( event.pyevent.xid )
             stream.reply(json.dumps(msg))
             
@@ -309,7 +308,6 @@ class Monitoring(Component):
         # if no command-line params were passed then use defaults
         lg.debug( "Configuring monitoring..." )
         #self.register_python_event( LinkUtilizationReplyEvent.NAME )
-        #print conf
         # Set everything to the default values initially
         #self.table_stats_poll_period = DEFAULT_POLL_TABLE_STATS_PERIOD
         #self.aggregate_stats_poll_period = DEFAULT_POLL_AGGREGATE_STATS_PERIOD
@@ -326,7 +324,6 @@ class Monitoring(Component):
                     key, value = arg, ''
                 args[key] = value
         
-            #print args    
             # extract params that "should/could" be there
             if 'table_poll' in args:
                 self.table_stats_poll_period = float(args['table_poll'])
@@ -344,13 +341,6 @@ class Monitoring(Component):
             if 'max_snapshots' in args:
                 self.max_snapshots_per_switch = long(args['max_snapshots'])
 
-
-        # Print out our configuration
-        lg.debug( "Table poll    : %f" % (self.table_stats_poll_period) )
-        lg.debug( "Port poll     : %f" % (self.port_stats_poll_period) )
-        lg.debug( "Agg poll      : %f" % (self.aggregate_stats_poll_period) )
-        lg.debug( "Epoch length  : %d" % (self.collection_epoch_duration) )
-        lg.debug( "Max snapshots : %d" % (self.max_snapshots_per_switch) )
 
         # Start our logical clock                     
         self.fire_epoch_timer()
@@ -424,9 +414,6 @@ class Monitoring(Component):
         # Get stats on all ports using OFPP_NONE
         body.port_no = openflow.OFPP_NONE
 
-        # set request.header.length = sizeof(packed? stats_request)
-        #    +sizeof(packet request body?)
-
         request.header.length = len(request.pack()) + len(body.pack())
         self.send_openflow_command(dpid, request.pack() +  body.pack())
 
@@ -477,8 +464,6 @@ class Monitoring(Component):
         body.match = match
         body.table_id = table_id
         body.out_port = openflow.OFPP_NONE
-        #lg.debug( request.__dict__ )
-        #lg.debug( body.__dict__ )
         request.header.length = len(request.pack()) + len(body.pack())
         self.send_openflow_command(dpid, request.pack() + body.pack())
 
@@ -528,7 +513,7 @@ class Monitoring(Component):
         least 1 switch stats reply"""
         return self.max_stats_reply_epoch
 
-    def get_latest_port_gbps(self, time_consistent=True):
+    def get_latest_port_bps(self, time_consistent=True):
         port_utilizations = []
         # Look at the latest reply epoch
         # For each switch get any snapshot that is ready with
@@ -536,7 +521,7 @@ class Monitoring(Component):
         # Go through that snapshot and pull out the port
         # info
         # Create portutilization instance: 
-        # [dpid,port,gbps_transmitted,gbps_received]
+        # [dpid,port,bps_transmitted,bps_received]
         for dpid in self.switches:
             # Get the latest snapshot for each switch
             latest_snapshot = self.get_latest_switch_stats(dpid)
@@ -548,7 +533,6 @@ class Monitoring(Component):
                 # most recent collection epoch then ignore the ones that aren't
                 if time_consistent and (latest_snapshot.collection_epoch != \
                         self.max_stats_reply_epoch):
-                    #lg.debug( "Consistent time required, skipping snaphost" )
                     continue
                     
                 #if latest_snapshot.ready() and \
@@ -562,23 +546,27 @@ class Monitoring(Component):
                     port_util = PortUtilization()
                     port_util.dpid = dpid
                     port_util.port = portinfo.port_number
+                    
+                    '''
                     if not FAKE_BPS_FROM_PKTS:
-                        port_util.gbps_transmitted = \
-                            portinfo.estimate_bits_sent_per_sec()/1e9
-                        port_util.gbps_received = \
-                            portinfo.estimate_bits_received_per_sec()/1e9
+                    '''
+                    port_util.bps_transmitted = \
+                        portinfo.estimate_bits_sent_per_sec()
+                    port_util.bps_received = \
+                        portinfo.estimate_bits_received_per_sec()
+                    '''
                     else:
-                        port_util.gbps_transmitted = AVG_PKT_SIZE * \
+                        port_util.bps_transmitted = AVG_PKT_SIZE * \
                             portinfo.estimate_packets_sent_per_sec()
-                        port_util.gbps_received = AVG_PKT_SIZE * \
+                        port_util.bps_received = AVG_PKT_SIZE * \
                             portinfo.estimate_packets_received_per_sec()
+                    '''
+                    ### KYR
+                    port_util.capacity = (self.port_cap[port_util.dpid][port_util.port].to_dict())['max_speed'] 
+                    ###       
                     port_utilizations.append(port_util)
             else:
                 pass
-
-        for util in port_utilizations:
-            if util.gbps_transmitted > 0.5 or util.gbps_received > 0.5:
-                lg.debug(util.__dict__)
 
         return port_utilizations
 
@@ -625,15 +613,13 @@ class Monitoring(Component):
     # Timers
     # Stats debugging timer
     def fire_stats_debug_timer(self):
-        lg.debug( "stats debugging" )
-        self.get_latest_port_gbps()
+        self.get_latest_port_bps()
         # re-post timer at some multiple of the collection epoch
         self.post_callback( self.collection_epoch_duration*2, \
                                 self.fire_stats_debug_timer )
 
     def fire_utilization_broadcasts(self):
-        #lg.debug( "utilization broadcasts" )
-        port_utils = self.get_latest_port_gbps()
+        port_utils = self.get_latest_port_bps()
         # Set xid = -1 when its unsolicited
         event = LinkUtilizationReplyEvent( -1, port_utils )
         # Post event
@@ -645,7 +631,6 @@ class Monitoring(Component):
         """Handler updates the logical clock used by Monitoring."""        
         
         '''
-        # Print the silent switch list
         lg.debug( "---silent switches start at epoch: %d---" \
                        % (self.collection_epoch) )
         for dpid in self.silent_switches:
@@ -670,30 +655,16 @@ class Monitoring(Component):
         lg.debug( "updated clock: %d" % (self.collection_epoch) )
         self.post_callback( self.collection_epoch_duration, \
                                 self.fire_epoch_timer )
-        
-    def dump_stats(self):
-        """Print out the latest swtich stats."""
-        lg.debug( "%d switches being monitored" % (len(self.switches)) )
-        # for each switch, dump the lastest snapshot
-        for dpid in self.switches:
-            switch_stats_q = self.snapshots[dpid]
-            latest_snapshot = switch_stats_q[0]
-            if latest_snapshot.ready():
-                latest_snapshot.print_stats()
-            #else:
-                #print "no snapshots ready"
-
+    
     # Table stats timer
     def fire_table_stats_timer(self, dpid):
         """Handler polls a swtich for its table stats.
         @param dpid - datapath/switch to contact
         """
-        #print "firing table stats timer. \
         #collection epoch: {0:d}".format(self.collection_epoch)    
         # Send a message and renew timer (if the switch is still around)       
         if dpid in self.switches:
-            # Send a table stats request
-            #self.ctxt.send_table_stats_request(dpid)    
+            # Send a table stats request  
             self.send_table_stats_request(dpid)    
             self.post_callback(self.table_stats_poll_period, \
                        lambda : self.fire_table_stats_timer(dpid))
@@ -703,12 +674,10 @@ class Monitoring(Component):
         """Handler polls a switch for its port stats.
         @param dpid - datapath/switch to contact
         """
-        # print "firing port stats timer. \
         # collection epoch: {0:d}".format(self.collection_epoch)
         # Send a ports stats message and renew timer 
         # (if the switch is still around)
         if dpid in self.switches:
-            #self.ctxt.send_port_stats_request(dpid)
             self.send_port_stats_request(dpid)    
             self.post_callback(self.port_stats_poll_period, \
                         lambda :  self.fire_port_stats_timer(dpid))
@@ -718,7 +687,6 @@ class Monitoring(Component):
         """Handler polls a switch for its aggregate stats.
         @param dpid - datapath/switch to contact
         """
-        # print "firing aggregate stats timer. \
         # collection epoch: {0:d}".format(self.collection_epoch)
         # Send a message and renew timer (if the switch is still around)
         if dpid in self.switches:
@@ -753,21 +721,19 @@ class Monitoring(Component):
     # Event handlers. FYI if you need/want to find out what fields exist 
     # in a specific event type look at src/nox/lib/util.py at the utility 
     # functions that are used to manipulate them
+    '''
     def handle_flow_in(self, event):
         """Handler responds to flow_in events.
         @param event - flow in event to handle
         """
-        #lg.debug( 'Handling flow in event' )
         return CONTINUE
 
     def handle_flow_mod(self, event):
         """Handler responds to flow_in modification events.
         @param flow mod event to handle
         """
-        #lg.debug( 'Handling flow mod event.' )
-        #print event.__dict__
         return CONTINUE
-    
+    '''
     def handle_datapath_join(self, event):
         """Handler responds to switch join events.
         @param event datapath/switch join event to handle
@@ -775,14 +741,6 @@ class Monitoring(Component):
         # grab the dpid from the event
         dpid = event.datapath_id
         epoch = self.collection_epoch
-        #lg.debug( "updated clock: %d" % (self.collection_epoch) )
-
-        #lg.debug( "Handling switch join. Epoch: {0:d},dpid: {1:x}"\
-        #                                        .format(epoch,dpid) )
-        #print "collection epoch {0:d} handling dp join.\
-        # dpid: {1:x}".format(epoch,dpid)    
-        #print current_thread()        
-        #print event.__dict__
 
         #ports = event.ports
         #for item in ports:
@@ -799,10 +757,6 @@ class Monitoring(Component):
             #supports_1GB_HD = (item['curr'] & openflow.OFPPF_1GB_HD) > 0
             #supports_1GB_FD = (item['curr'] & openflow.OFPPF_1GB_FD) > 0
             #supports_10GB_FD = (item['curr'] & openflow.OFPPF_10GB_FD) > 0
-            
-            #print '\t', item['name'],item['port_no'],item['speed'], \
-            #item['curr'], port_enabled, link_enabled, supports_10MB_FD, \
-            #supports_100MB_FD, supports_1GB_FD, supports_10GB_FD
             
         # Set up some timers for polling this switch periodically
         # Whenever a new switch joins set up some timers for polling it 
@@ -823,8 +777,6 @@ class Monitoring(Component):
                 # create port capability
                 new_port_cap = PortCapability()
                 # set fields
-                #print "port capability"
-                #print item
                 new_port_cap.port_name = item['name']
                 new_port_cap.port_number = item['port_no']
                 new_port_cap.port_enabled = ((item['config'] & \
@@ -877,7 +829,6 @@ class Monitoring(Component):
                                               (self.collection_epoch, dpid) )
         # drop all the stats for this switch
         if dpid in self.switches:
-            #print "removing switch"
             self.switches.remove(dpid)
             # Throw away its stats snapshots
             del self.snapshots[dpid]
@@ -915,9 +866,6 @@ class Monitoring(Component):
         # "latest" 
         #if current_collection_epoch > self.max_stats_reply_epoch:
         #    self.max_stats_reply_epoch = current_collection_epoch
-
-        #lg.debug( "handling agg stats in." )
-        #print event.__dict__
         
         # Remove switch from silent_switch list if it's on it
         if dpid in self.silent_switches:
@@ -930,7 +878,6 @@ class Monitoring(Component):
             # Are we adding a new snapshot?    
             if len(switch_stats_q) == 0:
                 # Create new snapshot and save it
-                #print "creating new snapshot"
                 new_snapshot = Snapshot( self )
                 # Set the collection epoch and the datapath id
                 new_snapshot.collection_epoch = current_collection_epoch
@@ -942,14 +889,13 @@ class Monitoring(Component):
                 # Always add the most recent snapshot to the front of the queue
                 switch_stats_q.appendleft(new_snapshot)
             else:
-                pass #print "possibly updating existing snapshot"
+                pass
             
             # Get the latest snapshot
             latest_snapshot = switch_stats_q[0]
 
             # If it's for this collection epoch, just update it/overwrite it
             if latest_snapshot.collection_epoch == current_collection_epoch:
-                #print "updating existing snapshot"
                 latest_snapshot.timestamp = time.time()
                 latest_snapshot.number_of_flows = event.flow_count
                 latest_snapshot.bytes_in_flows = event.byte_count
@@ -958,7 +904,6 @@ class Monitoring(Component):
                 # Only add a new snapshot if it's later in time
                 # than the "latest" snapshot
                 if current_collection_epoch > latest_snapshot.collection_epoch:
-                    #print "adding a new snapshot"
                     new_snapshot = Snapshot( self )
                     new_snapshot.collection_epoch = current_collection_epoch
                     new_snapshot.timestamp = time.time()
@@ -974,8 +919,6 @@ class Monitoring(Component):
                     switch_stats_q.appendleft(new_snapshot)
                     # Limit the number of old snapshots we keep around        
                     if len(switch_stats_q) > self.max_snapshots_per_switch:
-                         #lg.debug( "Purging old stats. \
-                         #     dpid: {0:x}".format(dpid) )
                         switch_stats_q.pop()
                 else:
                     # Received delayed snapshot
@@ -987,7 +930,7 @@ class Monitoring(Component):
         except Exception:
             pass
         finally:        
-            pass #self.dump_stats()
+            pass
 
         return CONTINUE
 
@@ -997,8 +940,6 @@ class Monitoring(Component):
         """
         dpid = event.datapath_id
         
-        #lg.debug( event.__dict__ )
-
         if event.xid in self.pending_switch_queries:
             lg.debug( "responding to switch query for table stats" )
             # Publish custom event
@@ -1006,15 +947,11 @@ class Monitoring(Component):
                                       SwitchQueryReplyEvent.QUERY_TABLE_STATS,\
                                       event )
             self.post( pyevent( SwitchQueryReplyEvent.NAME, reply ) )
-            # Remove the xid from our todo list
-            #self.pending_switch_queries.remove( event.xid )
 
         # Remove switch from silent_switch list if it's on it 
         if dpid in self.silent_switches:
             self.silent_switches.remove(dpid)
 
-        #lg.debug( "Handling table stats in from dpid: %x" % (dpid) )
-        #print event.__dict__        
         tables = event.tables
         return CONTINUE
 
@@ -1030,13 +967,9 @@ class Monitoring(Component):
                                           SwitchQueryReplyEvent.QUERY_PORT_STATS,\
                                           event )
             self.post( pyevent( SwitchQueryReplyEvent.NAME, reply ) )
-            # Remove the xid from our todo list
-            #self.pending_switch_queries.remove( event.xid )
 
         # Use the reply xid as the current collection epoch
         current_collection_epoch = event.xid #self.collection_epoch
-        #lg.debug( "Handling port stats in from dpid: %x" % (dpid) )
-        #print event.ports
 
         # Check whether this stats reply pushes forward out notion of
         # "latest"
@@ -1056,7 +989,6 @@ class Monitoring(Component):
             # Are we adding a new snapshot?    
             if len(switch_stats_q) == 0:
                 # Create new snapshot and save it
-                # print "creating new snapshot"
                 new_snapshot = Snapshot( self )
                 # Set the collection epoch and the datapath id
                 new_snapshot.collection_epoch = current_collection_epoch
@@ -1066,7 +998,7 @@ class Monitoring(Component):
                 # Always add the most recent snapshot to the front of the queue
                 switch_stats_q.appendleft(new_snapshot)
             else:
-                pass #print "possibly updating existing snapshot"
+                pass
             
             # Get the latest snapshot
             latest_snapshot = switch_stats_q[0]
@@ -1074,7 +1006,6 @@ class Monitoring(Component):
             # If the latest snapshot is for this collection epoch, just 
             # update it
             if latest_snapshot.collection_epoch == current_collection_epoch:
-                #print "updating existing snapshot"
                 latest_snapshot.timestamp = time.time()
                 latest_snapshot.store_port_info(ports, self.port_cap[dpid])
                 # update deltas if we can
@@ -1085,7 +1016,6 @@ class Monitoring(Component):
                 # Only add a new snapshot if it's more recent
                 # than the collection epoch of the "latest" snapshot
                 if current_collection_epoch > latest_snapshot.collection_epoch:
-                    #print "adding a new snapshot"
                     new_snapshot = Snapshot( self )
                     new_snapshot.collection_epoch = current_collection_epoch
                     new_snapshot.timestamp = time.time()
@@ -1100,7 +1030,6 @@ class Monitoring(Component):
                     switch_stats_q.appendleft(new_snapshot)
                     # Limit the number of old snapshots we keep around        
                     if len(switch_stats_q) > self.max_snapshots_per_switch:
-                    #lg.debug( "Purging old stats. dpid: {0:x}".format(dpid) )
                         switch_stats_q.pop()
                 else:
                     # Received delayed snapshot
@@ -1116,7 +1045,6 @@ class Monitoring(Component):
         return CONTINUE
     
     def handle_flow_stats_in(self, event):
-        #lg.debug( "handling flow stats in: %s" % (event.__dict__) ) 
 
         if event.xid in self.pending_switch_queries:
             lg.debug( "responding to switch query for flow stats" )
@@ -1124,9 +1052,6 @@ class Monitoring(Component):
             reply = SwitchQueryReplyEvent( event.xid, event.datapath_id, \
                                SwitchQueryReplyEvent.QUERY_FLOW_STATS, event )
             self.post( pyevent( SwitchQueryReplyEvent.NAME, reply ) )
-            # Remove the xid from our todo list
-            #self.pending_switch_queries.remove( event.xid )
-
         return CONTINUE
 
     def handle_queue_stats_in(self,event):
@@ -1138,19 +1063,11 @@ class Monitoring(Component):
             reply = SwitchQueryReplyEvent( event.xid, event.datapath_id, \
                                SwitchQueryReplyEvent.QUERY_QUEUE_STATS, event )
             self.post( pyevent( SwitchQueryReplyEvent.NAME, reply ) )
-            # Remove the xid from our todo list
-            #self.pending_switch_queries.remove( event.xid )
-
         return CONTINUE
     
     # Static functions for encoding custom events as json
     def encode_switch_query( self, obj ):
-        #lg.debug( "entering encoding portstats" )
         if isinstance( obj.pyevent, SwitchQueryReplyEvent ):
-            #lg.debug( "encoding switch query reply event" )
-            #lg.debug( obj.pyevent.__dict__ )
-            #lg.debug( obj.pyevent.query_type )
-            #lg.debug( obj.pyevent.reply.ports )
             if obj.pyevent.query_type == \
                     SwitchQueryReplyEvent.QUERY_PORT_STATS:
                 return [obj.pyevent.reply.ports]
@@ -1178,7 +1095,6 @@ class Monitoring(Component):
             lg.debug( "not encoding switch query reply event" )
             raise TypeError( repr(obj) + " is not JSON serializable" )
     
-    
     def handle_link_util_reply_event(self, event):
         if len(event.pyevent.port_utils) > 0:
         
@@ -1188,10 +1104,18 @@ class Monitoring(Component):
             utils = []
             for util in event.pyevent.port_utils:
                 u = {}
-                u['dpid'] = util.dpid
-                u['port'] = util.port
-                u['gbps_transmitted'] = util.gbps_transmitted
-                u['gbps_received'] = util.gbps_received
+                u['dpid'] = hex(util.dpid)[2:len(hex(util.dpid))-1]
+                u['port'] = str(util.port)
+                
+                '''...THIS CALCULATION OF UTILIZATION IS DISPUTABLE...'''
+                add = util.bps_transmitted+util.bps_received
+                avgrate = add/2
+                if util.capacity:
+                    ut = float(avgrate) / float(util.capacity)
+                else:
+                    ut = float(0)
+                u['utilization'] = ut
+                
                 utils.append(u)
             portUtilsMsg['utils'] = utils
             if event.pyevent.xid != -1:
@@ -1268,16 +1192,12 @@ class PortCapability:
     def compute_max_port_speed_bps(self):
         """Compute the max port speed in bps"""
         if self.supports_10Gb_fd == True:
-            #print "supports 10gb"
             self.max_speed = 10000 * 1e6
         elif self.supports_1Gb_hd == True or self.supports_1Gb_fd == True:
-            #print "supports 1gb"
             self.max_speed = 1000 * 1e6
         elif self.supports_100Mb_hd == True or self.supports_100Mb_fd == True:
-            #print "supports 100mb"
             self.max_speed = 100 * 1e6
         elif self.supports_10Mb_hd == True or self.supports_10Mb_fd == True:
-            #print "supports 10mb"
             self.max_speed = 10 * 1e6
         else:
             self.max_speed = 0
@@ -1298,8 +1218,9 @@ class PortUtilization:
     def __init__(self):
         self.dpid = -1
         self.port = -1
-        self.gbps_transmitted = 0.0
-        self.gbps_received = 0.0
+        self.bps_transmitted = 0.0
+        self.bps_received = 0.0
+        ###self.max_speed = 0
 
 class PortInfo:
     """Class keeps track of port capabilities and recent usage"""
@@ -1354,43 +1275,7 @@ class PortInfo:
         dict['delta_rx_errors'] = self.delta_rx_errors
         dict['delta_tx_errors'] = self.delta_tx_errors
         return dict
-
-    def print_stats(self):
-        """Print per-port stats to stdout"""
-        print "port number             : %d" % (self.port_number)
-        #print "port speed (bps)        : %f" % \
-        #       (self.port_cap[self.port_number].compute_max_port_speed_bps())
-        print "port speed (bps)        : %f" % \
-            (self.port_cap.compute_max_port_speed_bps())
-        print "ttl rx bytes            : %d" % (self.total_rx_bytes)
-        print "ttl tx bytes            : %d" % (self.total_tx_bytes)
-        print "ttl rx packets          : %d" % (self.total_rx_packets)
-        print "ttl tx packets          : %d" % (self.total_tx_packets)
-        print "ttl rx packets dropped  : %d" % (self.total_rx_packets_dropped)
-        print "ttl tx packets dropped  : %d" % (self.total_tx_packets_dropped)
-        print "ttl rx errors           : %d" % (self.total_rx_errors)
-        print "ttl tx errors           : %d" % (self.total_tx_errors)
-        print "delta rx bytes          : %d" % (self.delta_rx_bytes)
-        print "delta tx bytes          : %d" % (self.delta_tx_bytes)
-        print "delta rx packets        : %d" % (self.delta_rx_packets)
-        print "delta tx packets        : %d" % (self.delta_tx_packets)
-        print "delta rx packets dropped: %d" % (self.delta_rx_packets_dropped)
-        print "delta tx packets dropped: %d" % (self.delta_tx_packets_dropped)
-        print "delta rx errors         : %d" % (self.delta_rx_errors)
-        print "delta tx errors         : %d" % (self.delta_tx_errors)
-        print "bits rx/sec             : %f" % \
-                           (self.estimate_bits_received_per_sec())
-        print "bits tx/sec             : %f" % \
-                           (self.estimate_bits_sent_per_sec())
-        print "packets rx/sec          : %f" % \
-                             (self.estimate_packets_received_per_sec())
-        print "packets tx/sec          : %f" % \
-                                 (self.estimate_packets_sent_per_sec())
-        print "rx utilization          : %f" % \
-                                 (self.estimate_port_rx_utilization())
-        print "tx utilization          : %f" % \
-                                 (self.estimate_port_tx_utilization())
-        
+      
     def compute_delta_from(self, rhs, send_alarm = True):
         """Compute the counter and epoch deltas between this snapshot 
         and another (rhs)
@@ -1429,22 +1314,6 @@ class PortInfo:
              portError.rx_errors = self.delta_rx_errors
              portError.tx_errors = self.delta_tx_errors
              self.post( pyevent( PortErrorEvent.NAME, portError ) )
-
-        '''
-        lg.debug( "port number      : %d" % (self.port_number) )
-        lg.debug( "delta bytes rx   : %d" % (self.delta_rx_bytes) )
-        lg.debug( "delta bytes tx   : %d" % (self.delta_tx_bytes) )
-        lg.debug( "rx bps           : %d" % \
-                      (self.estimate_bits_received_per_sec()) )
-        lg.debug( "tx bps           : %d" % \
-                      (self.estimate_bits_sent_per_sec()) )
-        '''
-        #lg.debug( "delta pkts rx    : %d" % (self.delta_rx_packets) )
-        #lg.debug( "delta pkts tx    : %d" % (self.delta_tx_packets) )
-        #lg.debug( "delta rx pkts drp: %d" % (self.delta_rx_packets_dropped) )
-        #lg.debug( "delta tx pkts drp: %d" % (self.delta_tx_packets_dropped) )
-        #lg.debug( "delta rx errors  : %d" % (self.delta_rx_errors) )
-        #lg.debug( "delta tx errors  : %d" % (self.delta_tx_errors) )
         
     def compute_max_port_speed_bps(self):
         """Compute the max port speed in bps"""
@@ -1610,7 +1479,6 @@ class Snapshot:
         snapshot and another (rhs)
         @param rhs - snapshot to compute delta from
         """
-        #print "computing delta from snapshot..."
         if self.collection_epoch != rhs.collection_epoch:
             self.epoch_delta = self.collection_epoch - rhs.collection_epoch
             self.time_since_delta = self.timestamp - rhs.timestamp
@@ -1716,37 +1584,3 @@ class Snapshot:
             return False
         else: 
             return True
-
-    def print_stats(self):
-        """Dump aggregate switch-level and per-port stats to stdout."""
-        print "---snap-start---"
-        print "dpid                    : 0x%x" % (self.dpid)
-        print "collection epoch        : %d" % (self.collection_epoch)
-        print "epoch delta             : %d" % (self.epoch_delta)
-        print "ports active            : %d" % (len(self.port_info))
-        print "# flows                 : %d" % (self.number_of_flows)
-        print "# bytes in flows        : %d" % (self.bytes_in_flows)
-        print "# packets in flows      : %d" % (self.packets_in_flows)
-        print "ttl rx bytes            : %d" % (self.total_rx_bytes)
-        print "ttl tx bytes            : %d" % (self.total_tx_bytes)
-        print "ttl rx packets          : %d" % (self.total_rx_packets)
-        print "ttl tx packets          : %d" % (self.total_tx_packets)
-        print "ttl rx packets dropped  : %d" % (self.total_rx_packets_dropped)
-        print "ttl tx packets dropped  : %d" % (self.total_tx_packets_dropped)
-        print "ttl rx errors           : %d" % (self.total_rx_errors)
-        print "ttl tx errors           : %d" % (self.total_tx_errors)
-        print "delta rx bytes          : %d" % (self.delta_rx_bytes)
-        print "delta tx bytes          : %d" % (self.delta_tx_bytes)
-        print "delta rx packets        : %d" % (self.delta_rx_packets)
-        print "delta tx packets        : %d" % (self.delta_tx_packets)
-        print "delta rx packets dropped: %d" % (self.delta_rx_packets_dropped)
-        print "delta tx packets dropped: %d" % (self.delta_tx_packets_dropped)
-        print "delta rx errors         : %d" % (self.delta_rx_errors)
-        print "delta tx errors         : %d" % (self.delta_tx_errors)
-        print "___port info___"
-        # Show per-port stats
-        for key in self.port_info:
-            self.port_info[key].print_stats()
-            print "\n"
-        print "---snap-end---"
-
