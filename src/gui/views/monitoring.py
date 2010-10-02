@@ -80,7 +80,6 @@ class Monitoring_View(View):
     def got_monitoring_msg(self, msg):
         jsonmsg = json.loads(str(msg))
         if jsonmsg["msg_type"] == "linkutils":
-            #print jsonmsg
             self.update_stats(jsonmsg["utils"])
         else:
             self.show_stats_reply(jsonmsg)
@@ -274,25 +273,20 @@ class Monitoring_View(View):
                                      ( str(replyMsg) ) )
         
     def update_stats(self, utils):
-        ''' updates link stats from dispatch_server message '''
+        '''
+        Updates link stats from dispatch_server message
+        '''
         self.stats = {}
         for util in utils:
-        #    print( "dpid: %d, port: %d, tx: %f, rx: %f" % \
-        #               (util.dpid, util.port, util.gbps_transmitted, 
-        #                util.gbps_received) )
-            self.stats[(util["dpid"], util["port"])] = \
-                            (util["gbps_transmitted"] + util["gbps_received"]) / 2
-        #print self.stats[(1, 3)]
+            dpid = util["dpid"]
+            while len(dpid)<12:
+                dpid = "0" + dpid
+            self.stats[(dpid, util["port"])] = util["utilization"]
+        self.topoWidget.topologyView.updateAllSignal.emit()
         
     def link_color(self, link):
-        # Co-opted from the elastictree view
-        # reflected by shades of colors based on utilizations
-        # assumes 1 GB links
         '''
-        srcID = link.source.dpid
-        srcPort = link.sport
-        dstID = link.dest.dpid
-        dstPort = link.dport
+        Paints links based on their utilizations
         '''
         srcID = link.source.id
         srcPort = link.sport
@@ -312,28 +306,19 @@ class Monitoring_View(View):
             util2 = self.stats[(dstID, dstPort)]
             util = (util1 + util2) / 2
 
-        '''
-        print link.source.id
-        print link.dest.id
-        if link.source.id == "1":
-            print util
-        '''
-
-        #print util
         if util >= 0.8:
             return QtCore.Qt.red
         if util >= 0.3:
             return QtCore.Qt.yellow
-        if util >= 0.0:
+        if util >= 0.0001:
             return QtCore.Qt.green
-        return QtCore.Qt.white
+        return QtCore.Qt.gray
 
     def link_pattern(self, link):
         pattern = QtCore.Qt.SolidLine
         return pattern
         
     def node_color(self, node):
-        #print "node color in monitoring view" 
         '''
         if node.dpid in self.service_subset:
             if self.service_name == "serviceB":

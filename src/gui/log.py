@@ -121,7 +121,7 @@ class LogDisplay(QtGui.QTextEdit):
         
         # Colors
         self.bgColor = QtCore.Qt.black
-        self.textColor = QtGui.QColor(QtCore.Qt.green).light(65)
+        self.textColor = QtGui.QColor(QtCore.Qt.green).light(85)
         
         self.p = QtGui.QPalette()
         self.setColors()
