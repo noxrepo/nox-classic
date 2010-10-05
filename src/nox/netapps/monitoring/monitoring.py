@@ -46,6 +46,9 @@ DEFAULT_POLL_TABLE_STATS_PERIOD     = 1 # seconds
 DEFAULT_POLL_PORT_STATS_PERIOD      = 1 # seconds
 DEFAULT_POLL_AGGREGATE_STATS_PERIOD = 1 # seconds
 
+
+DEFAULT_POLL_UTIL_PERIOD = 1 # seconds
+
 # Arbitrary limits on how much stats history we keep per switch
 DEFAULT_COLLECTION_EPOCH_DURATION = 10 # seconds
 DEFAULT_MAX_STATS_SNAPSHOTS_PER_SWITCH = 10
@@ -624,7 +627,8 @@ class Monitoring(Component):
         event = LinkUtilizationReplyEvent( -1, port_utils )
         # Post event
         self.post( pyevent( LinkUtilizationReplyEvent.NAME, event ) )
-        self.post_callback( 0.1, self.fire_utilization_broadcasts )
+        self.post_callback( DEFAULT_POLL_UTIL_PERIOD,\
+                        self.fire_utilization_broadcasts )
 
     # Logical clock timer    
     def fire_epoch_timer(self):
