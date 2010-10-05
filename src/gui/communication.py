@@ -185,10 +185,8 @@ class ConsoleInterface():
         self.nox_host = "localhost"
         ##Port number
         self.port_no = 2703
-        ##Wait for reply
-        self.expectReply = True
         
-    def send_cmd(self, cmd=None):        
+    def send_cmd(self, cmd=None, expectReply=False):        
         # if textbox empty, construct command
         if not cmd:
             print "sending dummy cmd"
@@ -197,7 +195,7 @@ class ConsoleInterface():
         sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         sock.connect((self.nox_host,self.port_no))
         sock.send(cmd)
-        if self.expectReply:
+        if expectReply:
             print simplejson.dumps(simplejson.loads(sock.recv(4096)), indent=4)
         sock.send("{\"type\":\"disconnect\"}")
         sock.shutdown(1)

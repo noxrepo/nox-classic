@@ -6,6 +6,7 @@ Console Widget, used for sending json messages to NOX
 
 from PyQt4 import QtGui, QtCore
 from communication import ConsoleInterface
+import simplejson
 
 class ConsoleWidget(QtGui.QWidget):
     def __init__(self, parent=None):
@@ -46,14 +47,25 @@ class ConsoleWidget(QtGui.QWidget):
         
     def send_cmd(self):
         self.curs.execute("select distinct component from messages")
-        print self.curs
-        if "jsonmessenger" not in self.curs:
+        comps = []
+        for c in self.curs:
+            comps.append(str(c)[3:len(str(c))-3])
+        if "jsonmessenger" not in comps:
+            self.parent.logWidget.logDisplay.parent.freezeLog = True
             self.logDisplay.setText("jsonmessenger is not running")
         else:
             cmd = str(self.consoleEdit.text())
-            self.consoleInterface.send_cmd(cmd)
-        
-            
+            valid_json = True
+            try:
+                jsonmsg = simplejson.loads(cmd)
+            except:
+                self.parent.logWidget.logDisplay.parent.freezeLog = True
+                self.logDisplay.setText("invalid json command")
+                valid = False
+            if valid_json:
+                self.consoleInterface.send_cmd(cmd)
+                #self.parent.logWidget.logDisplay.parent.freezeLog = False
+                            
     def keyPressEvent(self, event):
         key = event.key()
 
