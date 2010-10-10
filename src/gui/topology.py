@@ -37,7 +37,7 @@ class Node(QtGui.QGraphicsItem):
         self.setFlag(QtGui.QGraphicsItem.ItemIsMovable)
         self.setFlag(QtGui.QGraphicsItem.ItemSendsGeometryChanges)
         self.setZValue(1)
-        self.setAcceptHoverEvents(False)
+        self.setAcceptHoverEvents(True)
         
         # Node attributes
         self.isUp = True        # up/down state   
@@ -49,7 +49,7 @@ class Node(QtGui.QGraphicsItem):
         self.switchDetails = QtGui.QMenu('&Switch Details')
         self.switchDetails.addAction('Datapath ID: 0x%s' % self.id)
         self.switchDetails.addAction('Links: ' + str(len(self.linkList)))
-        self.switchDetails.addAction('Table Size: 0')
+        self.switchDetails.addAction('Table Size: '+ '')
 
         # Switch stats menu
         self.switchStats = QtGui.QMenu('&Get Switch Stats')
@@ -195,6 +195,7 @@ class Node(QtGui.QGraphicsItem):
         return QtGui.QGraphicsItem.itemChange(self, change, value)
 
     def mousePressEvent(self, event):
+        self.stillHover = False
         self.update()
         QtGui.QGraphicsItem.mousePressEvent(self, event)
 
@@ -206,17 +207,21 @@ class Node(QtGui.QGraphicsItem):
         if event.button() == QtCore.Qt.RightButton:
             popup = QtGui.QMenu()
             popup.addAction("Show &Flow Table", self.query_flow_stats)
-            #popup.addAction("Show MapReduce Cluster", self.filter_map_reduce)
-            #popup.addAction("Show Storage Cluster", self.filter_storage)
             popup.addSeparator()
+            
+            # Build new switchDetails menu
+            self.switchDetails = QtGui.QMenu('&Switch Details')
+            self.switchDetails.addAction('Datapath ID: 0x%s' % self.id)
+            self.switchDetails.addAction('Links: ' + str(len(self.linkList)/2))
+            self.switchDetails.addAction('Table Size: '+ '')
+            
+            
             popup.addMenu(self.switchDetails)
             popup.addSeparator()
-            # rean-g: adding a pre-built menu causes it to be treated
-            # as an independent/disconnected entity not owned by the
-            # menu that it is being added to. As a result you can't
-            # handle its item clicks in a straight forward way
-            #popup.addMenu(self.switchStats)
-            # Build stats menu dynamically
+            
+            
+            
+            # Build new stats menu dynamically
             statsMenu = popup.addMenu( '&Get Switch Stats' )
             # Add a bunch of actions to sub menu
             statsMenu.addAction( 'Port Stats', self.query_port_stats )
@@ -299,19 +304,27 @@ class Node(QtGui.QGraphicsItem):
         self.update()
        
     def hoverEnterEvent(self, event):
+        self.stillHover = True
+        
+        # rebuild switchDetails menu
+        self.switchDetails = QtGui.QMenu('&Switch Details')
+        self.switchDetails.addAction('Datapath ID: 0x%s' % self.id)
+        self.switchDetails.addAction('Links: ' + str(len(self.linkList)/2))
+        self.switchDetails.addAction('Table Size: '+ '')
+        
+        self.hoverPos = event.lastScreenPos() + QtCore.QPoint(10,10)
         self.hoverTimer = QtCore.QTimer()
-        self.hoverTimer.singleShot(3000,self.showSwitchDetailsMenu(event.lastScreenPos()))
-        #self.hoverTimer.singleShot(1000, self,
-        #       QtCore.SLOT('self.showSwitchDetailsMenu(event.lastScreenPos())'))
-        #self.connect(hoverTimer, "showSwitchDetails()")
-        #hoverTimer.start(10000)
+        self.hoverTimer.singleShot(500, self.showSwitchDetailsMenu)
     
     @QtCore.pyqtSlot()    
-    def showSwitchDetailsMenu(self,pos):
-        self.switchDetails.exec_(pos)
+    def showSwitchDetailsMenu(self):
+        if self.stillHover:
+            #pos = self.mapToItem(self,self.pos() + QtCore.QPointF(10,10))
+            self.switchDetails.exec_(self.hoverPos)
         
     def hoverLeaveEvent(self, event):
-        self.switchDetails.exec_(event.lastScreenPos())
+        self.stillHover = False
+        self.switchDetails.hideTearOffMenu()
     
         
 class Link(QtGui.QGraphicsItem):
@@ -335,7 +348,7 @@ class Link(QtGui.QGraphicsItem):
         self.destPoint = QtCore.QPointF()
         self.setFlag(QtGui.QGraphicsItem.ItemIsMovable)
         self.setAcceptedMouseButtons(QtCore.Qt.RightButton)
-        self.setAcceptHoverEvents(True)
+        self.setAcceptHoverEvents(False)
         self.source = sourceNode
         self.dest = destNode
         self.sport = sport
