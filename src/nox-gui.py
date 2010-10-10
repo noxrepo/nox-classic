@@ -20,6 +20,7 @@ import gui.log as log
 import gui.topology as topology
 import gui.console as console
 import gui.Popup as Popup
+import signal
        
 class MainWindow(QtGui.QMainWindow):
     
@@ -31,18 +32,18 @@ class MainWindow(QtGui.QMainWindow):
         self.resize(1280, 800)
         self.statusBar().showMessage('Ready')        
         self.center()
-        
         # Messenger socket:
         if len(sys.argv) > 1:
             self.noxip = sys.argv[1]
         else:
             self.noxip = "127.0.0.1"
         self.noxport = 2703 #messenger port
-
+        
         self.logWidget = log.LogWidget(self)
         self.left = self.logWidget
-                
+        
         self.topoWidget = topology.TopoWidget(self) 
+        
         self.consoleWidget = console.ConsoleWidget(self)  
         
         self.rightvbox = QtGui.QVBoxLayout()
@@ -56,6 +57,8 @@ class MainWindow(QtGui.QMainWindow):
         self.splitter.addWidget(self.right)
         
         self.setCentralWidget(self.splitter)
+        
+        signal.signal(signal.SIGINT, self.sigint_handler)  
 
         # Actions
         start = QtGui.QAction(QtGui.QIcon('gui/icons/logo.png'), 'Start', self)
@@ -87,16 +90,15 @@ class MainWindow(QtGui.QMainWindow):
         exit.setShortcut('Ctrl+Q')
         exit.setStatusTip('Exit application')
         self.connect(exit, QtCore.SIGNAL('triggered()'), QtCore.SLOT('close()'))
-        #self.connect(exit, QtCore.SIGNAL('triggered()'), self.graceful_close)
         
-        '''
+        #'''
         switch_to_dark = QtGui.QAction('Dark',self)
         switch_to_dark.setStatusTip('Switch to dark color theme')
         self.connect(switch_to_dark, QtCore.SIGNAL('triggered()'), self.dark)     
         switch_to_bright = QtGui.QAction('Bright',self)
         switch_to_bright.setStatusTip('Switch to bright color theme')
         self.connect(switch_to_bright, QtCore.SIGNAL('triggered()'), self.bright)        
-        '''
+        #'''
         
         self.statusBar()
 
@@ -113,11 +115,11 @@ class MainWindow(QtGui.QMainWindow):
         components_menu = menubar.addMenu('&Components')
         components_menu.addAction('Installed Components')
         components_menu.addAction('Active Components')
-        '''
-        theme_menu = menubar.addMenu('&Theme')
+        #'''
+        theme_menu = menubar.addMenu('&Colors')
         theme_menu.addAction(switch_to_dark)
         theme_menu.addAction(switch_to_bright)
-        '''
+        #'''
         help_menu = menubar.addMenu('&Help')
         help_menu.addAction('Help')
         help_menu.addAction('About')
@@ -135,6 +137,10 @@ class MainWindow(QtGui.QMainWindow):
         size =  self.geometry()
         self.move((screen.width()-size.width())/2, (screen.height()-size.height())/2)
        
+    
+    def sigint_handler(self, signal, frame):
+        sys.exit(0) 
+       
     def closeEvent(self, event):
         '''
         reply = QtGui.QMessageBox.question(self, 'Exit NOX',
@@ -145,8 +151,12 @@ class MainWindow(QtGui.QMainWindow):
         else:
             event.ignore()
         '''
-        self.logWidget.logInterface.running = False
-        event.accept()
+        print "Exiting."
+        #sys.exit(0)
+        self.logWidget.logInterface.shutdown()
+        #self.logWidget.logInterface.terminate()
+        #self.logWidget.logInterface.wait()
+        #event.accept()
         
     def start_nox(self):
         popup = Popup.StartComboBox(self)
@@ -164,17 +174,34 @@ class MainWindow(QtGui.QMainWindow):
         self.right.show()
         self.left.show()
     
-    '''
+    #'''
     def dark(self):
+        # Change Log colors
         self.logWidget.logDisplay.bgColor = QtCore.Qt.black
-        self.logWidget.logDisplay.textColor = QtGui.QColor(QtCore.Qt.green).light(65)
+        self.logWidget.logDisplay.textColor = \
+                QtGui.QColor(QtCore.Qt.green).light(85)
         self.logWidget.logDisplay.setColors()
+        self.logWidget.logDisplay.setText(self.logWidget.logDisplay.toPlainText())
+        
+        # Change Topology colors
+        self.topoWidget.topologyView.setStyleSheet("background: black")
+        # stupid way to refresh background color:
+        self.topoWidget.topologyView.scaleView(0.5)
+        self.topoWidget.topologyView.scaleView(2)
         
     def bright(self):
-        self.logWidget.logDisplay.bgColor = QtCore.Qt.white
+        # Change Topology colors
+        self.logWidget.logDisplay.bgColor = \
+                QtGui.QColor(QtCore.Qt.gray)
         self.logWidget.logDisplay.textColor = QtCore.Qt.black
         self.logWidget.logDisplay.setColors()
-    '''
+        self.logWidget.logDisplay.setText(self.logWidget.logDisplay.toPlainText())
+        
+        # Change Topology colors
+        self.topoWidget.topologyView.setStyleSheet("background: gray") 
+        self.topoWidget.topologyView.scaleView(0.5)
+        self.topoWidget.topologyView.scaleView(2)
+        
     
     def toggle_show_console(self):
         if self.consoleWidget.isHidden():

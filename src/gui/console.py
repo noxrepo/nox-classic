@@ -10,8 +10,8 @@ import simplejson
 
 class ConsoleWidget(QtGui.QWidget):
     def __init__(self, parent=None):
-        self.parent = parent
         QtGui.QWidget.__init__(self, parent)
+        self.parent = parent
         
         # Handle to logDisplay
         self.logDisplay = self.parent.logWidget.logDisplay

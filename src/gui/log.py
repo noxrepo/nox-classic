@@ -155,7 +155,8 @@ class LogWidget(QtGui.QWidget):
     def __init__(self, parent=None):
         QtGui.QWidget.__init__(self, parent)
                 
-        self.parent = parent
+        #self.parent = parent
+        
         # Configure log message DB
         self.conn = connect('log.db')
         self.curs = self.conn.cursor()        
@@ -191,7 +192,9 @@ class LogWidget(QtGui.QWidget):
         self.insert_message(msg)
         
 	def __del__(self):
-	    self.logInterface.stop()
+	    print "out"
+	    self.wait()
+	    #self.logInterface.stop()
                 
     def insert_message(self, message):
         '''

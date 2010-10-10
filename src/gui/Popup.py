@@ -33,6 +33,7 @@ class FilterComboBox(QtGui.QDialog):
             self.connect(ok, QtCore.SIGNAL('clicked()'), self.setCompFilter)
             self.connect(cancel, QtCore.SIGNAL('clicked()'), self.cancel)
             
+            #print self.sizeHint()
             self.adjustSize()
                             
         def setCompFilter(self):

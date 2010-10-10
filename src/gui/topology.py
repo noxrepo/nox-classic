@@ -32,13 +32,12 @@ class Node(QtGui.QGraphicsItem):
         self.topoWidget = self.graph.parent
         self.linkList = []
         self.id = str(_id)
-        #self.dpid = _id
         self.layer = _layer
         self.newPos = QtCore.QPointF()
         self.setFlag(QtGui.QGraphicsItem.ItemIsMovable)
         self.setFlag(QtGui.QGraphicsItem.ItemSendsGeometryChanges)
         self.setZValue(1)
-        self.setAcceptHoverEvents(True)
+        self.setAcceptHoverEvents(False)
         
         # Node attributes
         self.isUp = True        # up/down state   
@@ -52,7 +51,6 @@ class Node(QtGui.QGraphicsItem):
         self.switchDetails.addAction('Links: ' + str(len(self.linkList)))
         self.switchDetails.addAction('Table Size: 0')
 
-    
         # Switch stats menu
         self.switchStats = QtGui.QMenu('&Get Switch Stats')
     
@@ -165,7 +163,6 @@ class Node(QtGui.QGraphicsItem):
             textRect = self.boundingRect()
             message = "0x"+self.id.lstrip("0")
 
-
             font = painter.font()
             font.setBold(True)
             font.setPointSize(2)
@@ -204,11 +201,6 @@ class Node(QtGui.QGraphicsItem):
     def mouseDoubleClickEvent(self, event):
         self.query_flow_stats()
         QtGui.QGraphicsItem.mouseDoubleClickEvent(self, event)
-    '''
-    def mouseDoubleClickEvent(self, event):
-        self.toggleStatus()
-        QtGui.QGraphicsItem.mouseDoubleClickEvent(self, event)
-    '''
         
     def mouseReleaseEvent(self, event):
         if event.button() == QtCore.Qt.RightButton:
@@ -284,12 +276,7 @@ class Node(QtGui.QGraphicsItem):
             sendMsg.dst = self.dpid
             self.topoWidget.topologyView.topologyInterface.send(sendMsg)
             self.topoWidget.selectedNode = None
-    '''
-    def showFlowTable(self):
-        self.graph.parent.logDisplay.parent.freezeLog = True
-        self.graph.parent.logDisplay.setText('Displaying Flow Table for switch '+self.id)
-        self.query_flow_stats()
-    '''
+            
     def toggleStatus(self):
         if self.isUp:
             self.alertSwitchDown()
@@ -310,22 +297,21 @@ class Node(QtGui.QGraphicsItem):
                 l.isUp = True
                 l.update()
         self.update()
-        
-    '''
+       
     def hoverEnterEvent(self, event):
-        hoverTimer = QtCore.QTimer()
-        hoverTimer.singleShot(1000, self, 
-               QtCore.SLOT('self.showSwitchDetailsMenu(event.lastScreenPos())'))
+        self.hoverTimer = QtCore.QTimer()
+        self.hoverTimer.singleShot(3000,self.showSwitchDetailsMenu(event.lastScreenPos()))
+        #self.hoverTimer.singleShot(1000, self,
+        #       QtCore.SLOT('self.showSwitchDetailsMenu(event.lastScreenPos())'))
         #self.connect(hoverTimer, "showSwitchDetails()")
         #hoverTimer.start(10000)
     
     @QtCore.pyqtSlot()    
     def showSwitchDetailsMenu(self,pos):
-        self.switchdetails.exec_(e.lastScreenPos())
+        self.switchDetails.exec_(pos)
         
     def hoverLeaveEvent(self, event):
-        pass#self.switchdetails.exec_(event.lastScreenPos())
-    '''        
+        self.switchDetails.exec_(event.lastScreenPos())
     
         
 class Link(QtGui.QGraphicsItem):
@@ -530,8 +516,8 @@ class Link(QtGui.QGraphicsItem):
 
 class TopoWidget(QtGui.QWidget):
     def __init__(self, parent=None):
+        QtGui.QWidget.__init__(self, parent)
         self.parent = parent
-        QtGui.QWidget.__init__(self, self.parent)
         
         # Handle to logDisplay
         self.logDisplay = self.parent.logWidget.logDisplay
