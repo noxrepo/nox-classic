@@ -1,3 +1,5 @@
+/* See JSON_parser.c for copyright information and licensing. */
+
 #ifndef JSON_PARSER_H
 #define JSON_PARSER_H
 
@@ -32,6 +34,21 @@ typedef long JSON_int_t;
 #ifdef __cplusplus
 extern "C" {
 #endif 
+
+typedef enum 
+{
+    JSON_E_NONE = 0,
+    JSON_E_INVALID_CHAR,
+    JSON_E_INVALID_KEYWORD,
+    JSON_E_INVALID_ESCAPE_SEQUENCE,
+    JSON_E_INVALID_UNICODE_SEQUENCE,
+    JSON_E_INVALID_NUMBER,
+    JSON_E_NESTING_DEPTH_REACHED,
+    JSON_E_UNBALANCED_COLLECTION,
+    JSON_E_EXPECTED_KEY,
+    JSON_E_EXPECTED_COLON,
+    JSON_E_OUT_OF_MEMORY
+} JSON_error;
 
 typedef enum 
 {
@@ -142,6 +159,13 @@ JSON_PARSER_DLL_API extern int JSON_parser_done(JSON_parser jc);
     \return Non-zero if the string is valid, zero otherwise.
 */
 JSON_PARSER_DLL_API extern int JSON_parser_is_legal_white_space_string(const char* s);
+
+/*! \brief Gets the last error that occurred during the use of JSON_parser.
+
+    \return A value from the JSON_error enum.
+*/
+JSON_PARSER_DLL_API extern int JSON_parser_get_last_error(JSON_parser jc);
+
 
 
 #ifdef __cplusplus
