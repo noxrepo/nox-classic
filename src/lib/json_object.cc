@@ -119,7 +119,8 @@ namespace vigil
 	retStr += "\""+i->first+"\":"+i->second->get_string()+",";
 	i++;
       }
-      retStr = retStr.substr(0,retStr.length()-1);
+      if (retStr.length() > 1)
+        retStr = retStr.substr(0,retStr.length()-1);
       retStr += "}";
       break;
     case JSONT_INTEGER:
