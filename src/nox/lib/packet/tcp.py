@@ -69,7 +69,7 @@ class tcp_opt:
         elif self.type == tcp_opt.MSS:
             return struct.pack('!BBH',self.type,4,self.val) 
         elif self.type == tcp_opt.WSOPT:
-            return struct.pack('!BBH',self.type,3,self.val) 
+            return struct.pack('!BBB',self.type,3,self.val) 
         elif self.type == tcp_opt.SACKPERM:
             return struct.pack('!BB',self.type,2) 
         elif self.type == tcp_opt.TSOPT:
@@ -155,7 +155,7 @@ class tcp(packet_base):
             elif arr[i] == tcp_opt.WSOPT:    
                 if arr[i+1] != 3:
                     raise Exception()
-                self.options.append(tcp_opt(tcp_opt.WSOPT, arr[i+1]))
+                self.options.append(tcp_opt(tcp_opt.WSOPT, arr[i+2]))
             elif arr[i] == tcp_opt.SACKPERM:    
                 if arr[i+1] != 2:
                     raise Exception() 
