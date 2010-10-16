@@ -104,11 +104,17 @@ Component_configuration::Component_configuration(json_object* d,
 
     json_object* n = json::get_dict_value(d, "name");
     name = n->get_string(true);
-    /*json_dict::iterator i;
-    json_dict* jodict = (json_dict*) d->object;
-    i = jodict->find("name");
-    name = i->second->get_string(true);*/
-    // TODO: parse keys
+
+    // Read config info from meta file
+    json_object * config = json::get_dict_value(d, "config");
+    if (config && config->type == json_object::JSONT_DICT)
+    {
+        json_dict * dict = (json_dict *) config->object;
+        for (json_dict::iterator di = dict->begin(); di != dict->end(); di++)
+        {
+            kv[di->first] = di->second->get_string(true);
+        }
+    }
 }
 
 const string 
@@ -146,7 +152,6 @@ Component_configuration::get_arguments_list(char d1, char d2) const {
     BOOST_FOREACH(const std::string& arg_str, arguments){
         std::stringstream args(arg_str);
 	std::string arg;
-	int argcount = 0;
 	
 	while (getline(args,arg, d1)) {
 	    std::stringstream argsplit(arg);
