@@ -148,20 +148,11 @@ Component_configuration::get_arguments_list(char d1, char d2) const {
 	std::string arg;
 	int argcount = 0;
 	
-	while (getline(args,arg, ',')) {
+	while (getline(args,arg, d1)) {
 	    std::stringstream argsplit(arg);
-	    std::string argid,argval,tmparg;
-	    while (getline(argsplit, tmparg, '=')) {
-	      switch (argcount) {
-	      case 0:
-		argid = tmparg;
-		break;
-	      case 1:
-		argval = tmparg;
-		break;
-	      }
-	      argcount++;
-	    }
+	    std::string argid,argval;
+	    getline(argsplit, argid, d2);
+	    getline(argsplit, argval);
 	    argmap.insert(std::make_pair(argid, argval));
 	}
     }
