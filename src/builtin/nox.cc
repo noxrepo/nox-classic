@@ -1146,6 +1146,7 @@ void Handshake_fsm::recv_message() {
             lg.warn("Received error during handshake (%d/%d)",
                     ntohs(oem->type), ntohs(oem->code));
             do_exit(EINVAL);
+            return;
           }
           break;
         case OFPT_PACKET_IN:
