@@ -13,6 +13,7 @@ jsonmessenger.
 
 import struct
 import sys
+import getopt
 
 from PyQt4 import QtGui, QtCore
 
@@ -24,21 +25,50 @@ import signal
        
 class MainWindow(QtGui.QMainWindow):
     
+    def usage(self):
+        """Print usage information
+        """
+        print "Usage "+sys.argv[0]+" <options> [IP address | default to localhost]"
+        print  "Options:"
+        print "-h/--help\n\tPrint this usage guide"
+        print "-p/--port\n\tPort to connect to"
+
     def __init__(self, parent=None):
         QtGui.QWidget.__init__(self, parent)
+
+        #Parse options and commandline arguments
+        try:
+            opts, args = getopt.getopt(sys.argv[1:], "hp:",
+                                       ["help","port="])
+        except getopt.GetoptError:
+            print "Option error!"
+            self.usage()
+            sys.exit(2)
+            
+        #Get options
+        self.noxport = 2703 #messenger port
+        for opt,arg in opts:
+            if (opt in ("-h","--help")):
+                self.usage()
+                sys.exit(0)
+            elif (opt in ("-p","--port")):
+                self.noxport = int(arg)
+            else:
+                print "Unhandled option :"+opt
+                sys.exit(2)
+
+        # Messenger socket:
+        if len(args) >= 1:
+            self.noxip = args[0]
+        else:
+            self.noxip = "127.0.0.1"
 
         # Configure layout
         self.setWindowTitle('NOX Graphical User Interface')
         self.resize(1280, 800)
         self.statusBar().showMessage('Ready')        
         self.center()
-        # Messenger socket:
-        if len(sys.argv) > 1:
-            self.noxip = sys.argv[1]
-        else:
-            self.noxip = "127.0.0.1"
-        self.noxport = 2703 #messenger port
-        
+
         self.logWidget = log.LogWidget(self)
         self.left = self.logWidget
         
