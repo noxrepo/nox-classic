@@ -21,7 +21,7 @@ AC_DEFUN([CHECK_TWISTED], [
     RETVAL=$?
     if (( $RETVAL != 0 )); then
         AC_MSG_RESULT([no])
-        AC_MSG_WARN([twisted not installed, compiling without Python support])
+        AC_MSG_ERROR([twisted not installed, but is required for Python support])
         PYTHON=""
     else
         AC_MSG_RESULT([yes])
