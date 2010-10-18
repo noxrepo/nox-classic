@@ -1034,7 +1034,7 @@ void Handshake_fsm::handle_vendor(std::auto_ptr<Buffer> buf)
                 }
             }   
 
-            switch ntohs(ofmph->type) {
+            switch (ntohs(ofmph->type)) {
             case OFMPT_CAPABILITY_REPLY: {
                     if(state != RECV_MGMT_CAPABILITY_REPLY) { 
                       lg.warn("Ignoring mgmt capability reply "
