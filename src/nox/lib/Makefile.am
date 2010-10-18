@@ -39,8 +39,6 @@ _config_la_CPPFLAGS = $(AM_CPPFLAGS) -I$(top_srcdir)/src/nox
 NOX_RUNTIMEFILES = \
 	core.py\
 	__init__.py\
-	openflow.py\
-	config.py\
 	util.py\
 	token_bucket.py\
 	directory.py\

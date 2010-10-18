@@ -16,7 +16,6 @@ NOX_RUNTIMEFILES = 		\
 	__init__.py		\
 	bootstrap.py   		\
 	componentws.py		\
-	deferredcallback.py	\
 	meta.json		\
 	pyoxidereactor.py
 

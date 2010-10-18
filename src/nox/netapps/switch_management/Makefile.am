@@ -11,8 +11,7 @@ EXTRA_DIST =\
 NOX_RUNTIMEFILES = meta.json
 
 if PY_ENABLED
-NOX_RUNTIMEFILES += __init__.py	\
-	pyswitch_management.py
+NOX_RUNTIMEFILES += __init__.py	
 endif # PY_ENABLED
 
 pkglib_LTLIBRARIES = \

@@ -98,9 +98,7 @@ _pydatacache_la_LDFLAGS = -module
 NOX_RUNTIMEFILES += \
 	__init__.py \
 	datatypes_impl.py \
-	datacache_impl.py \
-	pydatacache.py \
-	pydatatypes.py							
+	datacache_impl.py 					
 
 NOX_PYBUILDFILES =							\
 	pydatacache.py							\

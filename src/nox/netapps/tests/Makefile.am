@@ -49,7 +49,6 @@ if PY_ENABLED
 NOX_PYLIBFILES = _pytests.so
 
 NOX_RUNTIMEFILES += 							\
-	pytests.py							\
 	unittest.py							\
 	__init__.py
 

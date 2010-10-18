@@ -88,8 +88,7 @@ _pystorage_la_LDFLAGS = -module
 NOX_RUNTIMEFILES +=							\
 	__init__.py							\
 	storage.py							\
-	util.py								\
-	pystorage.py							
+	util.py		
 
 NOX_PYBUILDFILES =							\
 	pystorage.py							
