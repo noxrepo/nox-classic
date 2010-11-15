@@ -34,6 +34,7 @@ from   nox.lib.packet.ipv4 import ipv4
 from   nox.lib.packet.udp import udp 
 from   nox.lib.packet.tcp import tcp 
 from   nox.lib.packet.icmp import icmp 
+from   nox.lib.packet.arp import arp
 
 from twisted.python import log
 
@@ -403,7 +404,10 @@ def extract_flow(ethernet):
     else:
         attrs[core.NW_SRC] = 0
         attrs[core.NW_DST] = 0
-        attrs[core.NW_PROTO] = 0
+        if isinstance(p, arp):
+            attrs[core.NW_PROTO] = p.opcode
+        else:
+            attrs[core.NW_PROTO] = 0
         attrs[core.NW_TOS] = 0
         attrs[core.TP_SRC] = 0
         attrs[core.TP_DST] = 0
