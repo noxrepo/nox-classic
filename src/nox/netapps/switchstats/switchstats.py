@@ -154,7 +154,13 @@ class switchstats(Component):
         return None        
             
     def table_stats_in_handler(self, dpid, tables):
-        self.dp_table_stats[dpid] = tables
+        # Merge the new info in tables with the older info in dp_table_stats,
+        # replacing entries with the same 'name'.
+        if dpid not in self.dp_table_stats:
+            self.dp_table_stats[dpid] = []
+        self.dp_table_stats[dpid] = dict(chain(
+         ((m['name'],m) for m in self.dp_table_stats[dpid]),
+         ((m['name'],m) for m in tables))).values()
 
     def desc_stats_in_handler(self, dpid, desc):
         self.dp_desc_stats[dpid] = desc
