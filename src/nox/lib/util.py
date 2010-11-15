@@ -387,6 +387,7 @@ def extract_flow(ethernet):
         attrs[core.NW_SRC] = p.srcip
         attrs[core.NW_DST] = p.dstip
         attrs[core.NW_PROTO] = p.protocol
+        attrs[core.NW_TOS] = p.tos
         p = p.next
 
         if isinstance(p, udp) or isinstance(p, tcp):
@@ -403,6 +404,7 @@ def extract_flow(ethernet):
         attrs[core.NW_SRC] = 0
         attrs[core.NW_DST] = 0
         attrs[core.NW_PROTO] = 0
+        attrs[core.NW_TOS] = 0
         attrs[core.TP_SRC] = 0
         attrs[core.TP_DST] = 0
     return attrs
