@@ -171,6 +171,8 @@ class Component:
             elif action[0] == openflow.OFPAT_SET_TP_SRC \
                     or action[0] == openflow.OFPAT_SET_TP_DST:
                 a = struct.pack("!HHHH", action[0], 8, action[1], 0)
+            elif action[0] == openflow.OFPAT_SET_NW_TOS:
+                a = struct.pack("!HHBBBB", action[0], 8, action[1], 0, 0, 0)
             else:
                 print 'invalid action type', action[0]
                 return None
