@@ -43,9 +43,7 @@ from twisted.python import log
 ###############################################################################
 
 def __dladdr_check__(addr):
-    if isinstance(addr, basestring) and not (':' in addr):
-        if len(addr) != ethernetaddr.LEN:
-            return None
+    if isinstance(addr, basestring) and len(addr) == ethernetaddr.LEN:
         addr = create_bin_eaddr(addr)
     elif isinstance(addr, basestring) or ((isinstance(addr, long) or isinstance(addr, int)) and addr >= 0):
         addr = create_eaddr(addr)
@@ -76,9 +74,7 @@ def convert_to_eaddr(val):
         return val
     if isinstance(val, array.array):
         val = val.tostring()
-    if isinstance(val, str) and not (':' in val):
-        if len(val) < ethernetaddr.LEN:
-            return None
+    if isinstance(val, str) and len(val) == ethernetaddr.LEN:
         return create_bin_eaddr(val)
     elif isinstance(val, str) or isinstance(val, int) or isinstance(val, long):
         return create_eaddr(val)
