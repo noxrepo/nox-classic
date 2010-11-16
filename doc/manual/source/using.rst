@@ -93,17 +93,21 @@ for incomding OpenFlow connections, issue the following command::
 Under this configuration, an OpenFlow switch can connect to nox on port
 2525 to establish the OpenFlow communication channel.
 
-NOX supports the following interfaces:
+For your particular NOX build, you can find out what interfaces are supported
+(and what options are available for them) by examining the help::
 
-* *Passive TCP* (``-i ptcp:<portno>``) accepts incoming TCP connections.
-* *Active TCP* (``-i tcp:ip:<portno>``) active outgoing TCP connections.
-* *Passive SSL* (``-i pssl:<portno>)`` accepts incoming SSL connections.
-* *Active SSL* (``-i ssl:ip:<portno>``) active outgoing SSL connections.
-* *pcap* (``-i pcap:/path/to/pcapfile[:/path/to/outfile]``) reads traffic
-  from a pcap file, and alternatively write all output packets to an outfile
-  (used for testing).
-* *Generated packets* (``-i pgen:<# to generate>``) generates a flood of
-  identical packets (used for testing).
+  ./nox_core -h
+
+Some of the usual interfaces are:
+
+* *Passive TCP* (``ptcp``) accepts incoming TCP connections.
+* *Active TCP* (``tcp``) active outgoing TCP connections.
+* *Passive SSL* (``pssl``) accepts incoming SSL connections.
+* *Active SSL* (``ssl``) active outgoing SSL connections.
+* *pcap* reads traffic from a pcap file. Can also write packets
+  to a pcap file.  Used for testing.
+* *Generated packets* (``pgen``) generates a flood of
+  identical packets. Used for testing.
      
 
 Running NOX with an OpenFlow reference switch 

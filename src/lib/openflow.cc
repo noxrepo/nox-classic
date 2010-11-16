@@ -1134,11 +1134,29 @@ Openflow_connection_factory* Openflow_connection_factory::create(
                 ? atoi(tokens[2].c_str()) : OFP_TCP_PORT;
         return new Tcp_openflow_connection_factory(tokens[1], htons(port));
     } else if (tokens[0] == "ptcp") {
-        uint16_t port = atoi(tokens[1].c_str());
+        const char * ip = "0.0.0.0";
+        uint16_t port = 0;
+        if (tokens.size() == 2) {
+            // The single token might be an IP or a port number.  We'll
+            // require IPs to be in dotted quad.
+            if (tokens[1].find_first_of('.') != std::string::npos)
+                ip = tokens[1].c_str();
+            else
+                port = atoi(tokens[1].c_str());
+        } else if (tokens.size() == 3) {
+            if (tokens[1].size() > 0) {
+                ip = tokens[1].c_str();
+            }
+            port = atoi(tokens[2].c_str());
+        } else {
+            log.err("ptcp connection name not in a form like ptcp:[IP]:[PORT]");
+            exit(EXIT_FAILURE);
+        }
+
         if (!port) {
             port = OFP_TCP_PORT;
         }
-        return new Passive_tcp_openflow_connection_factory(htons(port));
+        return new Passive_tcp_openflow_connection_factory(ip, htons(port));
     } else if (tokens[0] == "ssl") {
         if (tokens.size() != 6) {
             log.err("ssl connection name not in the form ssl:HOST:[PORT]:KEY:CERT:CAFILE");
@@ -1152,17 +1170,34 @@ Openflow_connection_factory* Openflow_connection_factory::create(
             tokens[1], htons(port), tokens[3].c_str(),
             tokens[4].c_str(), tokens[5].c_str());
     } else if (tokens[0] == "pssl") {
-        if (tokens.size() != 5) {
-            log.err("pssl connection name not in the form pssl:[PORT]:KEY:CERT:CAFILE");
+        const char * ip = "0.0.0.0";
+        uint16_t port = 0;
+        int key_index = 1;
+        if (tokens.size() == 6) {
+            key_index += 2; // Two extra args
+            if (tokens[1].size() > 0) {
+                ip = tokens[1].c_str();
+            }
+            port = atoi(tokens[2].c_str());
+        } else if (tokens.size() == 5) {
+            // The first token might be an IP or a port number.  We'll
+            // require IPs to be in dotted quad.
+            key_index += 1; // One extra arg
+            if (tokens[1].find_first_of('.') != std::string::npos)
+                ip = tokens[1].c_str();
+            else
+                port = atoi(tokens[1].c_str());
+        } else if (tokens.size() != 4) {
+            log.err("pssl connection name not in a form like pssl:[IP]:[PORT]:KEY:CERT:CAFILE");
             exit(EXIT_FAILURE);
         }
-        uint16_t port = atoi(tokens[1].c_str());
+
         if (!port) {
             port = OFP_SSL_PORT;
         }
         return new Passive_ssl_openflow_connection_factory(
-            htons(port), tokens[2].c_str(), tokens[3].c_str(),
-            tokens[4].c_str());
+            ip, htons(port), tokens[key_index + 0].c_str(),
+            tokens[key_index + 1].c_str(), tokens[key_index + 2].c_str());
     } else if (tokens[0] == "pcap") {
 #ifndef HAVE_PCAP        
             log.err("pcap support not built in.  Ensure you have pcap installed and rebuild");
@@ -1248,11 +1283,11 @@ Tcp_openflow_connection_factory::to_string()
 }
 
 Passive_tcp_openflow_connection_factory
-::Passive_tcp_openflow_connection_factory(uint16_t port_)
-    : port(port_)
+::Passive_tcp_openflow_connection_factory(const char* bind_ip_, uint16_t port_)
+    : bind_ip(bind_ip_), port(port_)
 {
     socket.set_reuseaddr();
-    int error = socket.bind(htonl(INADDR_ANY), port);
+    int error = socket.bind(bind_ip, port);
     if (error) {
         throw errno_exception(error, "bind");
     }
@@ -1336,17 +1371,19 @@ Ssl_openflow_connection_factory::to_string()
 }
 
 Passive_ssl_openflow_connection_factory
-::Passive_ssl_openflow_connection_factory(uint16_t port_,
-                                          const char *key, const char *cert,
+::Passive_ssl_openflow_connection_factory(const char* bind_ip_,
+                                          uint16_t port_, const char *key,
+                                          const char *cert,
                                           const char *CAfile)
     : config(new Ssl_config(Ssl_config::SSLv3 | Ssl_config::TLSv1,
                             Ssl_config::AUTHENTICATE_SERVER,
                             Ssl_config::REQUIRE_CLIENT_CERT,
                             key, cert, CAfile)),
       socket(config),
+      bind_ip(bind_ip_),
       port(port_)
 {
-    int error = socket.bind(htonl(INADDR_ANY), port);
+    int error = socket.bind(bind_ip, port);
     if (error) {
         throw errno_exception(error, "bind");
     }
