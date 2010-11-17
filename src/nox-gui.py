@@ -21,6 +21,7 @@ import gui.log as log
 import gui.topology as topology
 import gui.console as console
 import gui.Popup as Popup
+import gui.settings as settings
 import signal
        
 class MainWindow(QtGui.QMainWindow):
@@ -62,6 +63,9 @@ class MainWindow(QtGui.QMainWindow):
             self.noxip = args[0]
         else:
             self.noxip = "127.0.0.1"
+            
+        # Global Settings
+        self.settings = settings.Settings(self)
 
         # Configure layout
         self.setWindowTitle('NOX Graphical User Interface')
@@ -121,17 +125,31 @@ class MainWindow(QtGui.QMainWindow):
         exit.setStatusTip('Exit application')
         self.connect(exit, QtCore.SIGNAL('triggered()'), QtCore.SLOT('close()'))
         
-        #'''
         switch_to_dark = QtGui.QAction('Dark',self)
         switch_to_dark.setStatusTip('Switch to dark color theme')
         self.connect(switch_to_dark, QtCore.SIGNAL('triggered()'), self.dark)     
+        
         switch_to_bright = QtGui.QAction('Bright',self)
         switch_to_bright.setStatusTip('Switch to bright color theme')
         self.connect(switch_to_bright, QtCore.SIGNAL('triggered()'), self.bright)        
-        #'''
+        
+        set_node_id_size_small = QtGui.QAction('Small',self)
+        set_node_id_size_small.setStatusTip('Set node ID fonts to small')
+        self.connect(set_node_id_size_small, QtCore.SIGNAL('triggered()'), \
+         self.settings.set_node_id_size_small) 
+        
+        set_node_id_size_normal = QtGui.QAction('Normal',self)
+        set_node_id_size_normal.setStatusTip('Set node ID fonts to small')
+        self.connect(set_node_id_size_normal, QtCore.SIGNAL('triggered()'), \
+         self.settings.set_node_id_size_normal) 
+        
+        set_node_id_size_large = QtGui.QAction('Large',self)
+        set_node_id_size_large.setStatusTip('Set node ID fonts to small')
+        self.connect(set_node_id_size_large, QtCore.SIGNAL('triggered()'), \
+         self.settings.set_node_id_size_large) 
         
         self.statusBar()
-
+       
         # Configure Menubar
         menubar = self.menuBar()
         file_menu = menubar.addMenu('&File')
@@ -142,6 +160,10 @@ class MainWindow(QtGui.QMainWindow):
         view_menu.addAction(switch_to_topo)
         view_menu.addAction(switch_to_split)
         view_menu.addAction(toggle_console)
+        id_size_menu = view_menu.addMenu('ID size')
+        id_size_menu.addAction(set_node_id_size_small)
+        id_size_menu.addAction(set_node_id_size_normal)
+        id_size_menu.addAction(set_node_id_size_large)
         components_menu = menubar.addMenu('&Components')
         components_menu.addAction('Installed Components')
         components_menu.addAction('Active Components')
@@ -161,6 +183,7 @@ class MainWindow(QtGui.QMainWindow):
         toolbar.addAction(switch_to_topo)
         toolbar.addAction(switch_to_split)
         toolbar.addAction(exit)
+        
         
     def center(self):
         screen = QtGui.QDesktopWidget().screenGeometry()

@@ -161,11 +161,13 @@ class Node(QtGui.QGraphicsItem):
         if self.showID:
             # Text.
             textRect = self.boundingRect()
-            message = "0x"+self.id.lstrip("0")
+            #message = "0x"+self.id#.lstrip("0")
+            message = self.id#.lstrip("0")
 
             font = painter.font()
             font.setBold(True)
-            font.setPointSize(2)
+            #font.setPointSize(2)
+            font.setPointSizeF(self.topoWidget.parent.settings.node_id_size)
             painter.setFont(font)
             painter.setPen(QtCore.Qt.gray)
             painter.drawText(textRect.translated(0.1, 0.1), message)
