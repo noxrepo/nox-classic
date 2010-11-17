@@ -162,11 +162,10 @@ class Node(QtGui.QGraphicsItem):
             # Text.
             textRect = self.boundingRect()
             #message = "0x"+self.id#.lstrip("0")
-            message = self.id#.lstrip("0")
+            message = self.id
 
             font = painter.font()
             font.setBold(True)
-            #font.setPointSize(2)
             font.setPointSizeF(self.topoWidget.parent.settings.node_id_size)
             painter.setFont(font)
             painter.setPen(QtCore.Qt.gray)
@@ -623,7 +622,7 @@ class TopologyView(QtGui.QGraphicsView):
     def __init__(self, parent=None):
         QtGui.QGraphicsView.__init__(self, parent)
         self.parent = parent
-        # topologyInterface exchanges protobufs with monitoring server
+        # topologyInterface exchanges json messages with monitoring server
         self.topologyInterface = TopologyInterface(self)
         self.topologyInterface.start()
         #asyncore.loop()
@@ -729,7 +728,7 @@ class TopologyView(QtGui.QGraphicsView):
                         self.nodes[nodeID] = nodeItem
                         new_nodes.append(nodeItem)  
                 self.addNodes(new_nodes)
-                self.positionNodes(new_nodes, "random")
+                self.positionNodes(new_nodes)
             '''
             elif jsonmsg["command"] == "delete":
                 nodes = jsonmsg["node_id"]
@@ -794,16 +793,43 @@ class TopologyView(QtGui.QGraphicsView):
         for linkItem in new_links:
             self.topoScene.addItem(linkItem)
             
-    def positionNodes(self, new_nodes, layout):
+    def positionNodes(self, new_nodes):
         '''
-        Position nodes according to a preffered layout (random/sphere/etc)
+        Position nodes according to current loaded layout (or random if none)
         '''
+        
         minX, maxX = -300, 300
         minY, maxY = -200, 200
+        
+        layout = self.parent.parent.settings.current_topo_layout 
+        
+        print layout
+        
         if layout == "random":
             for node in new_nodes:
                 node.setPos(randint(minX,maxX), randint(minY,maxY))
-
+        
+        else:
+            '''
+            If node position is described in current layout file, choose that,
+            otherwise place randomly
+            '''        
+            # Optimize: scan file into a dictionary. same for load.
+            f = QtCore.QFile("gui/layouts/"+layout)
+            f.open(QtCore.QIODevice.ReadOnly)
+            for node in new_nodes:
+                line = f.readLine()
+                found = False
+                while not line.isNull():
+                    nodeid,x,y = str(line).split()
+                    line = f.readLine()
+                    if str(node.id) == nodeid:
+                        node.setPos(float(x), float(y))
+                        found = True
+                if not found:
+                    node.setPos(randint(minX,maxX), randint(minY,maxY))
+            f.close()
+        
     def itemMoved(self):
         pass
     
@@ -868,11 +894,13 @@ class TopologyView(QtGui.QGraphicsView):
             self.get_topology()
         elif key == QtCore.Qt.Key_Space or key == QtCore.Qt.Key_Enter:
             # Redraw topology
-            self.positionNodes(self.nodes.values(),"random")
+            self.positionNodes(self.nodes.values())
             self.updateAll()
         else:
             QtGui.QGraphicsView.keyPressEvent(self, event)
-
+    '''
+    Toggle display of drawn items
+    '''
     def toggleNodes(self):
         for node in self.nodes.values():
             node.showNode = not node.showNode
@@ -939,7 +967,6 @@ class TopologyView(QtGui.QGraphicsView):
             return
 
         self.scale(scaleFactor, scaleFactor)
-        
     
     def mouseReleaseEvent(self, event):
         '''
@@ -969,6 +996,10 @@ class TopologyView(QtGui.QGraphicsView):
             f.write(line)
         f.close()
         
+        layout = str(filename).split("/")
+        layout = layout[len(layout)-1]
+        self.parent.parent.settings.set_current_topo_layout(layout)
+        
     def load_layout(self):
         '''
         Loads a custom node positioning for this topology
@@ -980,11 +1011,16 @@ class TopologyView(QtGui.QGraphicsView):
         line = f.readLine()
         while not line.isNull():
             nodeid,x,y = str(line).split()
-            if not nodeid in self.nodes:
-                print "Layout mismatch (node", nodeid, "does not exist)"
-                continue
-            self.nodes[nodeid].setX(float(x))
-            self.nodes[nodeid].setY(float(y))
             line = f.readLine()
+            if not nodeid in self.nodes:
+                print "Layout mismatch (node", nodeid, "exists in conf file but has not been discovered on the network)"
+            else:
+                self.nodes[nodeid].setX(float(x))
+                self.nodes[nodeid].setY(float(y))
         f.close()
+        
+        layout = str(filename).split("/")
+        layout = layout[len(layout)-1]
+        self.parent.parent.settings.set_current_topo_layout(layout)
+        
         self.updateAll()
