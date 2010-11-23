@@ -46,7 +46,7 @@ static Vlog_module log("flow");
 static const struct arp_eth_header* 
 pull_arp(Buffer& b)
 {
-    if (b.size() > ARP_ETH_HEADER_LEN) {
+    if (b.size() >= ARP_ETH_HEADER_LEN) {
         return reinterpret_cast<const arp_eth_header*>(b.try_pull(ARP_ETH_HEADER_LEN));
     }
     return 0;
