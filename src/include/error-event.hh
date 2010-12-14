@@ -50,6 +50,8 @@ struct Error_event
         return "Error_event";
     }
 
+    const boost::shared_ptr<Buffer>& get_buffer() const { return buf; }
+
     datapathid datapath_id;
     uint16_t type;
     uint16_t code;

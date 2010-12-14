@@ -47,6 +47,7 @@
 #include "pyevent.hh"
 #include "pyglue.hh"
 #include "shutdown-event.hh"
+#include "error-event.hh"
 
 #include "dso-deployer.hh"
 #include "fault.hh"
@@ -342,6 +343,26 @@ static void convert_shutdown(const Event& e, PyObject* proxy) {
     ((Event*)SWIG_Python_GetSwigThis(proxy)->ptr)->operator=(e);
 }
 
+static void convert_error(const Event& e, PyObject* proxy) {
+    const Error_event& ee = dynamic_cast<const Error_event&>(e);
+
+    pyglue_setattr_string(proxy, "xid",      to_python(ee.xid()));
+    pyglue_setattr_string(proxy, "type",     to_python(ee.type));
+    pyglue_setattr_string(proxy, "code",     to_python(ee.code));
+
+    size_t data_len = ee.get_buffer()->size();
+    if (data_len < sizeof(ofp_error_msg))
+        data_len = 0;
+    else
+        data_len -= sizeof(ofp_error_msg);
+
+    pyglue_setattr_string(proxy, "data",
+        Py_BuildValue((char*)"s#",
+            ee.get_buffer()->data() + sizeof(ofp_error_msg), data_len));
+
+    ((Event*)SWIG_Python_GetSwigThis(proxy)->ptr)->operator=(e);
+}
+
 PyRt::PyRt(const Context* c,
            const json_object*) 
     : Component(c), Deployer() {
@@ -487,9 +508,11 @@ PyRt::PyRt(const Context* c,
     register_event_converter(Desc_stats_in_event::static_get_name(), 
                              &convert_desc_stats_in);
     register_event_converter(Flow_stats_in_event::static_get_name(), 
-			     &convert_flow_stats_in);
+                             &convert_flow_stats_in);
     register_event_converter(Queue_stats_in_event::static_get_name(),
-			     &convert_queue_stats_in);
+                             &convert_queue_stats_in);
+    register_event_converter(Error_event::static_get_name(),
+                             &convert_error);
 }
 
 void

@@ -51,6 +51,7 @@
 #include "flow-mod-event.hh"
 #include "flow-removed.hh"
 #include "packet-in.hh"
+#include "error-event.hh"
 #include "port-status.hh"
 #include "pycomponent.hh"
 #include "pyevent.hh"

@@ -32,4 +32,5 @@
 #include "table-stats-in.hh"
 #include "flow-stats-in.hh"
 #include "queue-stats-in.hh"
+#include "error-event.hh"
 

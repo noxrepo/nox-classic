@@ -200,3 +200,12 @@ struct Queue_stats_in_event
  private:
   Queue_stats_in_event();
 };
+
+struct Error_event
+    : public Event
+{
+    static const std::string static_get_name();
+
+private:
+    Error_event();
+};
