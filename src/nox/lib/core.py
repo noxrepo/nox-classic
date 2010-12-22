@@ -678,6 +678,16 @@ class Component:
         self.register_handler(Switch_mgr_leave_event.static_get_name(),
                               gen_switch_mgr_leave_cb(handler))
 
+    def register_for_error(self, handler):
+        """
+        register a handler to be called on every error
+        event handler will be called with the following args:
+        
+        handler(type, code, data, xid)
+        """
+        self.register_handler(Error_event.static_get_name(),
+                              gen_error_cb(handler))
+
     def unregister_handler(self, rule_id):
         """
         Unregister a handler for match.
