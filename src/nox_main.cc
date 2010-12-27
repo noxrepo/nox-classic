@@ -20,18 +20,18 @@
  *
  * \section overview Overview
  *
- * This automatically generated documentation for NOX is currently a
- * work in progress.  Documentation of APIs is very hit and miss.  The
- * code is therefore the best reference for API details.  This focus
- * of the doxygen documentation effort at this time is the areas in
- * which newcomers to NOX have the most questions:
+ * This is an automatically generated documentation for NOX.  Recent API are fairly
+ * well-documented, though the documentation of olders API is pretty much hit 
+ * and miss.  This serves well as a guide for individual components 
+ * and detailed API calls.  You might want to refer to the wiki for tutorial and general
+ * explanations.  The modules page (and pages therein) might be most interesting:
  *
- * - The \ref nox-programming-model "cooperative threading, asynchronous, event-based programming model"
+ * - Some \ref noxapi "basic API" in NOX is documented here
  * - The existing \ref noxcomponents "components providing application functionality"
  * - The \ref noxevents "events core NOX and the components generate"
- * - Access to current information on network principles through the bindings-storage component
- * - Saving of persistent data using the storage component
- *
+ * - A few \ref utility utilites distributed with NOX
+ * - (Akan Datang)The \ref nox-programming-model "cooperative threading, asynchronous, event-based programming model"
+ * 
  */
 
 /** \page nox-programming-model The NOX Programming Model
