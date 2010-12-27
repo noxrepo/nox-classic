@@ -31,6 +31,7 @@ html:
 	    -e 's:^EXTRACT_PRIVATE *= NO:EXTRACT_PRIVATE = $(EXTRACT_PRIVATE):'\
 	    -e 's:^EXTRACT_STATIC *= NO:EXTRACT_STATIC = $(EXTRACT_STATIC):'\
 	    -e 's:^HAVE_DOT *= NO:HAVE_DOT = $(HAVE_DOT):'\
+	    -e 's:^PROJECT_NUMBER *= UNKNOWN VERSION:PROJECT_NUMBER = $(PACKAGE_VERSION):'\
 	    < doxygen.conf | $(DOXYGEN) -
 
 latex:
