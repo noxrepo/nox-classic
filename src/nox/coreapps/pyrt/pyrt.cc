@@ -44,6 +44,7 @@
 #include "flow-removed.hh"
 #include "packet-in.hh"
 #include "port-status.hh"
+#include "barrier-reply.hh"
 #include "pyevent.hh"
 #include "pyglue.hh"
 #include "shutdown-event.hh"
@@ -343,6 +344,15 @@ static void convert_shutdown(const Event& e, PyObject* proxy) {
     ((Event*)SWIG_Python_GetSwigThis(proxy)->ptr)->operator=(e);
 }
 
+static void convert_barrier_reply(const Event& e, PyObject *proxy) {
+    const Barrier_reply_event &bre = dynamic_cast<const Barrier_reply_event&>(e);
+
+    pyglue_setattr_string(proxy, "datapath_id", to_python(bre.datapath_id));
+    pyglue_setattr_string(proxy, "xid", to_python(bre.xid()));
+
+    ((Event*)SWIG_Python_GetSwigThis(proxy)->ptr)->operator=(e);
+}
+
 static void convert_error(const Event& e, PyObject* proxy) {
     const Error_event& ee = dynamic_cast<const Error_event&>(e);
 
@@ -511,6 +521,8 @@ PyRt::PyRt(const Context* c,
                              &convert_flow_stats_in);
     register_event_converter(Queue_stats_in_event::static_get_name(),
                              &convert_queue_stats_in);
+    register_event_converter(Barrier_reply_event::static_get_name(),
+                             &convert_barrier_reply);
     register_event_converter(Error_event::static_get_name(),
                              &convert_error);
 }

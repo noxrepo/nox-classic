@@ -46,6 +46,7 @@
 #include "port-stats-in.hh"
 #include "flow-stats-in.hh"
 #include "queue-stats-in.hh"
+#include "barrier-reply.hh"
 
 #include "echo-request.hh"
 #include "flow-mod-event.hh"

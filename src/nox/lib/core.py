@@ -678,6 +678,16 @@ class Component:
         self.register_handler(Switch_mgr_leave_event.static_get_name(),
                               gen_switch_mgr_leave_cb(handler))
 
+    def register_for_barrier_reply(self, handler):
+        """
+        register a handler to be called on every barrier_reply
+        event handler will be called with the following args:
+        
+        handler(dp_id, xid)
+        """
+        self.register_handler(Barrier_reply_event.static_get_name(),
+                              gen_barrier_cb(handler))
+
     def register_for_error(self, handler):
         """
         register a handler to be called on every error

@@ -201,6 +201,15 @@ struct Queue_stats_in_event
   Queue_stats_in_event();
 };
 
+struct Barrier_reply_event
+  : public Event
+{
+  static const std::string static_get_name();
+
+private:
+  Barrier_reply_event();
+};
+
 struct Error_event
     : public Event
 {
