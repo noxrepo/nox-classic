@@ -186,6 +186,15 @@ def gen_ps_in_cb(handler):
     f.cb = handler
     return f
 
+def gen_fs_in_cb(handler):
+    def f(event):
+        ret = f.cb(event.datapath_id, event.flows, event.more, event.xid)
+        if ret == None:
+            return CONTINUE
+        return ret
+    f.cb = handler
+    return f
+
 def gen_ts_in_cb(handler):
     def f(event):
         tables = event.tables 

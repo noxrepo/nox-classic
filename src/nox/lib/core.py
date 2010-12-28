@@ -521,6 +521,35 @@ class Component:
         self.register_handler(Aggregate_stats_in_event.static_get_name(),
                               gen_as_in_cb(handler))
 
+    ################################################################################
+    # register a handler to be called whenever flow
+    # statistics are returned by a switch.
+    #
+    # handler will be called with the following args:
+    #
+    # handler(dp_id, flows, more, xid)
+    #
+    # 'flows' is a list of flow stat dictionaries, each with the following keys:
+    #
+    #   "table_id"
+    #   "match"
+    #   "cookie"
+    #   "duration_sec"
+    #   "duration_nsec"
+    #   "priority"
+    #   "idle_timeout"
+    #   "hard_timeout"
+    #   "packet_count"
+    #   "byte_count"
+    #
+    # 'more' is a bool indicating whether or not the switch still has more stats
+    #   to send. If it does, the same xid will be used.
+    #
+    ################################################################################
+
+    def register_for_flow_stats_in(self, handler):
+        self.register_handler(Flow_stats_in_event.static_get_name(),
+                              gen_fs_in_cb(handler))
 
     ################################################################################
     # register a handler to be called whenever description
