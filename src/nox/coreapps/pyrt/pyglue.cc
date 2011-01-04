@@ -484,7 +484,7 @@ to_python(const ofp_flow_stats& fs)
     }
     pyglue_setdict_string(dict, "table_id", to_python(fs.table_id));
     pyglue_setdict_string(dict, "match", to_python(fs.match));
-    pyglue_setdict_string(dict, "cookie", to_python(ntohl(fs.cookie)));
+    pyglue_setdict_string(dict, "cookie", to_python(ntohll(fs.cookie)));
     pyglue_setdict_string(dict, "duration_sec", to_python(ntohl(fs.duration_sec)));
     pyglue_setdict_string(dict, "duration_nsec", to_python(ntohl(fs.duration_nsec)));
     pyglue_setdict_string(dict, "priority", to_python(ntohs(fs.priority)));
