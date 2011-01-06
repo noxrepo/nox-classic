@@ -175,9 +175,13 @@ else:
     appinfo["name"] = appname.replace("_"," ")
     appinfo["library"] = appname
     metainfo["components"].append(appinfo)
-    fileRef = open("meta.json","w")
-    fileRef.write(simplejson.dumps(metainfo, indent=4))
-    fileRef.close()
+    if (dryrun):
+        print "Writing to meta.json"
+        print simplejson.dumps(metainfo, indent=4)
+    else:
+        fileRef = open("meta.json","w")
+        fileRef.write(simplejson.dumps(metainfo, indent=4))
+        fileRef.close()
     #Makefile.am
     appMake = commands.getoutput("grep "+samplefile+"_la "+sampledir+"Makefile.am")\
               .replace("\n","\\n").replace(samplefile, appname)\
