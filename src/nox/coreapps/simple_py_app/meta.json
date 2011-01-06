@@ -1,0 +1,11 @@
+{
+    "components": [
+        {
+            "name": "simple_py_app" ,
+            "dependencies": [
+                "python"
+            ],
+            "python": "nox.coreapps.simple_py_app.simple_app" 
+        }
+    ]
+}
