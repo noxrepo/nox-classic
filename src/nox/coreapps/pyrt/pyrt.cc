@@ -293,6 +293,7 @@ static void convert_bootstrap_complete(const Event&e, PyObject* proxy) {
 static void convert_flow_removed(const Event& e, PyObject* proxy) {
     const Flow_removed_event& fre = dynamic_cast<const Flow_removed_event&>(e);
 
+    pyglue_setattr_string(proxy, "datapath_id", to_python(fre.cookie));
     pyglue_setattr_string(proxy, "cookie", to_python(fre.cookie));
     pyglue_setattr_string(proxy, "duration_sec", to_python(fre.duration_sec));
     pyglue_setattr_string(proxy, "duration_nsec", to_python(fre.duration_nsec));
@@ -356,6 +357,7 @@ static void convert_barrier_reply(const Event& e, PyObject *proxy) {
 static void convert_error(const Event& e, PyObject* proxy) {
     const Error_event& ee = dynamic_cast<const Error_event&>(e);
 
+    pyglue_setattr_string(proxy, "datapath_id", to_python(ee.datapath_id));
     pyglue_setattr_string(proxy, "xid",      to_python(ee.xid()));
     pyglue_setattr_string(proxy, "type",     to_python(ee.type));
     pyglue_setattr_string(proxy, "code",     to_python(ee.code));
