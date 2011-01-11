@@ -89,7 +89,7 @@ def convert_to_ipaddr(val):
             return a.addr
     return None
 
-def gen_packet_in_cb(handler):
+def gen_packet_in_callback(handler):
     def f(event):
         if event.reason == openflow.OFPR_NO_MATCH:
             reason = openflow.OFPR_NO_MATCH
@@ -116,7 +116,7 @@ def gen_packet_in_cb(handler):
         return ret
     return f
 
-def gen_dp_join_cb(handler):
+def gen_datapath_join_callback(handler):
     def f(event):
         attrs = {}
         attrs[core.N_BUFFERS] = event.n_buffers
@@ -139,7 +139,7 @@ def gen_dp_join_cb(handler):
     f.cb = handler
     return f
 
-def gen_dp_leave_cb(handler):
+def gen_datapath_leave_callback(handler):
     def f(event):
         ret = f.cb(event.datapath_id)
         if ret == None:
@@ -148,7 +148,7 @@ def gen_dp_leave_cb(handler):
     f.cb = handler
     return f
 
-def gen_ds_in_cb(handler):
+def gen_desc_stats_in_callback(handler):
     def f(event):
         stats = {}
         stats['mfr_desc'] = event.mfr_desc
@@ -163,7 +163,7 @@ def gen_ds_in_cb(handler):
     f.cb = handler
     return f
 
-def gen_as_in_cb(handler):
+def gen_aggr_stats_in_callback(handler):
     def f(event):
         stats = {}
         stats['packet_count'] = event.packet_count
@@ -176,7 +176,7 @@ def gen_as_in_cb(handler):
     f.cb = handler
     return f
 
-def gen_ps_in_cb(handler):
+def gen_port_stats_in_callback(handler):
     def f(event):
         ports = event.ports 
         ret = f.cb(event.datapath_id, ports)
@@ -186,7 +186,7 @@ def gen_ps_in_cb(handler):
     f.cb = handler
     return f
 
-def gen_fs_in_cb(handler):
+def gen_flow_stats_in_callback(handler):
     def f(event):
         ret = f.cb(event.datapath_id, event.flows, event.more, event.xid)
         if ret == None:
@@ -195,7 +195,7 @@ def gen_fs_in_cb(handler):
     f.cb = handler
     return f
 
-def gen_ts_in_cb(handler):
+def gen_table_stats_in_callback(handler):
     def f(event):
         tables = event.tables 
         ret = f.cb(event.datapath_id, tables)
@@ -205,7 +205,7 @@ def gen_ts_in_cb(handler):
     f.cb = handler
     return f
 
-def gen_port_status_cb(handler):
+def gen_port_status_callback(handler):
     def f(event):
         if event.reason == openflow.OFPPR_ADD:
             reason = openflow.OFPPR_ADD
@@ -230,7 +230,28 @@ def gen_port_status_cb(handler):
     f.cb = handler
     return f
 
-def gen_switch_mgr_join_cb(handler):
+def gen_flow_mod_callback(handler):
+    def f(event):
+        fm = event.flow_mod
+        ret = f.cb(event.datapath_id, fm['match'], fm['command'], fm['idle_timeout'],
+                   fm['hard_timeout'], fm['buffer_id'], fm['priority'], fm['cookie'])
+        if ret == None:
+            return CONTINUE
+        return ret
+    f.cb = handler
+    return f
+
+def gen_flow_removed_callback(handler):
+    def f(event):
+        ret = f.cb(event.datapath_id, event.flow, event.cookie, event.duration_sec,
+                   event.duration_nsec, event.byte_count, event.packet_count)
+        if ret == None:
+            return CONTINUE
+        return ret
+    f.cb = handler
+    return f
+
+def gen_switch_mgr_join_callback(handler):
     def f(event):
         ret = f.cb(event.mgmt_id)
         if ret == None:
@@ -239,7 +260,7 @@ def gen_switch_mgr_join_cb(handler):
     f.cb = handler
     return f
 
-def gen_switch_mgr_leave_cb(handler):
+def gen_switch_mgr_leave_callback(handler):
     def f(event):
         ret = f.cb(event.mgmt_id)
         if ret == None:
@@ -248,7 +269,7 @@ def gen_switch_mgr_leave_cb(handler):
     f.cb = handler
     return f
 
-def gen_barrier_cb(handler):
+def gen_barrier_reply_callback(handler):
     def f(event):
         ret = f.cb(event.datapath_id, event.xid)
         if ret == None:
@@ -257,9 +278,9 @@ def gen_barrier_cb(handler):
     f.cb = handler
     return f
 
-def gen_error_cb(handler):
+def gen_error_callback(handler):
     def f(event):
-        ret = f.cb(event.type, event.code, event.data, event.xid)
+        ret = f.cb(event.datapath_id, event.type, event.code, event.data, event.xid)
         if ret == None:
             return CONTINUE
         return ret
