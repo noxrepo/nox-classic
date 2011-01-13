@@ -43,16 +43,17 @@ struct Flow_removed_event
       public Flow_event,
       boost::noncopyable
 {
-    Flow_removed_event(datapathid datapath_id_, 
-                       uint32_t duration_sec_, uint32_t duration_nsec_,
-		       uint16_t idle_timeout_,
-                       uint64_t packet_count_, uint64_t byte_count_,
-		       uint64_t cookie_)
-        : Event(static_get_name()), datapath_id(datapath_id_), 
+    Flow_removed_event(
+       datapathid datapath_id_, uint16_t priority_,
+       uint8_t reason_, uint32_t duration_sec_,
+       uint32_t duration_nsec_, uint16_t idle_timeout_,
+       uint64_t packet_count_, uint64_t byte_count_,
+       uint64_t cookie_)
+        : Event(static_get_name()), datapath_id(datapath_id_),
+          priority(priority_), reason(reason_),
           duration_sec(duration_sec_), duration_nsec(duration_nsec_),
-	  idle_timeout(idle_timeout_),
-          packet_count(packet_count_), byte_count(byte_count_),
-          cookie(cookie_) { }
+          idle_timeout(idle_timeout_), packet_count(packet_count_),
+          byte_count(byte_count_), cookie(cookie_) { }
 
 
     Flow_removed_event(const datapathid datapath_id_, 
@@ -73,6 +74,10 @@ struct Flow_removed_event
     uint64_t byte_count;
     //Opaque cookie
     uint64_t cookie;
+    // Flow's priority
+    uint16_t priority;
+    // Reason for removal (see ofp_flow_removed_reason)
+    uint8_t reason;
 
     const ofp_match* get_flow() const {
         return &get_flow_removed()->match;
@@ -94,7 +99,9 @@ Flow_removed_event::Flow_removed_event(datapathid datapath_id_,
     : Event(static_get_name()), Ofp_msg_event(&ofr->header, buf),
       datapath_id(datapath_id_)
 {
-    cookie  = ntohll(ofr->cookie);
+    priority      = ntohs(ofr->priority);
+    reason        = ntohs(ofr->reason);
+    cookie        = ntohll(ofr->cookie);
     duration_sec  = ntohl(ofr->duration_sec);
     duration_nsec = ntohl(ofr->duration_nsec);
     idle_timeout  = ntohs(ofr->idle_timeout);

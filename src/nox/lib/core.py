@@ -472,10 +472,13 @@ class Component:
         """\bref Register a handler for flow removed events.
 
         The handler will be called with:
-         handler(dpid, attrs, cookie, dur_sec, dur_nsec, byte_count, packet_count)
+         handler(dpid, attrs, priority, reason, cookie, dur_sec,
+                dur_nsec, byte_count, packet_count)
 
         \note 'dpid' is the datapath id of the switch.
         \note 'attrs' is a flow dictionary (see comment above)
+        \note 'priority' is the flow's priority
+        \note 'reason' why the flow was removed (see ofp_flow_removed_reason)
         \note 'cookie' is the flow's cookie
         \note 'dur_sec' is how long the flow was alive in (s).
         \note 'dur_nsec' is how long the flow was alive beyond dur_sec in (ns).
@@ -566,8 +569,8 @@ class Component:
         \note 'stats' is a list of dictionaries (one for each port)
         \note   with the keys:
         \note \n
-	    \note   PORT_NO, RX_PACKETS, TX_PACKETS, RX_BYTES, TX_BYTES
-	    \note   RX_DROPPED, TX_DROPPED, RX_ERRORS, TX_ERRORS,
+        \note   PORT_NO, RX_PACKETS, TX_PACKETS, RX_BYTES, TX_BYTES
+        \note   RX_DROPPED, TX_DROPPED, RX_ERRORS, TX_ERRORS,
         \note   RX_FRAME_ERR, RX_OVER_ERROR, RX_CRC_ERROR, COLLISIONS
 
         @param handler the handler function

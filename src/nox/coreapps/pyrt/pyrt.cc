@@ -294,6 +294,8 @@ static void convert_flow_removed(const Event& e, PyObject* proxy) {
     const Flow_removed_event& fre = dynamic_cast<const Flow_removed_event&>(e);
 
     pyglue_setattr_string(proxy, "datapath_id", to_python(fre.cookie));
+    pyglue_setattr_string(proxy, "priority", to_python(fre.priority));
+    pyglue_setattr_string(proxy, "reason", to_python(fre.reason));
     pyglue_setattr_string(proxy, "cookie", to_python(fre.cookie));
     pyglue_setattr_string(proxy, "duration_sec", to_python(fre.duration_sec));
     pyglue_setattr_string(proxy, "duration_nsec", to_python(fre.duration_nsec));

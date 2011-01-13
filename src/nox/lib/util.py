@@ -243,8 +243,9 @@ def gen_flow_mod_callback(handler):
 
 def gen_flow_removed_callback(handler):
     def f(event):
-        ret = f.cb(event.datapath_id, event.flow, event.cookie, event.duration_sec,
-                   event.duration_nsec, event.byte_count, event.packet_count)
+        ret = f.cb(event.datapath_id, event.flow, event.priority, event.reason,
+                   event.cookie, event.duration_sec, event.duration_nsec,
+                   event.byte_count, event.packet_count)
         if ret == None:
             return CONTINUE
         return ret
