@@ -31,6 +31,9 @@ namespace vigil {
 class Buffer;
 
 struct Flow {
+  /** Validity of flow
+   */
+  bool invalid;
   /** Input switch port. 
    */
   uint16_t in_port;       
@@ -74,6 +77,7 @@ struct Flow {
   /** Empty constructor
    */
   Flow() :
+    invalid(false),
     in_port(0), dl_vlan(0), dl_vlan_pcp(0), 
     dl_src(), dl_dst(), dl_type(0),
     nw_src(0), nw_dst(0), 
@@ -81,23 +85,26 @@ struct Flow {
     tp_src(0), tp_dst(0), cookie(0) { }
   /** Copy constructor
    */
-  Flow(const Flow& flow_, uint64_t cookie_=0);
+  Flow(const Flow& flow_, uint64_t cookie_=0, bool invalid_=false);
   /** Constructor from packet
    */
   Flow(uint16_t in_port_, const Buffer&, uint64_t cookie_=0);
   /** Constructor from ofp_match
    */
-  Flow(const ofp_match& match, uint64_t cookie_=0);
+  Flow(const ofp_match& match, uint64_t cookie_=0, 
+       bool invalid_=false);
   /** Constructor from ofp_match
    */
-  Flow(const ofp_match* match, uint64_t cookie_=0);
+  Flow(const ofp_match* match, uint64_t cookie_=0,
+       bool invalid_=false);
   /** Detail constructor
    */
   Flow(uint16_t in_port_, uint16_t dl_vlan_, uint8_t dl_vlan_pcp_,
        ethernetaddr dl_src_, ethernetaddr dl_dst_, uint16_t dl_type_, 
        uint32_t nw_src_, uint32_t nw_dst_, uint8_t nw_proto_,
        uint16_t tp_src_, uint16_t tp_dst_, uint8_t nw_tos_=0, 
-       uint64_t cookie_=0) :
+       uint64_t cookie_=0, bool invalid_=false) :
+    invalid(invalid_),
     in_port(in_port_), dl_vlan(dl_vlan_), dl_vlan_pcp(dl_vlan_pcp_), 
     dl_src(dl_src_), dl_dst(dl_dst_), dl_type(dl_type_),
     nw_src(nw_src_), nw_dst(nw_dst_), 

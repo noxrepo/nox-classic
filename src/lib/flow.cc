@@ -100,8 +100,9 @@ pull_vlan(Buffer& b)
     return b.try_pull<vlan_header>();
 }
 
-  Flow::Flow(const ofp_match& match, uint64_t cookie_) 
-    : in_port(match.in_port), dl_vlan(match.dl_vlan), 
+  Flow::Flow(const ofp_match& match, uint64_t cookie_, bool invalid_) 
+    : invalid(invalid_),
+      in_port(match.in_port), dl_vlan(match.dl_vlan), 
       dl_vlan_pcp(match.dl_vlan_pcp), 
       dl_src(), dl_dst(), dl_type(match.dl_type),
       nw_src(match.nw_src), nw_dst(match.nw_dst), 
@@ -112,8 +113,9 @@ pull_vlan(Buffer& b)
     memcpy(dl_dst.octet, match.dl_dst, ethernetaddr::LEN);
 }
 
-  Flow::Flow(const ofp_match* match, uint64_t cookie_) 
-    : in_port(match->in_port), dl_vlan(match->dl_vlan), 
+  Flow::Flow(const ofp_match* match, uint64_t cookie_, bool invalid_) 
+    : invalid(invalid_),
+      in_port(match->in_port), dl_vlan(match->dl_vlan), 
       dl_vlan_pcp(match->dl_vlan_pcp), 
       dl_src(), dl_dst(), dl_type(match->dl_type),
       nw_src(match->nw_src), nw_dst(match->nw_dst), 
@@ -144,7 +146,8 @@ const of_match Flow::get_exact_match() const
     return om;
 }
 
-  Flow::Flow(const Flow& flow, uint64_t cookie_):
+Flow::Flow(const Flow& flow, uint64_t cookie_, bool invalid_):
+    invalid(invalid_),
     in_port(flow.in_port), dl_vlan(flow.dl_vlan), dl_vlan_pcp(flow.dl_vlan_pcp), 
     dl_src(flow.dl_src), dl_dst(flow.dl_dst), dl_type(flow.dl_type),
     nw_src(flow.nw_src), nw_dst(flow.nw_dst), 
@@ -158,6 +161,7 @@ Flow::Flow(uint16_t in_port_, const Buffer& buffer, uint64_t cookie_)
       nw_src(0), nw_dst(0), nw_proto(0), nw_tos(0),
       tp_src(0), tp_dst(0), cookie(cookie_)
 {
+    invalid = false;
     dl_vlan = htons(OFP_VLAN_NONE);
 
     Nonowning_buffer b(buffer);
@@ -214,7 +218,8 @@ Flow::Flow(uint16_t in_port_, const Buffer& buffer, uint64_t cookie_)
                         } else {
                             /* Avoid tricking other code into thinking that
                              * this packet has an L4 header. */
-                            nw_proto = 0;
+			    log.err("Invalid TCP packet, though IP protocol number if TCP");
+			    invalid = true;
                         }
                     } else if (nw_proto == ip_::proto::UDP) {
                         const udp_header *udp = pull_udp(b);
@@ -224,7 +229,8 @@ Flow::Flow(uint16_t in_port_, const Buffer& buffer, uint64_t cookie_)
                         } else {
                             /* Avoid tricking other code into thinking that
                              * this packet has an L4 header. */
-                            nw_proto = 0;
+			    log.err("Invalid UDP packet, though IP protocol number if UDP");
+                            invalid = true;
                         }
                     } else if (nw_proto == ip_::proto::ICMP) {
                         const icmp_header *icmp = pull_icmp(b);
@@ -234,7 +240,8 @@ Flow::Flow(uint16_t in_port_, const Buffer& buffer, uint64_t cookie_)
                         } else {
                             /* Avoid tricking other code into thinking that
                              * this packet has an L4 header. */
-                            nw_proto = 0;
+			    log.err("Invalid ICMP packet, though IP protocol number if ICMP");
+                            invalid = true;
                         }
                     }
                 }
@@ -256,6 +263,7 @@ end:
         log.err("Packet length %zu less than minimum Ethernet packet %d: %s",
                  buffer.size(), ETH_HEADER_LEN,
                  to_string().c_str());
+	invalid = true;
     }
 }
 
