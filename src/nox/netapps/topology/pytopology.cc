@@ -69,3 +69,22 @@ pytopology_proxy::get_outlinks(datapathid dpsrc, datapathid dpdst) const
     }
     return returnme; 
 }
+
+std::list<datapathid> 
+pytopology_proxy::get_neighbors(datapathid dpsrc) const
+{
+    std::list<datapathid> returnme;
+    Topology::DatapathLinkMap dp_link_map = topo->get_outlinks(dpsrc);
+    Topology::DatapathLinkMap::iterator dpl_it;
+    for (dpl_it = dp_link_map.begin(); dpl_it != dp_link_map.end(); dpl_it++) {
+        returnme.push_back(dpl_it->first);
+    }
+    return returnme;
+}
+
+std::list<datapathid> 
+pytopology_proxy::get_datapaths() const
+{
+    return topo->get_datapaths();
+}
+

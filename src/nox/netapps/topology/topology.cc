@@ -133,6 +133,17 @@ Topology::is_internal(const datapathid& dp, uint16_t port) const
     return (pm_iter != nlm_iter->second.internal.end());
 }
 
+std::list<datapathid> 
+Topology::get_datapaths()
+{
+    std::list<datapathid> returnme;
+    Topology::NetworkLinkMap::iterator dpit;
+    for(dpit = topology.begin(); dpit != topology.end(); dpit++) {
+	returnme.push_back(datapathid(dpit->first));
+    }
+    return returnme;
+}
+
 
 Disposition
 Topology::handle_datapath_join(const Event& e)

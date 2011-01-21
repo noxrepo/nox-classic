@@ -46,6 +46,8 @@ public:
 
     std::list<PyLinkPorts> get_outlinks(datapathid dpsrc, datapathid dpdst) const;
     bool is_internal(datapathid dp, uint16_t port) const;
+    std::list<datapathid> get_neighbors(datapathid dpsrc) const;
+    std::list<datapathid> get_datapaths() const;
 
 protected:   
 

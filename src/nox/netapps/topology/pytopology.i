@@ -35,7 +35,9 @@ struct PyLinkPorts {
     uint16_t dst;
 };
 
+
 %template(LLinkSet) std::list<PyLinkPorts>;
+%template(DPIDList) std::list<datapathid>;
 
 class pytopology_proxy{
 public:
@@ -47,6 +49,8 @@ public:
 
     std::list<PyLinkPorts> get_outlinks(datapathid dpsrc, datapathid dpdst) const;
     bool is_internal(datapathid dp, uint16_t port) const;
+    std::list<datapathid> get_datapaths() const;
+    std::list<datapathid> get_neighbors(datapathid dpsrc) const;
 
 protected:   
 
@@ -81,6 +85,12 @@ class pytopology(Component):
 
     def is_internal(self, dp, port):
         return self.pytop.is_internal(dp, port)
+
+    def get_datapaths(self):
+        return self.pytop.get_datapaths()
+
+    def get_neighbors(self, dpsrc):
+        return self.pytop.get_neighbors(dpsrc)
 
 
 def getFactory():

@@ -95,6 +95,9 @@ public:
     /** \brief Check if link is internal (i.e., between switches)
      */
     bool is_internal(const datapathid& dp, uint16_t port) const;
+    /** \brief Get a list of datapaths in the network
+     */
+    std::list<datapathid> get_datapaths();
 
 private:
     /** \brief Map of information index by datapath id
