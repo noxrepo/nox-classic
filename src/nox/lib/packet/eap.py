@@ -156,7 +156,7 @@ class eap(packet_base):
     def parse(self):
         dlen = len(self.arr)
         if dlen < self.MIN_LEN:
-            print '(eapol parse) warning EAP packet data too short to parse header: data len %u' % dlen
+            self.msg('(eapol parse) warning EAP packet data too short to parse header: data len %u' % dlen)
             return
 
         (self.code, self.id, self.length) \
@@ -179,7 +179,7 @@ class eap(packet_base):
         elif self.code == self.REQUEST_CODE:
             self.next = None    # Failure packets have no payload
         else:
-            print 'warning unsupported EAP code', eap.code_name(self.code)
+            self.msg('warning unsupported EAP code: %s' % eap.code_name(self.code))
 
     def set_payload(self, payload):
         self.next = payload

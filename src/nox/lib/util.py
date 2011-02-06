@@ -36,7 +36,8 @@ from   nox.lib.packet.tcp import tcp
 from   nox.lib.packet.icmp import icmp 
 from   nox.lib.packet.arp import arp
 
-from twisted.python import log
+import logging
+lg = logging.getLogger('core')
 
 ###############################################################################
 # HELPER FUNCTIONS (NOT REQUIRING ACCESS TO THE CORE)
@@ -96,7 +97,7 @@ def gen_packet_in_callback(handler):
         elif event.reason == openflow.OFPR_ACTION:
             reason = openflow.OFPR_ACTION
         else:
-            print 'packet_in reason type %u unknown...just passing along' % event.reason
+            lg.warning('packet_in reason type %u unknown...just passing along' % event.reason)
             reason = event.reason
 
         if event.buffer_id == UINT32_MAX:
@@ -107,7 +108,7 @@ def gen_packet_in_callback(handler):
         try:
             packet = ethernet(array.array('B', event.buf))
         except IncompletePacket, e:
-            log.err('Incomplete Ethernet header',system='pyapi')
+            lg.error('Incomplete Ethernet header')
         
         ret = handler(event.datapath_id, event.in_port, reason,
                       event.total_len, buffer_id, packet)
@@ -214,7 +215,7 @@ def gen_port_status_callback(handler):
         elif event.reason == openflow.OFPPR_MODIFY:
             reason = openflow.OFPPR_MODIFY
         else:
-            print 'port_status reason type %u unknown...just passing along' % event.reason
+            lg.warning('port_status reason type %u unknown...just passing along' % event.reason)
             reason = event.reason
 
         config = event.port['config']
@@ -314,8 +315,7 @@ def set_match(attrs):
     if attrs.has_key(core.DL_SRC):
         v = convert_to_eaddr(attrs[core.DL_SRC])
         if v == None:
-            print 'invalid ethernet addr'
-            return None
+            raise RuntimeError('invalid ethernet addr')
         m.set_dl_src(v.octet)
         num_entries += 1
     else:
@@ -324,8 +324,7 @@ def set_match(attrs):
     if attrs.has_key(core.DL_DST):
         v = convert_to_eaddr(attrs[core.DL_DST])
         if v == None:
-            print 'invalid ethernet addr'
-            return None
+            raise RuntimeError('invalid ethernet addr')
         m.set_dl_dst(v.octet)
         num_entries += 1
     else:
@@ -340,8 +339,7 @@ def set_match(attrs):
     if attrs.has_key(core.NW_SRC):
         v = convert_to_ipaddr(attrs[core.NW_SRC])
         if v == None:
-            print 'invalid ip addr'
-            return None
+            raise RuntimeError('invalid ip addr')
         m.nw_src = v
         num_entries += 1
 
@@ -352,8 +350,7 @@ def set_match(attrs):
             elif n_wild >= 0:
                 wildcards |= n_wild << openflow.OFPFW_NW_SRC_SHIFT
             else:
-                print 'invalid nw_src wildcard bit count', n_wild
-                return None
+                raise RuntimeError('invalid nw_src wildcard bit count: %u' % (n_wild,))
             num_entries += 1
     else:
         wildcards = wildcards | openflow.OFPFW_NW_SRC_MASK
@@ -361,8 +358,7 @@ def set_match(attrs):
     if attrs.has_key(core.NW_DST):
         v = convert_to_ipaddr(attrs[core.NW_DST])
         if v == None:
-            print 'invalid ip addr'
-            return None            
+            raise RuntimeError('invalid ip addr')
         m.nw_dst = v
         num_entries += 1
 
@@ -373,8 +369,7 @@ def set_match(attrs):
             elif n_wild >= 0:
                 wildcards |= n_wild << openflow.OFPFW_NW_DST_SHIFT
             else:
-                print 'invalid nw_dst wildcard bit count', n_wild
-                return None
+                raise RuntimeError('invalid nw_dst wildcard bit count: %u' % (n_wild,))
             num_entries += 1
     else:
         wildcards = wildcards | openflow.OFPFW_NW_DST_MASK
@@ -404,8 +399,7 @@ def set_match(attrs):
         wildcards = wildcards | openflow.OFPFW_TP_DST
 
     if num_entries != len(attrs.keys()):
-        print 'undefined flow attribute type in attrs', attrs
-        return None
+        raise RuntimeError('undefined flow attribute type in attrs: %s' % (attrs,))
 
     m.wildcards = c_htonl(wildcards)
     return m

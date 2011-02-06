@@ -86,7 +86,6 @@
 #   MX data
 #======================================================================
 
-from twisted.python import log
 import struct
 from packet_utils       import *
 from packet_exceptions  import *
@@ -164,7 +163,7 @@ class dns(packet_base):
     def parse(self):
         dlen = len(self.arr)
         if dlen < dns.MIN_LEN:
-            print '(dns parse) warning DNS packet data too short to parse header: data len %u' % dlen
+            self.msg('(dns parse) warning DNS packet data too short to parse header: data len %u' % dlen)
             return None
 
         bits = 0
@@ -193,7 +192,7 @@ class dns(packet_base):
             try:
                 query_head = self.next_question(query_head)
             except Exception, e:
-                log.err(str(e),system="packet")
+                self.err('(dns) parsing questions: ' + str(e))
                 return None
 
         # answers 
@@ -201,7 +200,7 @@ class dns(packet_base):
             try:
                 query_head = self.next_rr(query_head, self.answers)
             except Exception, e:
-                log.err(str(e),system="packet")
+                self.err('(dns) parsing answers: ' + str(e))
                 return None
 
         # authoritative name servers
@@ -209,7 +208,7 @@ class dns(packet_base):
             try:
                 query_head = self.next_rr(query_head, self.authorities)
             except Exception, e:
-                log.err(str(e),system="packet")
+                self.err('(dns) parsing authoritative name servers: ' + str(e))
                 return None
 
         # additional resource records
@@ -217,7 +216,7 @@ class dns(packet_base):
             try:
                 query_head = self.next_rr(query_head, self.additional)
             except Exception, e:
-                log.err(str(e),system="packet")
+                self.err('(dns) parsing additional resource records: ' + str(e))
                 return None
 
         self.parsed = True

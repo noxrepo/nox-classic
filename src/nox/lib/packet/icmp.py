@@ -92,7 +92,7 @@ class echo(packet_base):
         dlen = len(self.arr)
 
         if dlen < self.MIN_LEN:
-            print '(echo parse) warning echo payload too short to parse header: data len %u' % dlen
+            self.msg('(echo parse) warning echo payload too short to parse header: data len %u' % dlen)
             return
 
         (self.id, self.seq) \
@@ -159,7 +159,7 @@ class unreach(packet_base):
     def parse(self):
         dlen = len(self.arr)
         if dlen < self.MIN_LEN:
-            print '(unreach parse) warning unreachable payload too short to parse header: data len %u' % dlen
+            self.msg('(unreach parse) warning unreachable payload too short to parse header: data len %u' % dlen)
             return
 
         (self.unused, self.next_mtu) \
@@ -224,7 +224,7 @@ class icmp(packet_base):
     def parse(self):
         dlen = len(self.arr)
         if dlen < self.MIN_LEN:
-            print '(icmp parse) warning ICMP packet data too short to parse header: data len %u' % dlen
+            self.msg('(icmp parse) warning ICMP packet data too short to parse header: data len %u' % dlen)
             return
 
         (self.type, self.code, self.csum) \

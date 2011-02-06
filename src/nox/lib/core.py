@@ -196,67 +196,62 @@ class Component:
         return self.ctxt.post(event)
 
     def make_action_array(self, actions):
-        try:
-            action_str = ""
+        action_str = ""
 
-            for action in actions:
-                args_expected = 2
-                if action[0] == openflow.OFPAT_OUTPUT:
-                    if type(action[1]) == int or type(action[1]) == long:
-                        a = struct.pack("!HHHH", action[0], 8,
-                                        action[1], 0)
-                    else:
-                        a = struct.pack("!HHHH", action[0], 8,
-                                        action[1][1], action[1][0])
-                elif action[0] == openflow.OFPAT_SET_VLAN_VID:
-                    a = struct.pack("!HHHH", action[0], 8, action[1], 0)
-                elif action[0] == openflow.OFPAT_SET_VLAN_PCP:
-                    a = struct.pack("!HHBBH", action[0], 8, action[1], 0, 0)
-                elif action[0] == openflow.OFPAT_STRIP_VLAN:
-                    args_expected = 1
-                    a = struct.pack("!HHI", action[0], 8, 0)
-                elif action[0] == openflow.OFPAT_SET_DL_SRC \
-                        or action[0] == openflow.OFPAT_SET_DL_DST:
-                    eaddr = convert_to_eaddr(action[1])
-                    if eaddr == None:
-                        raise RuntimeError('invalid ethernet addr')
-                    a = struct.pack("!HH6sHI", action[0], 16,
-                                    eaddr.binary_str(), 0, 0)
-                elif action[0] == openflow.OFPAT_SET_NW_SRC \
-                        or action[0] == openflow.OFPAT_SET_NW_DST:
-                    iaddr = convert_to_ipaddr(action[1])
-                    if iaddr == None:
-                        raise RuntimeError('invalid ip addr')
-                    a = struct.pack("!HHI", action[0], 8, ipaddr(iaddr).addr)
-                elif action[0] == openflow.OFPAT_SET_TP_SRC \
-                        or action[0] == openflow.OFPAT_SET_TP_DST:
-                    a = struct.pack("!HHHH", action[0], 8, action[1], 0)
-                elif action[0] == openflow.OFPAT_SET_NW_TOS:
-                    a = struct.pack("!HHBBBB", action[0], 8, action[1], 0, 0, 0)
-                elif action[0] == openflow.OFPAT_ENQUEUE:
-                    a = struct.pack("!HHHHHHI", action[0], 16, action[1][0],
-                                    0,0,0, action[1][1])
+        for action in actions:
+            args_expected = 2
+            if action[0] == openflow.OFPAT_OUTPUT:
+                if type(action[1]) == int or type(action[1]) == long:
+                    a = struct.pack("!HHHH", action[0], 8,
+                                    action[1], 0)
                 else:
-                    raise RuntimeError('invalid action type: ' + str(action[0]))
+                    a = struct.pack("!HHHH", action[0], 8,
+                                    action[1][1], action[1][0])
+            elif action[0] == openflow.OFPAT_SET_VLAN_VID:
+                a = struct.pack("!HHHH", action[0], 8, action[1], 0)
+            elif action[0] == openflow.OFPAT_SET_VLAN_PCP:
+                a = struct.pack("!HHBBH", action[0], 8, action[1], 0, 0)
+            elif action[0] == openflow.OFPAT_STRIP_VLAN:
+                args_expected = 1
+                a = struct.pack("!HHI", action[0], 8, 0)
+            elif action[0] == openflow.OFPAT_SET_DL_SRC \
+                    or action[0] == openflow.OFPAT_SET_DL_DST:
+                eaddr = convert_to_eaddr(action[1])
+                if eaddr == None:
+                    raise RuntimeError('invalid ethernet addr')
+                a = struct.pack("!HH6sHI", action[0], 16,
+                                eaddr.binary_str(), 0, 0)
+            elif action[0] == openflow.OFPAT_SET_NW_SRC \
+                    or action[0] == openflow.OFPAT_SET_NW_DST:
+                iaddr = convert_to_ipaddr(action[1])
+                if iaddr == None:
+                    raise RuntimeError('invalid ip addr')
+                a = struct.pack("!HHI", action[0], 8, ipaddr(iaddr).addr)
+            elif action[0] == openflow.OFPAT_SET_TP_SRC \
+                    or action[0] == openflow.OFPAT_SET_TP_DST:
+                a = struct.pack("!HHHH", action[0], 8, action[1], 0)
+            elif action[0] == openflow.OFPAT_SET_NW_TOS:
+                a = struct.pack("!HHBBBB", action[0], 8, action[1], 0, 0, 0)
+            elif action[0] == openflow.OFPAT_ENQUEUE:
+                a = struct.pack("!HHHHHHI", action[0], 16, action[1][0],
+                                0,0,0, action[1][1])
+            else:
+                raise RuntimeError('invalid action type: ' + str(action[0]))
 
-                if len(action) != args_expected:
-                    raise RuntimeError('action %s expected %s arguments',
-                                       action[0], args_expected)
+            if len(action) != args_expected:
+                raise RuntimeError('action %s expected %s arguments',
+                                    action[0], args_expected)
 
-                action_str = action_str + a
+            action_str = action_str + a
 
-            return action_str
-        except Exception, e:
-            print e
-            return None
+        return action_str
 
     def send_port_mod(self, dpid, portno, hwaddr, mask, config):    
         try:
             addr = create_eaddr(str(hwaddr)) 
             return self.ctxt.send_port_mod(dpid, portno, addr, mask, config)
         except Exception, e:    
-            print e
-            #lg.error("unable to send port mod"+str(e))
+            raise RuntimeError("unable to send port mod:" + str(e))
 
     def send_switch_command(self, dpid, command, arg_list):
         return self.ctxt.send_switch_command(dpid, command, ",".join(arg_list))
@@ -708,26 +703,22 @@ class Component:
                 field = Packet_expr.DL_SRC
                 val = convert_to_eaddr(val)
                 if val == None:
-                    print 'invalid ethernet addr'
-                    return False
+                    raise RuntimeError('invalid ethernet addr')
             elif key == DL_DST:
                 field = Packet_expr.DL_DST
                 val = convert_to_eaddr(val)
                 if val == None:
-                    print 'invalid ethernet addr'
-                    return False
+                    raise RuntimeError('invalid ethernet addr')
             elif key == NW_SRC:
                 field = Packet_expr.NW_SRC
                 val = convert_to_ipaddr(val)
                 if val == None:
-                    print 'invalid ip addr'
-                    return False
+                    raise RuntimeError('invalid ip addr')
             elif key == NW_DST:
                 field = Packet_expr.NW_DST
                 val = convert_to_ipaddr(val)
                 if val == None:
-                    print 'invalid ip addr'
-                    return False
+                    raise RuntimeError('invalid ip addr')
             elif key == NW_PROTO:
                 field = Packet_expr.NW_PROTO
             elif key == TP_SRC:
@@ -743,16 +734,14 @@ class Component:
                 field = Packet_expr.GROUP_DST
                 val = htonl(val)
             else:
-                print 'invalid key', key
-                return False
+                raise RuntimeError('invalid key: %s' % (key,))
         
             if isinstance(val, ethernetaddr):
                 e.set_eth_field(field, val)
             else:
                 # check for max?
                 if val > UINT32_MAX:
-                    print 'value %u exceeds accepted range', val
-                    return False
+                    raise RuntimeError('value %u exceeds accepted range:' % (val, ))
                 e.set_uint32_field(field, val)
 
         return self.ctxt.register_handler_on_match(gen_packet_in_callback(handler), priority, e)

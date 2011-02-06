@@ -51,12 +51,12 @@ class llc(packet_base):
     def parse(self):
         plen = self.prev.get_payload_len()
         if plen != None and plan < LlcPacket.LEN: 
-            print '(llc parse) data too short to be an llc packet %u' % plen
+            self.msg('(llc parse) data too short to be an llc packet %u' % plen)
             return
 
         dlen = len(self.get_layer())
         if dlen != None and plan < LlcPacket.LEN: 
-            print '(llc parse) data too truncated to parse llc packet %u' % plen
+            self.msg('(llc parse) data too truncated to parse llc packet %u' % plen)
             return
 
         (self.dsap, self.ssap, self.ctrl) \

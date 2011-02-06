@@ -151,7 +151,7 @@ class dhcp(packet_base):
     def parse(self):
         dlen = len(self.arr)
         if dlen < dhcp.MIN_LEN:
-            print '(dhcp parse) warning DHCP packet data too short to parse header: data len %u' % dlen
+            self.msg('(dhcp parse) warning DHCP packet data too short to parse header: data len %u' % dlen)
             return None
 
         (self.op, self.htype, self.hlen, self.hops, self.xid, self.secs, \
@@ -167,12 +167,12 @@ class dhcp(packet_base):
         self.parsed = True
 
         if self.hlen > 16:
-            print '(dhcp parse) DHCP hlen %u too long' % self.hlen
+            self.warn('(dhcp parse) DHCP hlen %u too long' % self.hlen)
             return
 
         for i in range(4):
             if dhcp.MAGIC[i] != self.magic[i]:
-                print '(dhcp parse) bad DHCP magic value %s' % str(self.magic)
+                self.warn('(dhcp parse) bad DHCP magic value %s' % str(self.magic))
                 return
 
         self.parsedOptions = {}
@@ -187,7 +187,7 @@ class dhcp(packet_base):
         if self.parsedOptions.has_key(dhcp.OVERLOAD_OPT):
             opt_val = self.parsedOptions[dhcp.OVERLOAD_OPT]
             if opt_val[0] != 1:
-                print 'DHCP overload option has bad len %u' % opt_val[0]
+                self.warn('DHCP overload option has bad len %u' % opt_val[0])
                 return
             if opt_val[1] == 1 or opt_val[1] == 3:
                 self.parseOptionSegment(self.file)
@@ -205,18 +205,18 @@ class dhcp(packet_base):
             if opt == dhcp.PAD_OPT:
                 continue
             if ofs >= len:
-                print 'DHCP option ofs extends past segment'
+                self.warn('DHCP option ofs extends past segment')
                 return
             opt_len = barr[ofs]
             ofs += 1         # Account for the length octet
             if ofs + opt_len > len:
                 return False
             if self.parsedOptions.has_key(opt):
-                print '(parseOptionSegment) ignoring duplicate DHCP option: %d' % opt
+                self.info('(parseOptionSegment) ignoring duplicate DHCP option: %d' % opt)
             else:
                 self.parsedOptions[opt] = barr[ofs:ofs+opt_len]
             ofs += opt_len
-        print 'DHCP end of option segment before END option'
+        self.warn('DHCP end of option segment before END option')
 
     def hdr(self):
         fmt = '!BBBBIHHIIII16s64s128s4s%us' % self.options.buffer_info()[1]
