@@ -3,27 +3,27 @@
         "events": {
             "Bootstrap_complete_event": [
                 "authenticator",
-		"routing",
-		"tests",
-		"role_config_manager",
+                "routing",
+                "tests",
+                "role_config_manager",
                 "sepl_enforcer"],
             "Datapath_join_event": [
-	        "topology",
+                "topology",
                 "datapathmem",
                 "linkload",
                 "authenticator",
-		"lavi_switches",
-		"cswitchstats"
+                "lavi_switches",
+                "cswitchstats"
                 ],
             "Datapath_leave_event": [
-	        "topology",
+                "topology",
                 "datapathmem",
                 "linkload",
-		"switchrtt",
+                "switchrtt",
                 "noop",
                 "authenticator",
-		"lavi_switches",
-		"cswitchstats"
+                "lavi_switches",
+                "cswitchstats"
                 ],
             "Openflow_msg_event": [
                 "switchrtt"
@@ -36,11 +36,11 @@
                 "noop",
                 "counter",
                 "packetdump",
-		"simplerouting",
+                "simplerouting",
                 "ctlflood",
                 "switch",
-		"hub",
-		"cswitchstats"
+                "hub",
+                "cswitchstats"
                 ],
             "Flow_in_event": [
                 "sepl_enforcer",
@@ -50,10 +50,10 @@
                 "flow_cache"
                 ],
             "Link_event": [
-	        "topology",
+                "topology",
                 "authenticator",
-		"lavi_swlinks",
-		"routing_module"
+                "lavi_swlinks",
+                "routing_module"
                 ],
             "Flow_mod_event": [
                 "authenticator"
@@ -63,28 +63,28 @@
                 "dwh"
                 ],
             "Port_status_event": [
-	        "datapathmem",
+                "datapathmem",
                 "linkload",
-		"cswitchstats",
-		"topology",
-		"authenticator"
+                "cswitchstats",
+                "topology",
+                "authenticator"
                 ],
             "Port_stats_in_event": [
                 "linkload"
                 ],
             "Msg_event": [
-	        "messenger"
+                "messenger"
                 ],
             "JSONMsg_event": [
                 "jsonmessenger",
                 "lavi_switches",  
-		"lavi_hosts",
+                "lavi_hosts",
                 "lavi_swlinks",
                 "lavi_host2sw",
-	    	"lavi_networkflow",
-	    	"lavi_hostflow",
-		"lavi flows",
-		"lavi nodes",
+                    "lavi_networkflow",
+                    "lavi_hostflow",
+                "lavi flows",
+                "lavi nodes",
                 "lavi links",
                 "tablog"
                 ],
@@ -92,21 +92,21 @@
                 "flowlog",
                 "rttlog"
                 ],
-	    "Host_auth_event": [
-	    	"authenticator"
-	        ],
-	    "User_auth_event": [
-	    	"authenticator"
-	        ],
-	    "Flow_route_event": [
-		"lavitest_showflow",
-	    	"lavi_networkflow",
-	    	"lavi_hostflow"
-	        ],
-	    "Host_location_event": [
-	    	"lavi_hosts",
-		"lavi_host2sw"
-	        ]        
-	    }
+            "Host_auth_event": [
+                    "authenticator"
+                ],
+            "User_auth_event": [
+                    "authenticator"
+                ],
+            "Flow_route_event": [
+                "lavitest_showflow",
+                    "lavi_networkflow",
+                    "lavi_hostflow"
+                ],
+            "Host_location_event": [
+                    "lavi_hosts",
+                "lavi_host2sw"
+                ]
+        }
     }
 }
