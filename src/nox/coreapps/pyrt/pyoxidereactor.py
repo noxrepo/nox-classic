@@ -20,7 +20,6 @@
 #
 
 import signal
-import nox.lib.core
 import oxidereactor
 import twisted
 import logging, types
