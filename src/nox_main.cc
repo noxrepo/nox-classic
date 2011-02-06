@@ -230,7 +230,7 @@ int start_gui() {
         return -1;
     case 0:
         /* Daemon process */
-        char *args[] = {"", (char *) 0 };
+        char * args[] = {(char *)"", (char *) 0 };
         execv("../../src/gui/qt-nox.py", args);
         cout<<"Starting GUI\n";
         break;
@@ -430,7 +430,7 @@ int main(int argc, char *argv[])
     
     /* Determine the end-user applications to run */
     Application_list applications = parse_application_list(optind, argc, argv);
-    json_object* platform_configuration;
+    json_object* platform_configuration = NULL;
         
     try {
         /* Parse the platform configuration file */
