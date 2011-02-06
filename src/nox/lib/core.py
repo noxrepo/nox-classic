@@ -196,46 +196,59 @@ class Component:
         return self.ctxt.post(event)
 
     def make_action_array(self, actions):
-        action_str = ""
-        
-        for action in actions:
-            if action[0] == openflow.OFPAT_OUTPUT \
-                    and isinstance(action[1],list) \
-                    and len(action[1]) == 2:
-                a = struct.pack("!HHHH", action[0], 8,
-                                action[1][1], action[1][0])
-            elif action[0] == openflow.OFPAT_SET_VLAN_VID:
-                a = struct.pack("!HHHH", action[0], 8, action[1], 0)
-            elif action[0] == openflow.OFPAT_SET_VLAN_PCP:
-                a = struct.pack("!HHBBH", action[0], 8, action[1], 0, 0)
-            elif action[0] == openflow.OFPAT_STRIP_VLAN:
-                a = struct.pack("!HHI", action[0], 8, 0)
-            elif action[0] == openflow.OFPAT_SET_DL_SRC \
-                    or action[0] == openflow.OFPAT_SET_DL_DST:
-                eaddr = convert_to_eaddr(action[1])
-                if eaddr == None:
-                    print 'invalid ethernet addr'
-                    return None
-                a = struct.pack("!HH6sHI", action[0], 16, eaddr.binary_str(), 0, 0)
-            elif action[0] == openflow.OFPAT_SET_NW_SRC \
-                    or action[0] == openflow.OFPAT_SET_NW_DST:
-                iaddr = convert_to_ipaddr(action[1])
-                if iaddr == None:
-                    print 'invalid ip addr'
-                    return None
-                a = struct.pack("HHI", htons(action[0]), htons(8), htonl(ipaddr(iaddr).addr))
-            elif action[0] == openflow.OFPAT_SET_TP_SRC \
-                    or action[0] == openflow.OFPAT_SET_TP_DST:
-                a = struct.pack("!HHHH", action[0], 8, action[1], 0)
-            elif action[0] == openflow.OFPAT_SET_NW_TOS:
-                a = struct.pack("!HHBBBB", action[0], 8, action[1], 0, 0, 0)
-            else:
-                print 'invalid action type', action[0]
-                return None
+        try:
+            action_str = ""
 
-            action_str = action_str + a
+            for action in actions:
+                args_expected = 2
+                if action[0] == openflow.OFPAT_OUTPUT:
+                    if type(action[1]) == int or type(action[1]) == long:
+                        a = struct.pack("!HHHH", action[0], 8,
+                                        action[1], 0)
+                    else:
+                        a = struct.pack("!HHHH", action[0], 8,
+                                        action[1][1], action[1][0])
+                elif action[0] == openflow.OFPAT_SET_VLAN_VID:
+                    a = struct.pack("!HHHH", action[0], 8, action[1], 0)
+                elif action[0] == openflow.OFPAT_SET_VLAN_PCP:
+                    a = struct.pack("!HHBBH", action[0], 8, action[1], 0, 0)
+                elif action[0] == openflow.OFPAT_STRIP_VLAN:
+                    args_expected = 1
+                    a = struct.pack("!HHI", action[0], 8, 0)
+                elif action[0] == openflow.OFPAT_SET_DL_SRC \
+                        or action[0] == openflow.OFPAT_SET_DL_DST:
+                    eaddr = convert_to_eaddr(action[1])
+                    if eaddr == None:
+                        raise RuntimeError('invalid ethernet addr')
+                    a = struct.pack("!HH6sHI", action[0], 16,
+                                    eaddr.binary_str(), 0, 0)
+                elif action[0] == openflow.OFPAT_SET_NW_SRC \
+                        or action[0] == openflow.OFPAT_SET_NW_DST:
+                    iaddr = convert_to_ipaddr(action[1])
+                    if iaddr == None:
+                        raise RuntimeError('invalid ip addr')
+                    a = struct.pack("!HHI", action[0], 8, ipaddr(iaddr).addr)
+                elif action[0] == openflow.OFPAT_SET_TP_SRC \
+                        or action[0] == openflow.OFPAT_SET_TP_DST:
+                    a = struct.pack("!HHHH", action[0], 8, action[1], 0)
+                elif action[0] == openflow.OFPAT_SET_NW_TOS:
+                    a = struct.pack("!HHBBBB", action[0], 8, action[1], 0, 0, 0)
+                elif action[0] == openflow.OFPAT_ENQUEUE:
+                    a = struct.pack("!HHHHHHI", action[0], 16, action[1][0],
+                                    0,0,0, action[1][1])
+                else:
+                    raise RuntimeError('invalid action type: ' + str(action[0]))
 
-        return action_str
+                if len(action) != args_expected:
+                    raise RuntimeError('action %s expected %s arguments',
+                                       action[0], args_expected)
+
+                action_str = action_str + a
+
+            return action_str
+        except Exception, e:
+            print e
+            return None
 
     def send_port_mod(self, dpid, portno, hwaddr, mask, config):    
         try:
@@ -445,7 +458,10 @@ class Component:
         if buffer_id == UINT32_MAX and packet != None:
             for action in actions:
                 if action[0] == openflow.OFPAT_OUTPUT:
-                    self.send_openflow_packet(dp_id, packet, action[1][1], inport)
+                    if type(action[1]) == int or type(action[1]) == long:
+                        self.send_openflow_packet(dp_id, packet, action[1], inport)
+                    else:
+                        self.send_openflow_packet(dp_id, packet, action[1][1], inport)
                 else:
                     raise NotImplementedError
 
