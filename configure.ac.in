@@ -11,6 +11,8 @@ AH_BOTTOM([/* NOX version with build number, e.g. "1.2.3+build456". */
 
 AM_INIT_AUTOMAKE([tar-ustar])
 
+AM_SILENT_RULES([yes])
+
 AC_PROG_CXX
 AC_PROG_CC
 AC_PROG_CPP
