@@ -934,7 +934,7 @@ struct ofp_queue_get_config_reply {
     struct ofp_header header;
     uint16_t port;
     uint8_t pad[6];
-    struct ofp_packet_queue queues[]; /* List of configured queues. */
+    struct ofp_packet_queue queues[0]; /* List of configured queues. */
 };
 OFP_ASSERT(sizeof(struct ofp_queue_get_config_reply) == 16);
 
