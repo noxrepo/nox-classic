@@ -3157,7 +3157,7 @@ namespace vigil
     of_packet_out::of_packet_out()
     {
         (*this).header.type = OFPT_PACKET_OUT;
-        buffer_id = 4294967295;
+        buffer_id = 0xffffffff;
         in_port = 0;
         actions_len = 0;
     }
