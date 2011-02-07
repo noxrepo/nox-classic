@@ -50,10 +50,10 @@ struct Flow_removed_event
        uint64_t packet_count_, uint64_t byte_count_,
        uint64_t cookie_)
         : Event(static_get_name()), datapath_id(datapath_id_),
-          priority(priority_), reason(reason_),
           duration_sec(duration_sec_), duration_nsec(duration_nsec_),
           idle_timeout(idle_timeout_), packet_count(packet_count_),
-          byte_count(byte_count_), cookie(cookie_) { }
+          byte_count(byte_count_), cookie(cookie_),
+          priority(priority_), reason(reason_) { }
 
 
     Flow_removed_event(const datapathid datapath_id_, 
