@@ -19,6 +19,7 @@ import logging
 from nox.lib.core import *
 
 from collections import defaultdict
+from itertools import chain
 
 import nox.lib.openflow as openflow
 from nox.lib.packet.packet_utils  import mac_to_str
