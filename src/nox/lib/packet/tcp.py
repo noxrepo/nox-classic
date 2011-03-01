@@ -150,7 +150,7 @@ class tcp(packet_base):
             elif arr[i] == tcp_opt.MSS:    
                 if arr[i+1] != 4:
                     raise Exception() 
-                val = struct.unpack('!H',arr[i+2:i+4])    
+                val = struct.unpack('!H',arr[i+2:i+4])[0]
                 self.options.append(tcp_opt(tcp_opt.MSS,val))
             elif arr[i] == tcp_opt.WSOPT:    
                 if arr[i+1] != 3:
