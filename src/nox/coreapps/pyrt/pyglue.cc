@@ -365,7 +365,7 @@ to_python(const Table_stats& ts)
     CONVERT_SWITCH_STAT(ts.matched_count,pyo_matched_count)
     CONVERT_CHECK(pyo_matched_count)
 
-    ret = Py_BuildValue((char*)"{s:l, s:s#, s:I, s:I, s:S, s:S}",
+    ret = Py_BuildValue((char*)"{s:i, s:s#, s:I, s:I, s:S, s:S}",
             "table_id", ts.table_id, 
             "name", ts.name.c_str(), ts.name.size(),
             "max_entries",   ts.max_entries, 
