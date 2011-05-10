@@ -6,7 +6,9 @@
                 "python",
                 "lavi_switches",
                 "lavi_swlinks",
-                "lavi nodes"
+                "lavi_host2sw",
+                "lavi nodes",
+                "lavi_hosts"
             ],
             "python": "nox.netapps.monitoring.monitoring" 
         }

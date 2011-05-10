@@ -42,9 +42,9 @@ import simplejson as json
 #DEFAULT_POLL_AGGREGATE_STATS_PERIOD = 0.04
 
 # For testing, poll less aggressively
-DEFAULT_POLL_TABLE_STATS_PERIOD     = 1 # seconds
-DEFAULT_POLL_PORT_STATS_PERIOD      = 1 # seconds
-DEFAULT_POLL_AGGREGATE_STATS_PERIOD = 1 # seconds
+DEFAULT_POLL_TABLE_STATS_PERIOD     = 20 # seconds
+DEFAULT_POLL_PORT_STATS_PERIOD      = 20 # seconds
+DEFAULT_POLL_AGGREGATE_STATS_PERIOD = 20 # seconds
 
 
 DEFAULT_POLL_UTIL_PERIOD = 1 # seconds
@@ -53,11 +53,6 @@ DEFAULT_POLL_UTIL_PERIOD = 1 # seconds
 DEFAULT_COLLECTION_EPOCH_DURATION = 10 # seconds
 DEFAULT_MAX_STATS_SNAPSHOTS_PER_SWITCH = 10
 
-'''
-# Get around temporary LB4 stats limitation by estimating bytes from pkts
-FAKE_BPS_FROM_PKTS = False
-AVG_PKT_SIZE = 1000 * 8 # bits
-'''
 # Static log handle
 lg = logging.getLogger('monitoring')
 
@@ -109,13 +104,14 @@ class Monitoring(Component):
         # Subscribers for monitoring messages
         #(eg. self.subscribers["linkutils"] = [guistream]
         self.subscribers = {}
-
+        """
         # Set defaults
         self.table_stats_poll_period = DEFAULT_POLL_TABLE_STATS_PERIOD
         self.aggregate_stats_poll_period = DEFAULT_POLL_AGGREGATE_STATS_PERIOD
         self.port_stats_poll_period = DEFAULT_POLL_PORT_STATS_PERIOD
         self.collection_epoch_duration = DEFAULT_COLLECTION_EPOCH_DURATION
         self.max_snapshots_per_switch = DEFAULT_MAX_STATS_SNAPSHOTS_PER_SWITCH
+        """
         
     def aggregate_timer(self, dpid):
         flow = of.ofp_match() 
@@ -168,12 +164,7 @@ class Monitoring(Component):
                          lambda event: self.handle_jsonmsg_event(event))
                          
         """ Installs the monitoring component. Register all the event handlers\
-        and sets up the switch polling timers."""    
-        # Add handlers for the events we're interested in
-        #self.register_handler( Flow_in_event.static_get_name(), \
-        #                 lambda event: self.handle_flow_in(event))
-        #self.register_handler( Flow_mod_event.static_get_name(), \
-        #                 lambda event: self.handle_flow_mod(event))
+        and sets up the switch polling timers."""
         self.register_handler( Datapath_join_event.static_get_name(), \
                          lambda event: self.handle_datapath_join(event))
         self.register_handler( Datapath_leave_event.static_get_name(), \
@@ -270,7 +261,6 @@ class Monitoring(Component):
             msg["data"] = json.dumps(event, sort_keys=True, \
                                       default=self.encode_switch_query)
             
-            lg.debug( "Checking type" )
             # Figure out what kind of query reply came back
             if event.pyevent.query_type == \
                     SwitchQueryReplyEvent.QUERY_PORT_STATS:
@@ -301,79 +291,7 @@ class Monitoring(Component):
             stream.reply(json.dumps(msg))
             
         return CONTINUE
-    
-    '''
-    def configure(self, conf):
-        """Configures the monitoring module using any command-line
-        parameters.
-        """
-        # Use any command-line params to configure ourselves
-        # if no command-line params were passed then use defaults
-        lg.debug( "Configuring monitoring..." )
-        #self.register_python_event( LinkUtilizationReplyEvent.NAME )
-        # Set everything to the default values initially
-        #self.table_stats_poll_period = DEFAULT_POLL_TABLE_STATS_PERIOD
-        #self.aggregate_stats_poll_period = DEFAULT_POLL_AGGREGATE_STATS_PERIOD
-        #self.port_stats_poll_period = DEFAULT_POLL_PORT_STATS_PERIOD
-        #self.collection_epoch_duration = DEFAULT_COLLECTION_EPOCH_DURATION
-        #self.max_snapshots_per_switch = DEFAULT_MAX_STATS_SNAPSHOTS_PER_SWITCH
         
-        if 'arguments' in conf:
-            args = {}
-            for arg in conf['arguments']:
-                if '=' in arg:
-                    key, value = arg.split('=')
-                else:
-                    key, value = arg, ''
-                args[key] = value
-        
-            # extract params that "should/could" be there
-            if 'table_poll' in args:
-                self.table_stats_poll_period = float(args['table_poll'])
-            
-            if 'port_poll' in args:
-                self.port_stats_poll_period = float(args['port_poll'])
-
-            if 'aggregate_poll' in args:
-                self.aggregate_stats_poll_period = \
-                    float(args['aggregate_poll'])
-            
-            if 'epoch_duration' in args:
-                self.collection_epoch_duration = long(args['epoch_duration'])
-
-            if 'max_snapshots' in args:
-                self.max_snapshots_per_switch = long(args['max_snapshots'])
-
-
-        # Start our logical clock                     
-        self.fire_epoch_timer()
-        
-        # Start some internal debugging
-        self.fire_stats_debug_timer()
-        self.fire_utilization_broadcasts()
-        # Used for testing only
-        #self.fire_fake_network_status_events()
-        lg.debug( "Finished configuring monitoring" )
-        # Add named subsets to topodb from config file
-        if self.topo != None:
-            self.add_named_topo_views()
-
-    def dispatch_service_query_callback( self, query ):
-        lg.debug( "Got service query from DispatchServer xid: %d" % \
-                      (query.xid) )
-        # Create new topoquery reply message
-        if self.topo.named_subsets.has_key(query.subset_name):
-            service = self.topo.named_subsets[query.subset_name]
-            #lg.debug( service.__dict__ )
-            # Send the topology subset - the receiver needs to know
-            # what to do when query.subset_name != "all" because they
-            # aren't getting a topo instance instead they get a subset instance
-            event = TopologyReplyEvent( query.xid, service, query.subset_name )
-            # Post event
-            self.post( pyevent( "toporeplyevent", event ) )
-
-    '''
-    
     # Construct and send our own stats request messages so we can make use
     # of the xid field (store our logical clock/collection epoch here) to
     # detect whether stats replies from switches are delayed, lost or
@@ -382,10 +300,7 @@ class Monitoring(Component):
         """Send a table stats request to a switch (dpid).
         @param dpid - datapath/switch to contact
         """
-        # Build the request and then send a barrier request after it
-        # to try to coerce in-order processing.
-        # Using flow installer as an example of OF message construction
-        # in python
+        # Build the request 
         request = of.ofp_stats_request()
         if xid == -1:
             request.header.xid = c_htonl(long(self.collection_epoch))
@@ -550,23 +465,13 @@ class Monitoring(Component):
                     port_util.dpid = dpid
                     port_util.port = portinfo.port_number
                     
-                    '''
-                    if not FAKE_BPS_FROM_PKTS:
-                    '''
                     port_util.bps_transmitted = \
                         portinfo.estimate_bits_sent_per_sec()
                     port_util.bps_received = \
                         portinfo.estimate_bits_received_per_sec()
-                    '''
-                    else:
-                        port_util.bps_transmitted = AVG_PKT_SIZE * \
-                            portinfo.estimate_packets_sent_per_sec()
-                        port_util.bps_received = AVG_PKT_SIZE * \
-                            portinfo.estimate_packets_received_per_sec()
-                    '''
-                    ### KYR
-                    port_util.capacity = (self.port_cap[port_util.dpid][port_util.port].to_dict())['max_speed'] 
-                    ###       
+                        
+                    port_util.capacity = (self.port_cap[port_util.dpid][port_util.port].to_dict())['max_speed']
+                    
                     port_utilizations.append(port_util)
             else:
                 pass
@@ -604,14 +509,6 @@ class Monitoring(Component):
             return None
         else: 
             return (self.port_cap[dpid])[port_num]
-
-    #def get_flow_stats(self, dpid, flow_spec):
-    #    """API call to get stats of a specific flow from a switch"""
-    #    return {}
-
-    #def get_flow_stats_on_path(self, dpid_list, flow_spec):
-    #    """API call to get stats of a specific flow from a set of switches"""
-    #    return {}
 
     # Timers
     # Stats debugging timer
@@ -725,19 +622,6 @@ class Monitoring(Component):
     # Event handlers. FYI if you need/want to find out what fields exist 
     # in a specific event type look at src/nox/lib/util.py at the utility 
     # functions that are used to manipulate them
-    '''
-    def handle_flow_in(self, event):
-        """Handler responds to flow_in events.
-        @param event - flow in event to handle
-        """
-        return CONTINUE
-
-    def handle_flow_mod(self, event):
-        """Handler responds to flow_in modification events.
-        @param flow mod event to handle
-        """
-        return CONTINUE
-    '''
     def handle_datapath_join(self, event):
         """Handler responds to switch join events.
         @param event datapath/switch join event to handle
@@ -746,27 +630,28 @@ class Monitoring(Component):
         dpid = event.datapath_id
         epoch = self.collection_epoch
 
-        #ports = event.ports
-        #for item in ports:
+        '''
+        ports = event.ports
+        for item in ports:
             # Figure out what speeds are supported
-            #port_enabled = (item['config'] & openflow.OFPPC_PORT_DOWN) == 0
-            #link_enabled = (item['state'] & openflow.OFPPS_LINK_DOWN) == 0
+            port_enabled = (item['config'] & openflow.OFPPC_PORT_DOWN) == 0
+            link_enabled = (item['state'] & openflow.OFPPS_LINK_DOWN) == 0
             # Look at features supported, advertised and curr(ent)
-            #supports_10MB_HD = (item['curr'] & openflow.OFPPF_10MB_HD) == \
-            #                                         openflow.OFPPF_10MB_HD
-            #supports_10MB_FD = (item['curr'] & openflow.OFPPF_10MB_FD) > 0
-            #supports_100MB_HD = (item['curr'] & openflow.OFPPF_100MB_HD) > 0
-            #supports_100MB_FD = (item['curr'] & openflow.OFPPF_100MB_FD) == \
-            #                                          openflow.OFPPF_100MB_FD
-            #supports_1GB_HD = (item['curr'] & openflow.OFPPF_1GB_HD) > 0
-            #supports_1GB_FD = (item['curr'] & openflow.OFPPF_1GB_FD) > 0
-            #supports_10GB_FD = (item['curr'] & openflow.OFPPF_10GB_FD) > 0
-            
+            supports_10MB_HD = (item['curr'] & openflow.OFPPF_10MB_HD) == \
+                                                     openflow.OFPPF_10MB_HD
+            supports_10MB_FD = (item['curr'] & openflow.OFPPF_10MB_FD) > 0
+            supports_100MB_HD = (item['curr'] & openflow.OFPPF_100MB_HD) > 0
+            supports_100MB_FD = (item['curr'] & openflow.OFPPF_100MB_FD) == \
+                                                      openflow.OFPPF_100MB_FD
+            supports_1GB_HD = (item['curr'] & openflow.OFPPF_1GB_HD) > 0
+            supports_1GB_FD = (item['curr'] & openflow.OFPPF_1GB_FD) > 0
+            supports_10GB_FD = (item['curr'] & openflow.OFPPF_10GB_FD) > 0
+        '''
+        
         # Set up some timers for polling this switch periodically
         # Whenever a new switch joins set up some timers for polling it 
         # for its stats (using the monitor.py example as a rough reference)
-        if not dpid in self.switches:# and (not self.nodesAllowed or \
-                                       #   dpid in self.nodesAllowed):
+        if not dpid in self.switches:
             lg.debug( "Handling switch join. Epoch: %d, dpid: 0x%x" % \
                        (epoch,dpid) )
             # Add this switch to the set of switches being monitored
@@ -828,7 +713,6 @@ class Monitoring(Component):
         @param event - datapath leave event to handle
         """
         dpid = event.datapath_id
-        #lg.debug( "Handling dp leave. dpid: {0:x}".format(dpid) )
         lg.debug( "Handling switch leave. Epoch: %d, dpid: 0x%x" % \
                                               (self.collection_epoch, dpid) )
         # drop all the stats for this switch
@@ -848,8 +732,6 @@ class Monitoring(Component):
         """Handler responds to receiving aggregate switch stats.
         @param event - aggregate stats in event to handle
         """
-        
-        #lg.debug( event.__dict__ )
         # Get the snapshot list
         dpid = event.datapath_id
         # Use the xid as the current collection epoch
@@ -862,14 +744,18 @@ class Monitoring(Component):
                                        SwitchQueryReplyEvent.QUERY_AGG_STATS,\
                                        event )
             self.post( pyevent( SwitchQueryReplyEvent.NAME, reply ) )
+            '''
             # Remove the xid from our todo list
-            #self.pending_switch_queries.remove( event.xid )
+            self.pending_switch_queries.remove( event.xid )
+            '''
 
 
         # Check whether this stats reply pushes forward out notion of   
         # "latest" 
-        #if current_collection_epoch > self.max_stats_reply_epoch:
-        #    self.max_stats_reply_epoch = current_collection_epoch
+        '''
+        if current_collection_epoch > self.max_stats_reply_epoch:
+            self.max_stats_reply_epoch = current_collection_epoch
+        '''
         
         # Remove switch from silent_switch list if it's on it
         if dpid in self.silent_switches:
@@ -924,13 +810,7 @@ class Monitoring(Component):
                     # Limit the number of old snapshots we keep around        
                     if len(switch_stats_q) > self.max_snapshots_per_switch:
                         switch_stats_q.pop()
-                else:
-                    # Received delayed snapshot
-                    #lg.debug( """Received delayed snapshot from past
-                    #epoch: %d, when the latest collection epoch is: %d""" % \
-                    #(current_collection_epoch, \
-                    #     latest_snapshot.collection_epoch))
-                    pass
+                        
         except Exception:
             pass
         finally:        
@@ -1023,7 +903,9 @@ class Monitoring(Component):
                     new_snapshot = Snapshot( self )
                     new_snapshot.collection_epoch = current_collection_epoch
                     new_snapshot.timestamp = time.time()
-                    #new_snapshot.ports_active = ports_active
+                    '''
+                    new_snapshot.ports_active = ports_active
+                    '''
                     new_snapshot.dpid = dpid
                     # store port info
                     new_snapshot.store_port_info(ports, self.port_cap[dpid])
@@ -1035,13 +917,6 @@ class Monitoring(Component):
                     # Limit the number of old snapshots we keep around        
                     if len(switch_stats_q) > self.max_snapshots_per_switch:
                         switch_stats_q.pop()
-                else:
-                    # Received delayed snapshot
-                    #lg.debug( """Received delayed snapshot from past epoch: %d,
-                    #when the latest collection epoch is: %d""" % \
-                    #(current_collection_epoch, \
-                    #     latest_snapshot.collection_epoch))
-                    pass
         except Exception:
             pass
         finally:        
@@ -1111,7 +986,7 @@ class Monitoring(Component):
                 u['dpid'] = hex(util.dpid)[2:len(hex(util.dpid))-1]
                 u['port'] = str(util.port)
                 
-                '''...THIS CALCULATION OF UTILIZATION IS DISPUTABLE...'''
+                '''***THIS CALCULATION OF UTILIZATION IS DISPUTABLE***'''
                 add = util.bps_transmitted+util.bps_received
                 avgrate = add/2
                 if util.capacity:
@@ -1149,27 +1024,6 @@ def getFactory():
             return Monitoring(ctxt)
 
     return Factory()
-  
-  
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 

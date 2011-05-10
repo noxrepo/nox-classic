@@ -9,8 +9,6 @@ EXTRA_DIST =\
 	switchqueryreplyevent.py\
 	porterrorevent.py\
 	silentswitchevent.py\
-	nodeenterevent.py\
-	nodeexitevent.py\
 	switchadminupevent.py\
 	switchadmindownevent.py\
 	linkadminupevent.py\
@@ -23,8 +21,6 @@ NOX_RUNTIMEFILES = meta.json	\
 	switchqueryreplyevent.py\
 	porterrorevent.py\
 	silentswitchevent.py\
-	nodeenterevent.py\
-	nodeexitevent.py\
 	switchadminupevent.py\
 	switchadmindownevent.py\
 	linkadminupevent.py\
