@@ -412,9 +412,6 @@ int send_openflow_command(const datapathid& datapath_id, const ofp_header* oh,
                            reinterpret_cast<const ofp_flow_mod*>(oh),
                            std::auto_ptr<Buffer>(NULL));
         event_dispatcher.dispatch(fme);
-        
-        // KYR send Barrier, after each flow mod (routing timing issue)
-        //oconn->send_barrier_request();
     }
     return error;
 }
