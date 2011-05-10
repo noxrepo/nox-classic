@@ -1,0 +1,12 @@
+{
+    "components": [
+        {
+            "name": "flowtracer" ,
+            "dependencies": [
+                "python",
+                "pytopology"
+            ],
+            "python": "nox.netapps.flowtracer.flowtracer" 
+        }
+    ]
+}
