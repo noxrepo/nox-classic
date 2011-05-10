@@ -21,6 +21,7 @@ import struct
 import types
 from socket import htons, htonl
 import nox.lib.openflow as openflow
+import nox.lib.pyopenflow as pyopenflow
 
 from nox.coreapps.pyrt.pycomponent import * 
 from util import *
@@ -215,20 +216,20 @@ class Component:
                 args_expected = 1
                 a = struct.pack("!HHI", action[0], 8, 0)
             elif action[0] == openflow.OFPAT_SET_DL_SRC \
-                    or action[0] == openflow.OFPAT_SET_DL_DST:
+                     or action[0] == openflow.OFPAT_SET_DL_DST:
                 eaddr = convert_to_eaddr(action[1])
                 if eaddr == None:
                     raise RuntimeError('invalid ethernet addr')
                 a = struct.pack("!HH6sHI", action[0], 16,
                                 eaddr.binary_str(), 0, 0)
             elif action[0] == openflow.OFPAT_SET_NW_SRC \
-                    or action[0] == openflow.OFPAT_SET_NW_DST:
+                     or action[0] == openflow.OFPAT_SET_NW_DST:
                 iaddr = convert_to_ipaddr(action[1])
                 if iaddr == None:
                     raise RuntimeError('invalid ip addr')
                 a = struct.pack("!HHI", action[0], 8, ipaddr(iaddr).addr)
             elif action[0] == openflow.OFPAT_SET_TP_SRC \
-                    or action[0] == openflow.OFPAT_SET_TP_DST:
+                     or action[0] == openflow.OFPAT_SET_TP_DST:
                 a = struct.pack("!HHHH", action[0], 8, action[1], 0)
             elif action[0] == openflow.OFPAT_SET_NW_TOS:
                 a = struct.pack("!HHBBBB", action[0], 8, action[1], 0, 0, 0)
@@ -241,11 +242,11 @@ class Component:
             if len(action) != args_expected:
                 raise RuntimeError('action %s expected %s arguments',
                                     action[0], args_expected)
-
+ 
             action_str = action_str + a
 
-        return action_str
-
+            return action_str
+        
     def send_port_mod(self, dpid, portno, hwaddr, mask, config):    
         try:
             addr = create_eaddr(str(hwaddr)) 
@@ -459,6 +460,21 @@ class Component:
                         self.send_openflow_packet(dp_id, packet, action[1][1], inport)
                 else:
                     raise NotImplementedError
+                    
+    def send_barrier(self, dpid, xid=None):
+        #TODO: replace with real XID code
+        if xid == None:
+            if not hasattr(self, 'xid'):
+                xid = 8238
+            else:
+                xid = getattr(self, 'xid')
+            if xid >= 0xFFffFFfe:
+                xid = 8238
+            setattr(self, 'xid', xid + 1)
+            data = struct.pack("!BBHL", openflow.OFP_VERSION,
+            openflow.OFPT_BARRIER_REQUEST, 8, xid)
+            self.send_openflow_command(dpid, data)
+        return xid
 
     def register_for_packet_in(self, handler):
         """\brief Register a handler for a packet in event.
@@ -794,6 +810,16 @@ class Component:
         """
         self.register_handler(Error_event.static_get_name(),
                               gen_error_callback(handler))
+
+    def register_for_barrier_reply(self, handler):
+        """
+        register a handler to be called on every barrier_reply
+        event handler will be called with the following args:
+        
+        handler(dp_id, xid)
+        """
+        self.register_handler(Barrier_reply_event.static_get_name(),
+                              gen_barrier_cb(handler))
 
     def unregister_handler(self, rule_id):
         """

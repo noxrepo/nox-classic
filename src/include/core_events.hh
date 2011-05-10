@@ -34,4 +34,3 @@
 #include "queue-stats-in.hh"
 #include "barrier-reply.hh"
 #include "error-event.hh"
-

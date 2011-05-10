@@ -90,6 +90,7 @@ def forward_l2_packet(dpid, inport, packet, buf, bufid):
             flow = extract_flow(packet)
             flow[core.IN_PORT] = inport
             actions = [[openflow.OFPAT_OUTPUT, [0, prt[0]]]]
+            #actions = [[openflow.OFPAT_OUTPUT, prt[0]]]
             inst.install_datapath_flow(dpid, flow, CACHE_TIMEOUT, 
                                        openflow.OFP_FLOW_PERMANENT, actions,
                                        bufid, openflow.OFP_DEFAULT_PRIORITY,
@@ -162,7 +163,7 @@ class pyswitch(Component):
         inst.register_for_datapath_leave(datapath_leave_callback)
         inst.register_for_datapath_join(datapath_join_callback)
         inst.post_callback(1, timer_callback)
-
+        
     def getInterface(self):
         return str(pyswitch)
 

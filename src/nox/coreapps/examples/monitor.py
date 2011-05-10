@@ -36,7 +36,7 @@ class Monitor(Component):
 
     def aggregate_timer(self, dpid):
         flow = ofp_match() 
-        flow.wildcards = 0xffff
+        flow.wildcards = 0xffffffff
         self.ctxt.send_aggregate_stats_request(dpid, flow,  0xff)
         self.post_callback(MONITOR_TABLE_PERIOD, lambda : self.aggregate_timer(dpid))
 

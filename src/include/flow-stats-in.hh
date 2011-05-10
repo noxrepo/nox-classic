@@ -22,6 +22,7 @@
 #include <stddef.h>
 #include <string>
 
+#include <boost/shared_array.hpp>
 #include "event.hh"
 #include "netinet++/datapathid.hh"
 #include "ofp-msg-event.hh"
@@ -33,9 +34,11 @@ namespace vigil {
 struct Flow_stats
     : public ofp_flow_stats
 {
-    std::vector<ofp_action_header> v_actions;
+    std::vector<const ofp_action_header*> v_actions;
 
     Flow_stats(const ofp_flow_stats*);
+private:
+    boost::shared_array<uint8_t> action_data;
 };
 
 struct Flow_stats_in_event

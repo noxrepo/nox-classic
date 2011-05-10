@@ -147,6 +147,19 @@ Authenticator::handle_packet_in(const Event& e)
     if (flow.dl_type == ethernet::LLDP) {
         return CONTINUE;
     }
+    
+    //KYR
+    //if (flow.dl_type == ethernet::ARP) {
+    //    VLOG_DBG(lg, "GOT ARP %d", flow.nw_dst);
+    //    if (flow.dl_dst != 0xffffffffffff)
+    //    {
+    //        VLOG_DBG(lg, "nw_proto wildcarded");
+    //        flow.nw_proto = 2;
+    //    }
+    //}
+    //
+
+
 
     timeval curtime = { 0, 0 };
     gettimeofday(&curtime, NULL);

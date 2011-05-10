@@ -164,6 +164,8 @@ Flow::Flow(uint16_t in_port_, const Buffer& buffer, uint64_t cookie_)
     invalid = false;
     dl_vlan = htons(OFP_VLAN_NONE);
 
+
+
     Nonowning_buffer b(buffer);
     const eth_header* eth = pull_eth(b);
     if (eth) {

@@ -270,6 +270,15 @@ def gen_switch_mgr_leave_callback(handler):
         return ret
     f.cb = handler
     return f
+     
+def gen_barrier_cb(handler):
+    def f(event):
+        ret = f.cb(event.datapath_id, event.xid)
+        if ret == None:
+            return CONTINUE
+        return ret
+    f.cb = handler
+    return f
 
 def gen_barrier_reply_callback(handler):
     def f(event):

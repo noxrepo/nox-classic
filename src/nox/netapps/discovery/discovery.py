@@ -181,6 +181,7 @@ class discovery(Component):
                 continue
             self.lldp_packets[dp][port[PORT_NO]] = create_discovery_packet(dp, port[PORT_NO], LLDP_TTL);
 
+        print self.adjacency_list
     # --
     # On datapath leave, delete all associated links
     # --

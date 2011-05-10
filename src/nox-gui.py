@@ -18,6 +18,7 @@ import getopt
 from PyQt4 import QtGui, QtCore
 
 import gui.log as log
+import gui.info as info
 import gui.topology as topology
 import gui.console as console
 import gui.Popup as Popup
@@ -74,11 +75,19 @@ class MainWindow(QtGui.QMainWindow):
         self.center()
 
         self.logWidget = log.LogWidget(self)
-        self.left = self.logWidget
-        
+        self.infoWidget = info.InfoWidget(self) 
         self.topoWidget = topology.TopoWidget(self) 
+        self.consoleWidget = console.ConsoleWidget(self) 
         
-        self.consoleWidget = console.ConsoleWidget(self)  
+        self.leftvbox = QtGui.QVBoxLayout()
+        self.vSplitter = QtGui.QSplitter(QtCore.Qt.Vertical)
+        self.vSplitter.addWidget(self.infoWidget)
+        # Hide info pane initially, show when needed (e.q. switch query)
+        self.infoWidget.hide()
+        self.vSplitter.addWidget(self.logWidget)
+        self.leftvbox.addWidget(self.vSplitter)
+        self.left = QtGui.QWidget()
+        self.left.setLayout(self.leftvbox)
         
         self.rightvbox = QtGui.QVBoxLayout()
         self.rightvbox.addWidget(self.topoWidget)
@@ -86,11 +95,11 @@ class MainWindow(QtGui.QMainWindow):
         self.right = QtGui.QWidget()
         self.right.setLayout(self.rightvbox)
         
-        self.splitter = QtGui.QSplitter(QtCore.Qt.Horizontal)
-        self.splitter.addWidget(self.left)
-        self.splitter.addWidget(self.right)
+        self.hSplitter = QtGui.QSplitter(QtCore.Qt.Horizontal)
+        self.hSplitter.addWidget(self.left)
+        self.hSplitter.addWidget(self.right)
         
-        self.setCentralWidget(self.splitter)
+        self.setCentralWidget(self.hSplitter)
         
         signal.signal(signal.SIGINT, self.sigint_handler)  
 
@@ -230,28 +239,24 @@ class MainWindow(QtGui.QMainWindow):
     #'''
     def dark(self):
         # Change Log colors
-        self.logWidget.logDisplay.bgColor = QtCore.Qt.black
-        self.logWidget.logDisplay.textColor = \
-                QtGui.QColor(QtCore.Qt.green).light(85)
-        self.logWidget.logDisplay.setColors()
-        self.logWidget.logDisplay.setText(self.logWidget.logDisplay.toPlainText())
+        self.logWidget.logDisplay.setStyleSheet("background-color: \
+                black; color: green")
         
         # Change Topology colors
         self.topoWidget.topologyView.setStyleSheet("background: black")
+        #self.topoWidget.topologyView.update()
         # stupid way to refresh background color:
         self.topoWidget.topologyView.scaleView(0.5)
         self.topoWidget.topologyView.scaleView(2)
         
     def bright(self):
         # Change Topology colors
-        self.logWidget.logDisplay.bgColor = \
-                QtGui.QColor(QtCore.Qt.gray)
-        self.logWidget.logDisplay.textColor = QtCore.Qt.black
-        self.logWidget.logDisplay.setColors()
-        self.logWidget.logDisplay.setText(self.logWidget.logDisplay.toPlainText())
+        self.logWidget.logDisplay.setStyleSheet("background-color: white; \
+                color: black")
         
         # Change Topology colors
-        self.topoWidget.topologyView.setStyleSheet("background: gray") 
+        self.topoWidget.topologyView.setStyleSheet("background: white") 
+        #self.topoWidget.topologyView.update()
         self.topoWidget.topologyView.scaleView(0.5)
         self.topoWidget.topologyView.scaleView(2)
         

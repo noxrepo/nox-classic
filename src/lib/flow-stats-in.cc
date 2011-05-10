@@ -1,13 +1,21 @@
 #include "flow-stats-in.hh"
+#include <vector>
 
 namespace vigil {
 
 Flow_stats::Flow_stats(const ofp_flow_stats* ofs)
+    : action_data(new uint8_t[ntohs(ofs->length) - sizeof *ofs])
 {
     *(ofp_flow_stats*) this = *ofs;
-    const ofp_action_header* headers = ofs->actions;
-    size_t n_actions = (ntohs(ofs->length) - sizeof *ofs) / sizeof *headers;
-    v_actions.assign(headers, headers + n_actions);
+    memcpy(action_data.get(), ofs->actions, ntohs(ofs->length) - sizeof *ofs);
+    uint8_t * p = (uint8_t *)ofs->actions;
+    const uint8_t * end = ((uint8_t *)ofs) + ntohs(ofs->length);
+    while (p < end)
+    {
+        const ofp_action_header * h = (ofp_action_header *)p;
+        v_actions.push_back(h);
+        p += ntohs(h->len);
+    }
 }
 
 Flow_stats_in_event::Flow_stats_in_event(const datapathid& dpid,
