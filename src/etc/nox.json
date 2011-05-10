@@ -9,7 +9,8 @@
                 "routing",
                 "tests",
                 "role_config_manager",
-                "sepl_enforcer"],
+                "sepl_enforcer"
+                ],
             "Datapath_join_event": [
                 "topology",
                 "datapathmem",
@@ -32,7 +33,9 @@
                 "switchrtt"
                 ],
             "Packet_in_event": [
+                "spanning_tree",
                 "trackhost_pktin",
+                "sample_routing",
                 "hostip",
                 "authenticator",
                 "dwh",
@@ -84,8 +87,8 @@
                 "lavi_hosts",
                 "lavi_swlinks",
                 "lavi_host2sw",
-                    "lavi_networkflow",
-                    "lavi_hostflow",
+                "lavi_networkflow",
+                "lavi_hostflow",
                 "lavi flows",
                 "lavi nodes",
                 "lavi links",
@@ -96,20 +99,20 @@
                 "rttlog"
                 ],
             "Host_auth_event": [
-                    "authenticator"
+	            "authenticator"
                 ],
             "User_auth_event": [
-                    "authenticator"
+	            "authenticator"
                 ],
             "Flow_route_event": [
                 "lavitest_showflow",
-                    "lavi_networkflow",
-                    "lavi_hostflow"
+	            "lavi_networkflow",
+	            "lavi_hostflow"
                 ],
             "Host_location_event": [
-                    "lavi_hosts",
+	            "lavi_hosts",
                 "lavi_host2sw"
-                ]
+                ]        
+	        }
         }
-    }
 }

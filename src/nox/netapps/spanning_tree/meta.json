@@ -1,0 +1,13 @@
+{
+    "components": [
+        {
+            "name": "spanning_tree" ,
+            "dependencies": [
+                "python",
+                "discovery",
+                "jsonmessenger"
+            ],
+            "python": "nox.netapps.spanning_tree.spanning_tree" 
+        }
+    ]
+}
