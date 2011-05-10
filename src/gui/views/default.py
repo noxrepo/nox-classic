@@ -12,9 +12,8 @@ from view import View
 
 class Default_View(View):
     def __init__(self, topoWidget):
-        View.__init__(self, topoWidget)    
+        View.__init__(self, topoWidget, "Default")    
         
-        self.name = "Default"
         self.a = QtGui.QLabel(" Toggle: (<font color='green'>N</font>)odes")
         self.b = QtGui.QLabel(" Node(<font color='green'>I</font>)Ds \
                 Lin(<font color='green'>K</font>)s")

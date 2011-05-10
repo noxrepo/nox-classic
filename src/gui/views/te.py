@@ -17,9 +17,7 @@ TEDRequest, TEDReply, RemoveTunnelRequest
 class TE_View(View):   
     
     def __init__(self, topoWidget):
-        View.__init__(self, topoWidget)    
-        
-        self.name = "Traffic Engineering"
+        View.__init__(self, topoWidget, "Traffic Engineering")    
         
         # TE view buttons
         TTBtn = QtGui.QPushButton('&Tunnel Table')

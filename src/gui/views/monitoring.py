@@ -2,63 +2,29 @@
 Monitoring view for drawn topology
 
 @author Kyriakos Zarifis
+@author Rean Griffith
 '''
 from PyQt4 import QtGui, QtCore
 from view import View
-import random
 import simplejson as json
-
-'''
-from nox.ripcordapps.dispatch_server.ripcord_pb2 import Vertex, Edge, Path, \
-Tunnel, Tunnels, TunnelsRequest, Topology, DisplayTunnel, NewTunnelRequest, \
-SwitchQuery, Generic, SwitchQueryReply, TopologyRequest, TopologyReply
-'''
 
 class Monitoring_View(View):
 
     def __init__(self, topoWidget):
-        View.__init__(self, topoWidget)
-        
-        self.name = "Monitoring"
+        View.__init__(self, topoWidget, "Monitoring")
         
         # Monitoring view buttons
-        mrSvcBtn = QtGui.QPushButton('&MapReduce Cluster')
-        storageSvcBtn = QtGui.QPushButton('&Storage Cluster')
-        resetSvcBtn = QtGui.QPushButton('&Reset')
         infoBtn = QtGui.QPushButton('What is Monitoring?')
         
-        '''
-        self.connect(mrSvcBtn, QtCore.SIGNAL('clicked()'),
-                    self.show_map_reduce_cluster)
-        self.connect(storageSvcBtn, QtCore.SIGNAL('clicked()'),
-                    self.show_storage_cluster)
-        self.connect(resetSvcBtn, QtCore.SIGNAL('clicked()'),
-                     self.reset_services)
-        '''
-        self.connect(infoBtn, QtCore.SIGNAL('clicked()'),
-                     self.show_monitoring_info)
+        self.connect(infoBtn, QtCore.SIGNAL('clicked()'), self.showInfo)
        
-        self.buttons.append(mrSvcBtn)
-        self.buttons.append(storageSvcBtn)
-        self.buttons.append(resetSvcBtn)
         self.buttons.append(infoBtn)
 
         for b in self.buttons:
             b.setCheckable(True)
-        #self.buttons[0].setChecked(True)
         
-        self.stats = {}  # maps tuples (dpid, port) to utilization
-        self.service_subset = set([])
-        self.service_name = ""
-
-        # Connect methods to signals
-        #self.get_port_stats_sig.connect( self.get_port_stats )
-        # Connect to signal from communication to handle switch query replies
-        #self.topologyInterface.switch_query_reply_received_signal.connect( \
-        #    self.show_stats_reply )
-
-        #self.topologyInterface.topology_received_signal.connect( \
-        #    self.show_topology_reply )
+        # maps tuples (dpid, port) to utilization
+        self.stats = {}  
         
         self.topologyInterface.monitoring_received_signal.connect( \
             self.got_monitoring_msg )
@@ -85,7 +51,6 @@ class Monitoring_View(View):
             self.show_stats_reply(jsonmsg)
 
     def get_port_stats( self, dpid ):
-        self.logDisplay.setText( "Query port stats from dpid: 0x%s" % (dpid) )
         self.get_stats(dpid, "portstats")
 
     def get_table_stats( self, dpid ):
@@ -104,92 +69,147 @@ class Monitoring_View(View):
         self.get_stats(dpid, "queuestats")
 
     def show_stats_reply( self, replyMsg ):
+        
+        reply = json.loads( replyMsg["data"] )
+        self.infoDisplay.grab()
+        
         if replyMsg["msg_type"] == "portstats":
-            reply = json.loads( replyMsg["data"] )
-            line = ""
-            line += str(len(reply[0])) + " ports\n"
+            msg = "Query results came back (dpid=0x%x)"%replyMsg["dpid"]
+            msg += "\n"+str(len(reply[0]))+" ports:\n"
+            self.infoDisplay.append(msg)
             for item in reply[0]:
-                line += "--------------------\n" + \
-                        "Port number : " + str(item['port_no']) + "\n" + \
-                        "tx bytes    : " + str(item['tx_bytes']) + "\n" + \
-                        "rx bytes    : " + str(item['rx_bytes']) + "\n" + \
-                        "tx packets  : " + str(item['tx_packets']) + "\n" + \
-                        "rx packets  : " + str(item['rx_packets']) + "\n" + \
-                        "tx dropped  : " + str(item['tx_dropped']) + "\n" + \
-                        "rx dropped  : " + str(item['rx_dropped']) + "\n" + \
-                        "tx errors   : " + str(item['tx_errors']) + "\n" + \
-                        "rx errors   : " + str(item['rx_errors']) + "\n" + \
-                        "collisions  : " + str(item['collisions']) + "\n" + \
-                        "rx over err : " + str(item['rx_over_err']) + "\n" + \
-                        "rx frame err: " + str(item['rx_frame_err'])+ "\n" + \
-                        "rx crc err  : " + str(item['rx_crc_err']) + "\n" + \
-                        "--------------------\n"
-            self.logDisplay.setText("Query results came back (dpid=0x%x):\n%s"\
-                                         % (replyMsg["dpid"],line))
+                port = "\n" + \
+                    "Port number: " + str(item['port_no']) + "\n" + \
+                    "tx bytes    \t: " + str(item['tx_bytes']) + "\n" + \
+                    "rx bytes    \t: " + str(item['rx_bytes']) + "\n" + \
+                    "tx packets  \t: " + str(item['tx_packets']) + "\n" + \
+                    "rx packets  \t: " + str(item['rx_packets']) + "\n" + \
+                    "tx dropped  \t: " + str(item['tx_dropped']) + "\n" + \
+                    "rx dropped  \t: " + str(item['rx_dropped']) + "\n" + \
+                    "tx errors   \t: " + str(item['tx_errors']) + "\n" + \
+                    "rx errors   \t: " + str(item['rx_errors']) + "\n" + \
+                    "collisions  \t: " + str(item['collisions']) + "\n" + \
+                    "rx over err \t: " + str(item['rx_over_err']) + "\n" + \
+                    "rx frame err\t: " + str(item['rx_frame_err'])+ "\n" + \
+                    "rx crc err  \t: " + str(item['rx_crc_err']) + "\n"
+                self.infoDisplay.append(port)
+            
         elif replyMsg["msg_type"] == "tablestats":
-            reply = json.loads( replyMsg["data"] )
-            line = ""
-            line += str(len(reply[0])) + " tables\n"
+            msg = "Query results came back (dpid=0x%x)"%replyMsg["dpid"]
+            msg += "\n"+str(len(reply[0]))+" tables:\n"
+            self.infoDisplay.append(msg)
             for item in reply[0]:
-                line += "--------------------\n" + \
-                "Table name    : " + str(item['name']) + "\n" + \
-                "Table id      : " + str(item['table_id']) + "\n" + \
-                "Max entries   : " + str(item['max_entries']) + "\n" + \
-                "Active count  : " + str(item['active_count']) + "\n" + \
-                "Lookup count  : " + str(item['lookup_count']) + "\n" + \
-                "Matched count : " + str(item['matched_count']) + "\n" + \
-                "--------------------\n"
-            self.logDisplay.setText("Query results came back (dpid=0x%x):\n%s"\
-                                        % (replyMsg["dpid"],line))
+                table = "\n" + \
+                "Table name   \t: " + str(item['name']) + "\n" + \
+                "Table id   \t\t: " + str(item['table_id']) + "\n" + \
+                "Max entries  \t: " + str(item['max_entries']) + "\n" + \
+                "Active count \t: " + str(item['active_count']) + "\n" + \
+                "Lookup count \t: " + str(item['lookup_count']) + "\n" + \
+                "Matched count\t: " + str(item['matched_count']) + "\n"
+                self.infoDisplay.append(table)
+                
         elif replyMsg["msg_type"] == "aggstats":
-            reply = json.loads( replyMsg["data"] )
-            line = ""
-            line += "--------------------\n" + \
-            "Packet count : " + str(reply[0]['packet_count']) + "\n" + \
-            "Byte count   : " + str(reply[0]['byte_count']) + "\n" + \
-            "Flow count   : " + str(reply[0]['flow_count']) + "\n" + \
-            "--------------------\n"
-            self.logDisplay.setText("Query results came back (dpid=0x%x):\n%s"\
-                                         % (replyMsg["dpid"],line))
+            msg = "Query results came back (dpid=0x%x)"%replyMsg["dpid"]
+            msg += "\nAggregate statistics:\n"
+            self.infoDisplay.append(msg)
+            agg = "\n" + \
+            "Packet count \t: " + str(reply[0]['packet_count']) + "\n" + \
+            "Byte count   \t: " + str(reply[0]['byte_count']) + "\n" + \
+            "Flow count   \t: " + str(reply[0]['flow_count']) + "\n"
+            self.infoDisplay.append(agg)
+            
         elif replyMsg["msg_type"] == "flowstats":
-            reply = json.loads( replyMsg["data"] )
-            line = ""
-            line += str(len(reply[0])) + " flows\n"
+            msg = "Query results came back (dpid=0x%x)"%replyMsg["dpid"]
+            msg += "\n"+str(len(reply[0]))+" flows:"
+            self.infoDisplay.append(msg)
             for item in reply[0]:
-                line += "--------------------\n" + \
-                "Packet count : " + str(item['packet_count']) + "\n" + \
-                "Hard timeout : " + str(item['hard_timeout']) + "\n" + \
-                "Byte count   : " + str(item['byte_count']) + "\n" + \
-                "Idle timeout : " + str(item['idle_timeout']) + "\n" + \
-                "Duration nsec: " + str(item['duration_nsec']) + "\n" + \
-                "Duration sec : " + str(item['duration_sec']) + "\n" + \
-                "Priority     : " + str(item['priority']) + "\n" + \
-                "Cookie       : " + str(item['cookie']) + "\n" + \
-                "Table id     : " + str(item['table_id']) + "\n" + \
-                "Match        : " + "\n"
-                for key in item['match']:
-                    line += "\t" + key + ":" + str(item['match'][key]) + "\n"
-                line += "--------------------\n"
-            self.logDisplay.setText("Query results came back (dpid=0x%x):\n%s"\
-                                         % (replyMsg["dpid"],line))
+                msg = "\nMatch : \n"
+                #for key in item['match']:
+                #    msg += key + "=" + str(item['match'][key]) + " "
+                # too many checks, optimize performance... Maybe do the above
+                # for every item except MAC/IPs, and treat those separately
+                match = item['match']
+                msg += "in_port: "+str(match['in_port'])+"  "
+                if "dl_src" in match:
+                    msg += "dl_src: "+hex(match['dl_src'])+"  "
+                if "dl_dst" in match:
+                    msg += "dl_dst: "+hex(match['dl_dst'])+"  "
+                if "nw_src" in match:
+                    msg += "nw_src: "+self.intToDottedIP(int(match['nw_src']))+"  "
+                if "nw_dst" in match:
+                    msg += "nw_dst: "+self.intToDottedIP(int(match['nw_dst']))+"  "
+                if "tp_src" in match:
+                    msg += "tp_src: "+str(match['tp_src'])+"  "
+                if "tp_dst" in match:
+                    msg += "tp_dst: "+str(match['tp_dst'])+"  "
+                if "nw_dst_n_wild" in match:
+                    msg += "nw_dst_n_wild: "+str(match['nw_dst_n_wild'])+"  "
+                if "nw_proto" in match:
+                    '''
+                    if match['dl_type'] == 0x806:
+                        if match['nw_proto'] == 0x1:
+                            msg += "nw_proto: (overwritten)arp_request  "
+                        elif match['nw_proto'] == 0x2:
+                            msg += "nw_proto: (overwritten)arp_reply  "
+                    elif match['nw_proto'] == 0x1:
+                        msg += "nw_proto: icmp  "
+                    else:
+                        msg += "nw_proto: "+str(match['nw_proto'])+"  "
+                    '''
+                    msg += "nw_proto: "+str(match['nw_proto'])+"  "
+                if "dl_type" in match:
+                    '''
+                    if match['dl_type'] == 0x800:
+                        msg += "dl_type: ip  "
+                    elif match['dl_type'] == 0x806:
+                        msg += "dl_type: arp  "
+                    else:
+                        msg += "dl_type: "+hex(match['dl_type'])+"  "
+                    '''
+                    msg += "dl_type: "+hex(match['dl_type'])+"  "
+                if "dl_vlan" in match:
+                    msg += "dl_vlan: "+str(match['dl_vlan'])+"  "
+                if "dl_vlan_pcp" in match:
+                    msg += "dl_vlan_pcp: "+str(match['dl_vlan_pcp'])+"  "
+                if "nw_tos" in match:
+                    msg += "nw_tos: "+str(match['nw_tos'])+"  "
+                
+                msg += "\nCounters : \n" + \
+                "Packet count: " + str(item['packet_count']) + "  " + \
+                "Hard timeout: " + str(item['hard_timeout']) + "  " + \
+                "Byte count: " + str(item['byte_count']) + "  " + \
+                "Idle timeout: " + str(item['idle_timeout']) + "  " + \
+                "Duration nsec: " + str(item['duration_nsec']) + "  " + \
+                "Duration sec: " + str(item['duration_sec']) + "  " + \
+                "Priority: " + str(item['priority']) + "  " + \
+                "Cookie: " + str(item['cookie']) + "  " + \
+                "Table id: " + str(item['table_id'])
+                msg += "\nActions : \n"
+                for action in item['actions']:
+                    msg += "Port: "+str(action['port'])
+                """NEED TO ADD PARSING FOR OTHER ACTION_TYPES TOO"""
+                #action_types = enumerate["output","setvlan",etc...]
+                # msg += "Type: "+types[action['type']]) etc
+                self.infoDisplay.append(msg)
+                
         elif replyMsg["msg_type"] == "queuestats":
-            reply = json.loads( replyMsg["data"] )
-            line = ""
-            line += str(len(reply[0])) + " queues\n"
+            msg = "Query results came back (dpid=0x%x)"%replyMsg["dpid"]
+            msg += "\n"+str(len(reply[0]))+" queues:\n"
+            self.infoDisplay.append(msg)
             for item in reply[0]:
-                line += "--------------------\n" + \
+                queue = "\n" + \
                 "Port number : " + str(item['port_no']) + "\n" + \
                 "Queue id    : " + str(item['queue_id']) + "\n" + \
                 "tx bytes    : " + str(item['tx_bytes']) + "\n" + \
                 "tx packets  : " + str(item['tx_packets']) + "\n" + \
-                "tx errors   : " + str(item['tx_errors']) + "\n" + \
-                "--------------------\n"
-            self.logDisplay.setText("Query results came back (dpid=0x%x):\n%s"\
-                                         % (replyMsg["dpid"],line))
+                "tx errors   : " + str(item['tx_errors']) + "\n"
+                self.infoDisplay.append(queue)
+            
         elif replyMsg["msg_type"] == "latestsnapshot":
-            reply = json.loads( replyMsg["data"] )
-            line = ""
-            line += "--------------------\n" + \
+            msg = "Query results came back (dpid=0x%x)"%replyMsg["dpid"]
+            msg += "Latest snapshot:\n"
+            self.infoDisplay.append(msg)
+            snapshot = "\n" + \
             "Collection epoch : " + str(reply['collection_epoch']) + "\n" + \
             "Epoch delta      : " + str(reply['epoch_delta']) + "\n" + \
             "Time since delta : " + str(reply['time_since_delta']) + "\n" + \
@@ -220,10 +240,10 @@ class Monitoring_View(View):
             
             # Add in port info
             if len(reply['ports']) > 0:
-                line += "\nPort info: \n"
+                snapshot += "\nPort info: \n"
                 for port_num in reply['ports']:
                     port_info = reply['ports'][port_num]
-                    line += "Port number : " + str(port_num) + "\n" + \
+                    snapshot += "Port number : " + str(port_num) + "\n" + \
                     "Port name : " + \
                          port_info['port_cap']['port_name'] + "\n" + \
                     "Enabled   : " + \
@@ -263,13 +283,12 @@ class Monitoring_View(View):
                      "Delta tx errors : " + \
                         str(port_info['delta_tx_errors']) + "\n" + \
                      "Delta rx errors : " + \
-                        str(port_info['delta_rx_errors']) + "\n\n"
-            line += "--------------------\n"
+                        str(port_info['delta_rx_errors']) + "\n"
             
-            self.logDisplay.setText("Query results came back (dpid=0x%x):\n%s"\
-                                         % (replyMsg["dpid"],line))
+            self.infoDisplay.append(snapshot)
         else:
-            self.logDisplay.setText( "Query results came back: %s" % \
+            # Uknown reply
+            self.infoDisplay.append( "Query results came back: %s" % \
                                      ( str(replyMsg) ) )
         
     def update_stats(self, utils):
@@ -315,55 +334,11 @@ class Monitoring_View(View):
         return QtCore.Qt.gray
 
     def link_pattern(self, link):
-        pattern = QtCore.Qt.SolidLine
-        return pattern
+        return QtCore.Qt.SolidLine
         
     def node_color(self, node):
-        '''
-        if node.dpid in self.service_subset:
-            if self.service_name == "serviceB":
-                return QtGui.QColor(QtCore.Qt.yellow)
-            else:
-                return QtGui.QColor(QtCore.Qt.blue)
-        else:
-        '''
         return QtGui.QColor(QtCore.Qt.green)
         
-    def show_map_reduce_cluster(self):
-        for b in self.buttons:
-            b.setChecked(False)
-        self.buttons[0].setChecked(True)
-        self.subview = "MapReduce Cluster" 
-        self.filter_map_reduce()
-            
-    def show_storage_cluster(self):
-        for b in self.buttons:
-            b.setChecked(False)
-        self.buttons[1].setChecked(True)
-        self.subview = "Storage Cluster" 
-        self.filter_storage()
-
-    def reset_services( self ):
-        for b in self.buttons:
-            b.setChecked(False)
-        self.buttons[2].setChecked(True)
-        self.service_name = ""
-        self.service_subset.clear()
-        # Force a repaint
-        self.topoWidget.topologyView.updateAll()
-
-    def filter_map_reduce(self):
-        self.get_filtered_topology( "serviceA" )
-
-    def filter_storage(self):
-        self.get_filtered_topology( "serviceB" )
-
-    def get_filtered_topology( self, subset_name ):
-        # Construct and send topo request message                           
-        topoRequestMsg = TopologyRequest()
-        topoRequestMsg.subset_name = subset_name
-        self.topologyInterface.send( topoRequestMsg )
-
     def show_topology_reply( self, topoMsg ):
         if topoMsg.subset_name == "serviceA" or \
                 topoMsg.subset_name == "serviceB":
@@ -381,51 +356,20 @@ class Monitoring_View(View):
 
         # Force a re-paint
         self.topoWidget.topologyView.updateAll()
-
-    def show_monitoring_info(self):
-        for b in self.buttons:
-            b.setChecked(False)
-        self.buttons[3].setChecked(True)
-        self.subview = "What is Monitoring"
-        info_popup = InfoPopup(self)
-        info_popup.exec_()
         
-class InfoPopup(QtGui.QDialog):
-    ''' popup showing basic background for Monitoring '''
+    def intToDottedIP(self, intip):
+        octet = ''
+        for exp in [3,2,1,0]:
+            octet = octet + str(intip / ( 256 ** exp )) + "."
+            intip = intip % ( 256 ** exp )
+        return(octet.rstrip('.'))        
+        
+    def showInfo(self):
+        self.buttons[0].setChecked(True)
 
-    def __init__(self, parent=None):
-        ''' Sets up graphics for popup '''
-        self.parent = parent
-        QtGui.QWidget.__init__(self)
-        self.setWindowTitle("Monitoring Basic Info")
-        self.resize(500, 150)
-        self.combo = QtGui.QGroupBox(self)
-
-        ok = QtGui.QPushButton("Ok")
-        self.connect(ok, QtCore.SIGNAL('clicked()'), self.ok)
-        self.hbox = QtGui.QHBoxLayout()
-        self.hbox.addStretch(1)
-        self.hbox.addWidget(ok)
-
-        self.vbox = QtGui.QVBoxLayout()
-        grid = QtGui.QGridLayout()
-        msg1 = "Monitoring visualizes switch and link health/status information" 
-        msg2 = "(e.g., switch flow tables, link utilizations, packet drops/errors, etc.)."
-        msg3 = "Monitoring also allows network administrators to view and manage"
-        msg4 = "services (applications) deployed in the network."
-        l = QtGui.QLabel(msg1)
-        m = QtGui.QLabel(msg2)
-        n = QtGui.QLabel(msg3)
-        o = QtGui.QLabel(msg4)
-        grid.addWidget(l, 1, 1)
-        grid.addWidget(m, 2, 1)
-        grid.addWidget(n, 3, 1)
-        grid.addWidget(o, 4, 1)
-
-        self.combo.setLayout(self.vbox)
-        self.vbox.addLayout(grid)
-        self.vbox.addLayout(self.hbox)
-        self.vbox.addStretch(1)
-
-    def ok(self):
-        self.accept()
+        msgBox = QtGui.QMessageBox()
+        msgBox.setWindowTitle("Monitoring View")
+        msgBox.setText("Monitoring visualizes switch and link health/status "+\
+            "information (e.g., switch flow tables, link utilizations, packet"+\
+            " drops/errors, etc.)")
+        msgBox.exec_()

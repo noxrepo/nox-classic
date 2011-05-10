@@ -20,9 +20,8 @@ class ET_View(View):
     powerSliderSignal = QtCore.pyqtSignal()
 
     def __init__(self, topoWidget):
-        View.__init__(self, topoWidget)    
+        View.__init__(self, topoWidget, "Elastic Tree")    
 
-        self.name = "Elastic Tree"
         self.logDisplay = self.topoWidget.parent.logWidget.logDisplay
         utilBtn = QtGui.QPushButton('Change Util Bound')
         infoBtn = QtGui.QPushButton('What is ElasticTree?')
