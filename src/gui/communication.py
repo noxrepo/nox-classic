@@ -54,12 +54,12 @@ class LogHandler(SocketServer.BaseRequestHandler):
     
     def handle(self):
         msg = self.request[0].strip()
-        self.server.logWidget.trigger.emit(msg+'\n')
+        self.server.logWidget.dbWrapper.logMsgRcvdSignal.emit(msg+'\n')
 
 class TopologyInterface(QtCore.QThread, QtGui.QWidget):
 
     ''' 
-    Communicates with lavi through jsonmessenger in order to receive topology
+    Communicates with lavi through jsonmessenger in order to receive topology-view
     information. Used to communicate with jsonmessenger for other, component-
     specific event notification too. (eg new tunneltable etc)
     '''
@@ -83,6 +83,15 @@ class TopologyInterface(QtCore.QThread, QtGui.QWidget):
     
     # Define a new signal that takes a Topology type as an argument
     topology_received_signal = QtCore.pyqtSignal(str)
+   
+    # Signal used to notify STP view of new msg 
+    spanning_tree_received_signal = QtCore.pyqtSignal(str)
+    
+    # Signal used to notify routing view of new msg 
+    routing_received_signal = QtCore.pyqtSignal(str)
+    
+    # Signal used to notify FlowTracer view of new msg 
+    flowtracer_received_signal = QtCore.pyqtSignal(str)
     
     def __init__(self, topoView):
         QtCore.QThread.__init__(self)
@@ -111,8 +120,8 @@ class TopologyInterface(QtCore.QThread, QtGui.QWidget):
         
         
     def retry_connection(self):
-        print "Retrying connection to NOX..."
-        sleep(1)
+        print "Retrying connection to NOX...(is 'monitoring' component running?)"
+        sleep(2)
         try:
             self.sock.connect((self.noxip,self.noxport))
             self.connected = True
@@ -126,7 +135,7 @@ class TopologyInterface(QtCore.QThread, QtGui.QWidget):
         if not "xid" in msg:
             msg["xid"] = self.xid_counter
         self.xid_counter += 1   
-        print 'Sending ...%s' % (msg) 
+        #print 'Sending ...%s' % (msg) 
         self.sock.send(simplejson.dumps(msg))
         
     def shutdown(self):
@@ -171,6 +180,12 @@ class Listener(QtCore.QThread):
                     self.p.topology_received_signal.emit(msg)
                 elif jsonmsg["type"] == "monitoring":
                     self.p.monitoring_received_signal.emit(msg)
+                elif jsonmsg["type"] == "spanning_tree":
+                    self.p.spanning_tree_received_signal.emit(msg)
+                elif jsonmsg["type"] == "sample_routing":
+                    self.p.routing_received_signal.emit(msg)
+                elif jsonmsg["type"] == "flowtracer":
+                    self.p.routing_received_signal.emit(msg)
                 msg = ''
                 outstanding_lbraces = 0
                 end = False

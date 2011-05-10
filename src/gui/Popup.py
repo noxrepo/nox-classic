@@ -41,7 +41,7 @@ class FilterComboBox(QtGui.QDialog):
             for cb in self.checkboxes:
                 if cb.isChecked():
                     self.selection = self.selection +' '+ cb.text()
-            self.textbox.setText(self.selection)
+            self.textbox.setText(self.selection[1:])
             self.parent._filter()
             self.accept()
                 
@@ -101,10 +101,19 @@ class CompComboBox(FilterComboBox):
                     
         def addCheckboxes(self):            
             self.vbox.addWidget(QtGui.QLabel("Show the following components:"))
+            
             select = "select distinct component from messages"
-            self.parent.parent.curs.execute(select)
-            for comp in self.parent.parent.curs:
-                b = QtGui.QCheckBox(str(comp)[3:len(str(comp))-3])
+            #self.parent.parent.curs.execute(select)
+            #for comp in self.parent.parent.curs:
+            #    b = QtGui.QCheckBox(str(comp)[3:len(str(comp))-3])
+            #    self.vbox.addWidget(b)
+            #    self.checkboxes.append(b)
+                
+            q = self.parent.parent.dbWrapper.q       
+            q.exec_("select distinct component from messages")  
+            fieldNo = q.record().indexOf("component")
+            while q.next():
+                b = QtGui.QCheckBox(q.value(fieldNo).toString())
                 self.vbox.addWidget(b)
                 self.checkboxes.append(b)
                 

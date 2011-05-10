@@ -16,11 +16,11 @@ class ConsoleWidget(QtGui.QWidget):
         # Handle to logDisplay
         self.logDisplay = self.parent.logWidget.logDisplay
         
-        # Handle to sqldg
-        self.curs = self.parent.logWidget.curs
+        # Handle to sqldb
+        ###self.curs = self.parent.logWidget.curs
         
         # Configure Widget
-        self.label = QtGui.QLabel('Send JSON command to NOX')     
+        self.label = QtGui.QLabel('Send JSON command to NOX component')     
         self.consoleEdit = QtGui.QLineEdit()
         self.consoleEdit.setText("{\"type\":\"lavi\",\"command\":\"request\",\"node_type\":\"all\"}")
         

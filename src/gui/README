@@ -4,7 +4,10 @@ sending json-formatted messages to NOX.
 
 
 To run, you need to install the Qt bindings for python:
-    sudo apt-get install python-qt4
+    sudo apt-get install python-qt4 
+    
+    (python-qt4-sql
+    libqt4-sql-sqlite  ?)
     
 
 For Debian Lenny Distributions, aka for anyone developing withing the mininet VM
