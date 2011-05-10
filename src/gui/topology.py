@@ -1,7 +1,7 @@
 '''
 The topology panel of the GUI 
 
-@author Kyriakos Zarifis
+@author Kyriakos Zarifis (kyr.zarifis@gmail.com)
 '''
 
 from PyQt4 import QtGui, QtCore
@@ -15,8 +15,10 @@ import simplejson as json
 ### Add custom topology views here  (add them in topoWidget.__init__() below)
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 from views.monitoring import Monitoring_View
-#from views.te import TE_View
-#from views.elastictree import ET_View
+from views.rad import RAD_View
+from views.spanningtree import STP_View
+from views.samplerouting import Sample_Routing_View
+from views.flowtracer import Flow_Tracer_View
 
 
 class Node(QtGui.QGraphicsItem):
@@ -25,14 +27,17 @@ class Node(QtGui.QGraphicsItem):
     '''
     Type = QtGui.QGraphicsItem.UserType + 1
     
-    def __init__(self, graphWidget, _id, _layer=1):
+    def __init__(self, graphWidget, _id, _type, _layer=1):
         QtGui.QGraphicsItem.__init__(self)
 
         self.graph = graphWidget
         self.topoWidget = self.graph.parent
-        self.linkList = []
+        self.infoDisplay = self.topoWidget.parent.infoWidget
         self.id = str(_id)
-        self.layer = _layer
+        self.type = _type
+        self.linkList = []
+        self.neighbors = {}  # "str(port) : str(neigh.ID)"
+        #self.layer = _layer
         self.newPos = QtCore.QPointF()
         self.setFlag(QtGui.QGraphicsItem.ItemIsMovable)
         self.setFlag(QtGui.QGraphicsItem.ItemSendsGeometryChanges)
@@ -45,66 +50,51 @@ class Node(QtGui.QGraphicsItem):
         self.showNode = True    # Draw Node
         self.isSilent = False   # is switch unresponsive? - draw X
         
-        # Switch details menu
-        self.switchDetails = QtGui.QMenu('&Switch Details')
-        self.switchDetails.addAction('Datapath ID: 0x%s' % self.id)
-        self.switchDetails.addAction('Links: ' + str(len(self.linkList)))
-        self.switchDetails.addAction('Table Size: '+ '')
-
-        # Switch stats menu
-        self.switchStats = QtGui.QMenu('&Get Switch Stats')
-    
     def query_port_stats(self):
-        self.graph.parent.logDisplay.parent.freezeLog = True
-        self.graph.parent.logDisplay\
-            .setText( 'Querying port stats for switch: 0x%s' % self.id )
+        self.infoDisplay.grab()
+        self.infoDisplay.append('Querying port stats for switch: 0x%s'%self.id)
         self.topoWidget.monitoring_view.get_port_stats( self.id )
 
     def query_table_stats(self):
-        self.graph.parent.logDisplay.parent.freezeLog = True
-        self.graph.parent.logDisplay\
-            .setText( 'Querying table stats for switch: 0x%s' % self.id )
+        self.infoDisplay.grab()
+        self.infoDisplay.append('Querying table stats for switch: 0x%s'%self.id)
         self.topoWidget.monitoring_view.get_table_stats( self.id )
 
     def query_agg_stats(self):
-        self.graph.parent.logDisplay.parent.freezeLog = True
-        self.graph.parent.logDisplay\
-            .setText( 'Querying agg stats for switch: 0x%s' % self.id )
+        self.infoDisplay.grab()
+        self.infoDisplay.append('Querying agg stats for switch: 0x%s'%self.id)
         self.topoWidget.monitoring_view.get_aggregate_stats( self.id )
 
     def query_latest_snapshot(self):
-        self.graph.parent.logDisplay.parent.freezeLog = True
-        self.graph.parent.logDisplay\
-            .setText( 'Querying latest snapshot stats for switch: 0x%s' %\
-                          self.id )
+        self.infoDisplay.grab()
+        self.infoDisplay.append('Querying latest snapshot for switch: 0x%s'%self.id )
         self.topoWidget.monitoring_view.get_latest_snapshot( self.id )
 
     def query_flow_stats(self):
-        self.graph.parent.logDisplay.parent.freezeLog = True
-        self.graph.parent.logDisplay\
-            .setText( 'Querying flow stats for switch: 0x%s' % self.id )
+        self.infoDisplay.grab()
+        self.infoDisplay.append('Querying flow stats for switch: 0x%s'%self.id)
         self.topoWidget.monitoring_view.get_flow_stats( self.id )
+        self.infoDisplay.grab()
 
     def query_queue_stats(self):
-        self.graph.parent.logDisplay.parent.freezeLog = True
-        self.graph.parent.logDisplay\
-            .setText( 'Querying queue stats for switch: 0x%s' % self.id )
+        self.infoDisplay.grab()
+        self.infoDisplay.append('Querying queue stats for switch: 0x%s'%self.id)
         self.topoWidget.monitoring_view.get_queue_stats( self.id )
-
-    def filter_map_reduce(self):
-        self.filter_topology( "serviceA" )
-
-    def filter_storage(self):
-        self.filter_topology( "serviceB" )
-
-    def filter_topology(self, subset_name):
-        self.topoWidget.monitoring_view.get_filtered_topology( subset_name )
 
     def type(self):
         return Node.Type
 
     def addLink(self, link):
         self.linkList.append(link)
+        
+        # create localPort->neighborID mapping
+        if link.source.id == self.id:
+            neibID = link.dest.id
+        else:
+            neibID = link.source.id
+        
+        self.neighbors[link.dport] = neibID
+        
         link.adjust()
 
     def links(self):
@@ -123,10 +113,14 @@ class Node(QtGui.QGraphicsItem):
         return path
 
     def paint(self, painter, option, widget):    
+        """ too many IF checks, optimize """
         if self.showNode:
             painter.setPen(QtCore.Qt.NoPen)
             painter.setBrush(QtGui.QColor(QtCore.Qt.darkGray).light(25))
-            painter.drawEllipse(-9, -9, 20, 20)
+            if self.type == "host":
+                painter.drawRect(-9, -9, 15, 15)
+            else:
+                painter.drawEllipse(-9, -10, 20, 20)
 
             gradient = QtGui.QRadialGradient(-3, -3, 10)
             
@@ -134,9 +128,16 @@ class Node(QtGui.QGraphicsItem):
             activeView = self.graph.parent.views[self.graph.drawAccess]
             #pattern = activeView.node_pattern(self) not implemented
             color = activeView.node_color(self)
+            
             if not color:
                 color = QtGui.QColor(QtCore.Qt.green)
-            
+            """
+            if self.type == "host":
+                color = QtGui.QColor(QtCore.Qt.yellow)
+            else:
+                if not color:
+                    color = QtGui.QColor(QtCore.Qt.green)
+            """
             if option.state & QtGui.QStyle.State_Sunken:
                 gradient.setCenter(3, 3)
                 gradient.setFocalPoint(3, 3)
@@ -156,12 +157,14 @@ class Node(QtGui.QGraphicsItem):
 
             painter.setBrush(QtGui.QBrush(gradient))
             painter.setPen(QtGui.QPen(QtCore.Qt.black, 0))
-            painter.drawEllipse(-10, -10, 20, 20)
+            if self.type == "host":
+                painter.drawRect(-10, -10, 15, 15)
+            else:
+                painter.drawEllipse(-10, -10, 20, 20)
         
         if self.showID:
             # Text.
             textRect = self.boundingRect()
-            #message = "0x"+self.id#.lstrip("0")
             message = self.id
 
             font = painter.font()
@@ -207,36 +210,32 @@ class Node(QtGui.QGraphicsItem):
     def mouseReleaseEvent(self, event):
         if event.button() == QtCore.Qt.RightButton:
             popup = QtGui.QMenu()
-            popup.addAction("Show &Flow Table", self.query_flow_stats)
-            popup.addSeparator()
-            
-            # Build new switchDetails menu
-            self.switchDetails = QtGui.QMenu('&Switch Details')
-            self.switchDetails.addAction('Datapath ID: 0x%s' % self.id)
-            self.switchDetails.addAction('Links: ' + str(len(self.linkList)/2))
-            self.switchDetails.addAction('Table Size: '+ '')
-            
-            
-            popup.addMenu(self.switchDetails)
-            popup.addSeparator()
-            
-            
-            
-            # Build new stats menu dynamically
-            statsMenu = popup.addMenu( '&Get Switch Stats' )
-            # Add a bunch of actions to sub menu
-            statsMenu.addAction( 'Port Stats', self.query_port_stats )
-            statsMenu.addAction( 'Table Stats', self.query_table_stats )
-            statsMenu.addAction( 'Aggregate Stats', self.query_agg_stats )
-            statsMenu.addAction( 'Flow Stats', self.query_flow_stats )
-            statsMenu.addAction( 'Queue Stats', self.query_queue_stats )
-            statsMenu.addAction( 'Latest snapshot', \
-                                     self.query_latest_snapshot )
-
-            popup.addSeparator()
-            #popup.addAction("Bring switch &up", self.alertSwitchUp)
-            #popup.addAction("Bring switch &down", self.alertSwitchDown)
-            #popup.addAction("Select/deselect switch", self.selectSwitch)
+            # Switch Details Menu
+            if self.type == "switch":
+                popup.addAction("Show &Flow Table", self.query_flow_stats)
+                popup.addSeparator()
+                popup.addMenu(self.nodeDetails)
+                popup.addSeparator()
+                # Build new stats menu (move to init and build once?)
+                statsMenu = QtGui.QMenu( '&Get Switch Stats' )
+                statsMenu.addAction('Port Stats', self.query_port_stats)
+                statsMenu.addAction('Table Stats', self.query_table_stats)
+                statsMenu.addAction('Aggregate Stats', self.query_agg_stats)
+                statsMenu.addAction('Flow Stats', self.query_flow_stats)
+                statsMenu.addAction('Queue Stats', self.query_queue_stats)
+                statsMenu.addAction('Latest snapshot', self.query_latest_snapshot)
+                popup.addMenu(statsMenu)
+                popup.addSeparator()
+                #popup.addAction("Bring switch &up", self.alertSwitchUp)
+                #popup.addAction("Bring switch &down", self.alertSwitchDown)
+                #popup.addAction("Select/deselect switch", self.selectSwitch)
+                popup.addSeparator()
+                activeView = self.graph.parent.views[self.graph.drawAccess]
+                popup.addMenu(activeView.nodeMenu)
+            # Host Details Menu
+            if self.type == "host":
+                popup.addMenu(self.nodeDetails)
+                
             popup.exec_(event.lastScreenPos())
         self.update()
         QtGui.QGraphicsItem.mouseReleaseEvent(self, event)
@@ -261,7 +260,6 @@ class Node(QtGui.QGraphicsItem):
         self.topoWidget.topologyView.topologyInterface.send(sendMsg)
         mainWindow.setStatusTip("Brought down switch %0x" % self.dpid)
 
-
     def selectSwitch(self):
         ''' interactive selection of switches by user '''
         if self.layer != HOST_LAYER:
@@ -282,7 +280,7 @@ class Node(QtGui.QGraphicsItem):
             sendMsg.dst = self.dpid
             self.topoWidget.topologyView.topologyInterface.send(sendMsg)
             self.topoWidget.selectedNode = None
-            
+        
     def toggleStatus(self):
         if self.isUp:
             self.alertSwitchDown()
@@ -307,34 +305,34 @@ class Node(QtGui.QGraphicsItem):
     def hoverEnterEvent(self, event):
         self.stillHover = True
         
-        # rebuild switchDetails menu
-        self.switchDetails = QtGui.QMenu('&Switch Details')
-        self.switchDetails.addAction('Datapath ID: 0x%s' % self.id)
-        self.switchDetails.addAction('Links: ' + str(len(self.linkList)/2))
-        self.switchDetails.addAction('Table Size: '+ '')
+        # refresh nodeDetails menu
+        self.nodeDetails = QtGui.QMenu('&Switch Details')
+        if self.type == "switch":
+            self.nodeDetails.addAction('Datapath ID: 0x%s' % self.id)
+            self.nodeDetails.addAction('Table Size: '+ '')
+        elif self.type == "host":
+            self.nodeDetails.addAction('Host ID: 0x%s' % self.id)
+        self.nodeDetails.addAction('Links: ' + str(len(self.linkList)))
         
         self.hoverPos = event.lastScreenPos() + QtCore.QPoint(10,10)
         self.hoverTimer = QtCore.QTimer()
-        self.hoverTimer.singleShot(500, self.showSwitchDetailsMenu)
+        self.hoverTimer.singleShot(500, self.popupNodeDetailsMenu)
     
     @QtCore.pyqtSlot()    
-    def showSwitchDetailsMenu(self):
+    def popupNodeDetailsMenu(self):
         if self.stillHover:
             #pos = self.mapToItem(self,self.pos() + QtCore.QPointF(10,10))
-            self.switchDetails.exec_(self.hoverPos)
+            self.nodeDetails.exec_(self.hoverPos)
         
     def hoverLeaveEvent(self, event):
         self.stillHover = False
-        self.switchDetails.hideTearOffMenu()
-    
+        # hide popup...(currently user has to click somewhere)
         
 class Link(QtGui.QGraphicsItem):
     '''
     Interactive Link 
     '''
-    Pi = math.pi
-    TwoPi = 2.0 * Pi
-
+    
     Type = QtGui.QGraphicsItem.UserType + 2
 
     def __init__(self, graphWidget, sourceNode, destNode, sport, dport,\
@@ -356,6 +354,7 @@ class Link(QtGui.QGraphicsItem):
         self.dport = dport
         self.stype = stype
         self.dtype = dtype
+        self.drawArrow = False
         self.source.addLink(self)
         self.dest.addLink(self)
         self.adjust()
@@ -369,8 +368,8 @@ class Link(QtGui.QGraphicsItem):
         # Link details menu
         self.linkDetails = QtGui.QMenu('&Link Details')
         self.linkDetails.addAction('Link ID: '+ str(self.uid))
-        self.linkDetails.addAction('Ends: '+'dpa:'+str(self.sport)\
-                        +'-dpb:'+str(self.dport))
+        self.linkDetails.addAction('Ends: '+self.source.id+':'+str(self.sport)\
+                        +"-"+self.dest.id+':'+str(self.dport))
         self.linkDetails.addAction('Capacity: ')
 
     def type(self):
@@ -394,7 +393,8 @@ class Link(QtGui.QGraphicsItem):
         if not self.source or not self.dest:
             return
 
-        line = QtCore.QLineF(self.mapFromItem(self.source, 0, 0), self.mapFromItem(self.dest, 0, 0))
+        line = QtCore.QLineF(self.mapFromItem(self.source, 0, 0),\
+                                self.mapFromItem(self.dest, 0, 0))
         length = line.length()
         
         if length == 0.0:
@@ -409,18 +409,19 @@ class Link(QtGui.QGraphicsItem):
     def boundingRect(self):
         if not self.source or not self.dest:
             return QtCore.QRectF()
-
-        #penWidth = 1
+        '''
         return QtCore.QRectF(self.sourcePoint,
                              QtCore.QSizeF(self.destPoint.x() - self.sourcePoint.x(),
                                            self.destPoint.y() - self.sourcePoint.y())).normalized()
+        
         '''
+        penWidth = 1
         extra = (penWidth + self.arrowSize) / 2.0
 
         return QtCore.QRectF(self.sourcePoint,
                              QtCore.QSizeF(self.destPoint.x() - self.sourcePoint.x(),
                                            self.destPoint.y() - self.sourcePoint.y())).normalized().adjusted(-extra, -extra, extra, extra)
-        '''
+        
         
     def paint(self, painter, option, widget):
         if not self.source or not self.dest:
@@ -442,14 +443,38 @@ class Link(QtGui.QGraphicsItem):
                 if option.state & QtGui.QStyle.State_Sunken:
                     color = QtGui.QColor(color).light(256)
                 else:
-                    color = QtGui.QColor(color).light(100)
+                    color = QtGui.QColor(color).light(90)
             else:
                 color = QtCore.Qt.darkGray
                 pattern = QtCore.Qt.DashLine
+            
+            if not color:
+                color = QtCore.Qt.gray
+            if not pattern:
+                pattern = QtCore.Qt.SolidLine
                 
             painter.setPen(QtGui.QPen(color, 1, 
                 pattern, QtCore.Qt.RoundCap, QtCore.Qt.RoundJoin))
             painter.drawLine(line)
+        
+        
+            # Draw the arrows if there's enough room.
+            angle = math.acos(line.dx() / line.length())
+            if line.dy() >= 0:
+                angle = 2*math.pi - angle
+
+            destArrowP1 = self.destPoint + \
+                QtCore.QPointF(math.sin(angle-math.pi/3)*self.arrowSize,
+                math.cos(angle-math.pi/3)*self.arrowSize)
+            destArrowP2 = self.destPoint + \
+                QtCore.QPointF(math.sin(angle-math.pi+math.pi/3)*self.arrowSize,
+                math.cos(angle-math.pi+math.pi/3)*self.arrowSize)
+            
+            if self.drawArrow:
+                painter.setBrush(color)
+                painter.drawPolygon(QtGui.QPolygonF([line.p2(), \
+                    destArrowP1, destArrowP2]))
+        
         
         # Draw port numbers
         if self.showPorts:
@@ -533,13 +558,14 @@ class TopoWidget(QtGui.QWidget):
         QtGui.QWidget.__init__(self, parent)
         self.parent = parent
         
-        # Handle to logDisplay
-        self.logDisplay = self.parent.logWidget.logDisplay
+        # Handle to infoDisplay
+        self.infoDisplay = self.parent.infoWidget
         
         self.topologyView = TopologyView(self)
         
         # Dictionary keeping track of views
         self.views = {}
+        
         # Default view
         default_view = Default_View(self)
         self.views[default_view.name] = default_view
@@ -548,12 +574,16 @@ class TopoWidget(QtGui.QWidget):
         ### Add custom topology views here
         """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
         self.monitoring_view = Monitoring_View(self)
-        #self.te_view = TE_View(self)
-        #self.et_view = ET_View(self)
-        # Add views to drawAccess dict here
+        self.rad_view = RAD_View(self)
+        self.stp_view = STP_View(self)
+        self.routing_view = Sample_Routing_View(self)
+        self.flowtracer_view = Flow_Tracer_View(self)
+        
         self.views[self.monitoring_view.name] = self.monitoring_view
-        #self.views[self.te_view.name] = self.te_view
-        #self.views[self.et_view.name] = self.et_view
+        self.views[self.rad_view.name] = self.rad_view
+        self.views[self.stp_view.name] = self.stp_view
+        self.views[self.routing_view.name] = self.routing_view
+        self.views[self.flowtracer_view.name] = self.flowtracer_view
         """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
         ### This is the only addition required in this file when adding views
         """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -571,6 +601,7 @@ class TopoWidget(QtGui.QWidget):
         
         self.selectedNode = None
         
+        
 class ChangeViewWidget(QtGui.QWidget):
     def __init__(self, parent):
         self.parent = parent
@@ -579,9 +610,30 @@ class ChangeViewWidget(QtGui.QWidget):
         # Configure Widget
         # Primary view buttons
         self.viewBtns = []
+        
+    
+        # Add 'Default' button first
+        button = QtGui.QPushButton("Default")
+        button.setCheckable(True)
+        button.setStatusTip("Switch to Default view")
+        self.viewBtns.append(button)
+        self.connect(button, QtCore.SIGNAL('clicked()'),
+                parent.views["Default"].show)
+        self.connect(button, QtCore.SIGNAL('clicked()'),
+                self.parent.topologyView.updateAll)
+        self.connect(button, QtCore.SIGNAL('clicked()'),
+                self.markView)
+        self.connect(button, QtCore.SIGNAL('clicked()'),
+                self.notify_backend)
+        
+        self.viewBtns[0].setChecked(True)
+        # Add the rest view buttons, random order
         for viewName, viewObject in self.parent.views.items():
+            if viewName == "Default" :
+                continue
             button = QtGui.QPushButton(viewName)
             button.setCheckable(True)
+            button.setStatusTip("Switch to %s view"%viewName)
             self.viewBtns.append(button)
             self.connect(button, QtCore.SIGNAL('clicked()'),
                     viewObject.show)
@@ -591,8 +643,6 @@ class ChangeViewWidget(QtGui.QWidget):
                     self.markView)
             self.connect(button, QtCore.SIGNAL('clicked()'),
                     self.notify_backend)
-        # Set 'default' button pushed
-        self.viewBtns[0].setChecked(True)
         
         # Added by custom views
         self.secondaryBtns = []
@@ -610,11 +660,11 @@ class ChangeViewWidget(QtGui.QWidget):
         
     def notify_backend(self):
         return
-        msg = GuiViewChanged()
-        msg.active_view = str(self.sender().text())
-        self.parent.topologyView.topologyInterface.send(msg)
+        #msg = GuiViewChanged()
+        #msg.active_view = str(self.sender().text())
+        #self.parent.topologyView.topologyInterface.send(msg)
         
-                
+        
 class TopologyView(QtGui.QGraphicsView):
 
     updateAllSignal = QtCore.pyqtSignal() 
@@ -642,7 +692,6 @@ class TopologyView(QtGui.QGraphicsView):
 
         self.scale(0.9, 0.9)
         self.setMinimumSize(400, 400)
-        
         
         # Pan
         self.setDragMode(self.ScrollHandDrag)
@@ -678,8 +727,6 @@ class TopologyView(QtGui.QGraphicsView):
         msg["command"] = "subscribe"
         msg["link_type"] = "all"
         self.topologyInterface.send(msg)
-        
-        #(see what else. eg. link/node removals?)
         
     def get_nodes(self):
         '''
@@ -719,26 +766,32 @@ class TopologyView(QtGui.QGraphicsView):
                 new_nodes = []
 	            # Populate nodes
                 for nodeID in nodes:
-                    # prepend 0s until len = 12 "CHECK"
+                    # prepend 0s until len = 12
                     while len(nodeID) < 12 :
                         nodeID = "0"+nodeID
                     # If nodeItem doesn't already exist
                     if nodeID not in self.nodes.keys():
-                        nodeItem = Node(self, nodeID)
+                        nodeItem = Node(self, nodeID, jsonmsg["node_type"])
                         self.nodes[nodeID] = nodeItem
                         new_nodes.append(nodeItem)  
                 self.addNodes(new_nodes)
                 self.positionNodes(new_nodes)
-            '''
+                
             elif jsonmsg["command"] == "delete":
                 nodes = jsonmsg["node_id"]
-                deleted_nodes = []
-                for nodeID in deleted_nodes:
-                    if int(nodeID) in self.nodes.keys():
-                        print "deleting node", nodeID 
-                        dpid = int(nodeID)
-                        del self.nodes[dpid]
-            '''
+                for nodeID in nodes:
+                    if not jsonmsg["node_type"] == "host":
+                        # prepend 0s until len = 12
+                        while len(nodeID) < 12 :
+                            nodeID = "0"+nodeID
+                    if nodeID in self.nodes.keys():
+                        #un-draw node
+                        n = self.nodes[nodeID]
+                        self.topoScene.removeItem(n)
+                        n.update()
+                        '''Should I delete nodes or store in 'down' state?'''
+                        del self.nodes[nodeID]
+                        
         elif "links" in msg:
             if jsonmsg["command"] == "add":
                 links = jsonmsg["links"]
@@ -746,36 +799,65 @@ class TopologyView(QtGui.QGraphicsView):
 	            # Populate Links
                 linkid = len(self.links)
                 for link in links:
-                    # If linkItem doesn't already exist
-                    # (stupid, expensive full match check as there is no linkID)
-                    exists = False
-                    for l in self.links.values():
-                        if link["src id"]==l.source.id:
-                            if link["dst id"]==l.dest.id:
-                                if link["src port"]==l.sport:
-                                    if link["dst port"]==l.dport:
-                                        exists = True
-                    if exists:
-                        continue   
+                
+                    # Lavi advertises 1 link for each direction
+                    # We'll add a single object for a biderectional link
+                    # We'll always use 'minend-maxend' as the key
+                    srcid = link["src id"]
+                    while len(srcid) < 12 :
+                        srcid = "0"+srcid
+                    dstid = link["dst id"]
+                    while len(srcid) < 12 :
+                        srcid = "0"+dstid
+                    
+                    minend = str(min(srcid,dstid))
+                    maxend = str(max(srcid,dstid))
+                    key = minend+'-'+maxend
+                    
+                    '''
+                    if key in self.links:
+                        # re-draw link (assuming it has been removed)
+                        l = self.links[key]
+                        self.topoScene.addItem(l)
+                        l.update()
+                    ''' 
+                    
+                    if key in self.links:
+                        continue
+                       
+                    # If src_port is missing, default to 1
+                    if not "src port" in link:
+                        link["src port"] = 1
                     linkid = linkid+1
-                    linkItem = Link(self,\
-                            self.nodes[link["src id"]],\
-                            self.nodes[link["dst id"]],\
-                            link["src port"],\
-                            link["dst port"],\
-                            link["src type"],\
-                            link["dst type"],\
-                            linkid) 
-                    self.links[linkItem.uid] = linkItem
+                    
+                    # Create new linkItem
+                    
+                    linkItem = Link(self, self.nodes[srcid], self.nodes[dstid],\
+                        link["src port"], link["dst port"], link["src type"],\
+                        link["dst type"], linkid) 
+                    self.links[key]=linkItem
+                    
                     new_links.append(linkItem)
                 self.addLinks(new_links)
-            '''
+                
             elif jsonmsg["command"] == "delete":
                 links = jsonmsg["links"]
                 for link in links:
-                    print "deleting link" 
-            '''
-                
+                    # Only do this once (for both directions)
+                    if link["src id"] > link["dst id"]:
+                        continue
+                    # First, check if link exists
+                    key = str(link["src id"])+"-"+str(link["dst id"])
+                    if key in self.links:
+                        #un-draw link
+                        l = self.links[key]
+                        self.topoScene.removeItem(l)
+                        l.update()
+                        '''Should I delete links or store in 'down' state?'''
+                        del self.links[key]
+                        
+                    else:    
+                        print "Attempted to removed inexistent link:", key
         
         self.updateAll()
     
@@ -802,8 +884,6 @@ class TopologyView(QtGui.QGraphicsView):
         minY, maxY = -200, 200
         
         layout = self.parent.parent.settings.current_topo_layout 
-        
-        print layout
         
         if layout == "random":
             for node in new_nodes:
@@ -853,16 +933,28 @@ class TopologyView(QtGui.QGraphicsView):
             n.bringSwitchUp()
             n.update()
 
+    def updateAllNodes(self):
+        '''
+        Refresh all Nodes
+        '''
+        for n in self.nodes.values():
+            n.update()
+            
+    def updateAllLinks(self):
+        '''
+        Refresh all Links
+        '''
+        for e in self.links.values():
+            e.update()
+            e.adjust()
+            
     def updateAll(self):
         '''
         Refresh all Items
         # see if there is a auto way to updateall (updateScene()?)
         '''
-        for n in self.nodes.values():
-            n.update()
-        for e in self.links.values():
-            e.update()
-            e.adjust()
+        self.updateAllNodes()
+        self.updateAllLinks()
             
     def keyPressEvent(self, event):
         '''
@@ -882,16 +974,16 @@ class TopologyView(QtGui.QGraphicsView):
         elif key == QtCore.Qt.Key_L:
             # LAVI counts a biderctional link as 2 separate links, so IDs overlap
             self.toggleLinkIDs()
-            self.updateAll()
+            self.updateAllLinks()
         elif key == QtCore.Qt.Key_P:
             self.togglePorts()
-            self.updateAll()
+            self.updateAllLinks()
         elif key == QtCore.Qt.Key_H:
             self.toggleHosts()
-            self.updateAll()
-        elif key == QtCore.Qt.Key_R:
-            # Refresh topology
-            self.get_topology()
+            self.updateAllNodes()
+        #elif key == QtCore.Qt.Key_R:
+        #    # Refresh topology
+        #    self.get_topology()
         elif key == QtCore.Qt.Key_Space or key == QtCore.Qt.Key_Enter:
             # Redraw topology
             self.positionNodes(self.nodes.values())
@@ -949,16 +1041,18 @@ class TopologyView(QtGui.QGraphicsView):
         sceneRect = self.sceneRect()
         textRect = QtCore.QRectF(sceneRect.left() -5, sceneRect.top() + 60,
                                  sceneRect.width() - 4, sceneRect.height() - 4)
+        
         message = self.tr("Topology")
         
         font = painter.font()
         font.setPointSize(12)
         painter.setFont(font)
         painter.setPen(QtCore.Qt.darkGray)
-        painter.drawText(textRect.translated(0.8, 0.8), message)
+        painter.drawText(textRect.translated(20.8, 5.8), message)
         painter.setPen(QtCore.Qt.white)
         painter.setPen(QtGui.QColor(QtCore.Qt.gray).light(130))
-        painter.drawText(textRect, message)
+        painter.drawText(textRect.translated(20, 5), message)
+        
         
     def scaleView(self, scaleFactor):
         factor = self.matrix().scale(scaleFactor, scaleFactor).mapRect(QtCore.QRectF(0, 0, 1, 1)).width()
@@ -975,9 +1069,8 @@ class TopologyView(QtGui.QGraphicsView):
         if not self.itemAt(event.pos()):
             if event.button() == QtCore.Qt.RightButton:
                 popup = QtGui.QMenu()
-                popup.addAction("Save Layout", self.save_layout)
                 popup.addAction("Load Layout", self.load_layout)
-                popup.addAction("Refresh Topology", self.get_topology)
+                popup.addAction("Save Layout", self.save_layout)
                 popup.exec_(event.globalPos())
         QtGui.QGraphicsView.mouseReleaseEvent(self, event)
     
