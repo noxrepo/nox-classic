@@ -60,7 +60,6 @@ class Sample_Routing_View(View):
         links = []
         
         # Add first link
-        #print "path", p
         minend=min(self.topologyView.nodes[p[1]].neighbors[p[0]], p[1])
         maxend=max(self.topologyView.nodes[p[1]].neighbors[p[0]], p[1])
         firstlink = minend+'-'+maxend

@@ -6,6 +6,7 @@ import simplejson as json
 from nox.lib.netinet.netinet import c_ntohl
 from nox.coreapps.pyrt.pycomponent import CONTINUE
 from nox.netapps.topology.pytopology import pytopology
+from nox.lib.netinet import netinet
 
 
 from nox.coreapps.messenger.pyjsonmsgevent import JSONMsg_event
@@ -47,7 +48,7 @@ class flowtracer(Component):
         # Build match for flowstats request
         match = of.ofp_match()
         
-        print _match
+        #print _match
         
         match.wildcards = of.OFPFW_ALL
         
@@ -93,8 +94,14 @@ class flowtracer(Component):
             match.dl_dst = _match['dl_dst']
             match.wildcards -= of.OFPFW_DL_DST
         '''
-        
+        self.match = match
         self.pending_query_xid = self.send_flow_stats_request(dpid, match)
+        
+        # Add first node to trace path
+        strid = str(dpid)
+        while len(strid) < 12 :
+            strid = "0"+strid
+        self.current_path.append(strid)
         
     def send_flow_stats_request(self, dpid, match):
         """Send a flow stats request to a switch (dpid).
@@ -141,7 +148,6 @@ class flowtracer(Component):
             in order to see find the next hop
         """
         if c_ntohl(event.xid) == self.pending_query_xid:
-            log.debug( "Got flow MY stats reply" )
             # See action(s) for this entry
             if len(event.flows) != 1:
                 log.debug("matched to more than one flow entry! this should not happen")
@@ -150,23 +156,36 @@ class flowtracer(Component):
                 if action['type'] == 0:
                     ports.append(action['port'])
             #elif ADD other action types here 
-            print ports
-            next_dpid = self.get_remote_dpid_for_port(event.datapath_id, ports[0])
-            print next_dpid
+            dpid = netinet.create_datapathid_from_host(event.datapath_id)
+            next_dpid = self.get_remote_dpid_for_port(dpid, ports[0])
+            
+            if(next_dpid):
+                log.debug("Got FlowTracer stats reply from %s", dpid )
+                log.debug("Querying %s", next_dpid)    
+                self.pending_query_xid = self.send_flow_stats_request(next_dpid, \
+                        self.match)
+            else:
+                log.debug("TRACE END")
+                # Add last port (to host)
+                self.current_path.append(str(ports[0]))
+                print self.current_path 
+                
+                # Send complete path to GUI
+                self.send_to_gui("highlight", self.current_path)
+                
+                # Reset path
+                self.current_path = []
+            
         return CONTINUE
         
     def get_remote_dpid_for_port(self, dpid, port):
-        print "outlinks", self.topology.get_outlinks(dpid, 3)
-        """
         neighbors = self.topology.get_neighbors(dpid)
         for remote_dpid in neighbors:
-            print "neighbor:", remote_dpid
-            for link in get_outlinks(dpid, remote_dpid):
-                print "port:", link.src
+            for link in self.topology.get_outlinks(dpid, remote_dpid):
                 if link.src == port:
-                    return remote_dpid
-        return null
-        """
+                    self.current_path.append(str(remote_dpid))
+                    return remote_dpid.as_host()
+        return False
     """Communication with the GUI"""    
         
     def handle_jsonmsg_event(self, e):
@@ -207,6 +226,7 @@ class flowtracer(Component):
             
             if "highlight" in self.subscribers:
                 for stream in self.subscribers["highlight"]:
+                    log.debug("FlowTracer Sent path to GUI")
                     stream.reply(json.dumps(msg))
 
 

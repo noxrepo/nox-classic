@@ -32,9 +32,12 @@ class Flow_Tracer_View(View):
         self.topologyInterface.send( msg ) 
         
         self.highlighted_path = []
+        self.querynode = None
         
     def node_color(self, node):
-        pass
+        ''' Paint queried node yellow, rest of the nodes default '''
+        if node.id == self.querynode:
+            return QtGui.QColor(QtCore.Qt.yellow)
 
     def link_color(self, link):
         s = link.source.id
@@ -73,30 +76,47 @@ class Flow_Tracer_View(View):
             if (field == 'in_port') or \
                     (field == 'tp_src') or \
                     (field == 'tp_dst') or \
-                    (field == 'nw_proto') or \
                     (field == 'nw_dst_n_wild') or \
                     (field == 'dl_vlan') or \
                     (field == 'dl_vlan_pcp') or \
                     (field == 'nw_tos'):
                 value = int(value)
+            elif (field == 'nw_proto'):
+                if value == "ICMP":
+                    value = 0x1
+                elif value == "(overwritten)ARP-Request":
+                    value = 0x1
+                elif value == "(overwritten)ARP-Reply":
+                    value = 0x2
+                else:
+                    value = int(value)
             elif (field == 'dl_src') or \
-                    (field == 'dl_dst') or \
-                    (field == 'dl_type'):
+                    (field == 'dl_dst'):
                 value = int(value,16)
+            elif (field == 'dl_type'):
+                if value == "IP":
+                    value = 0x800
+                elif value == "ARP":
+                    value = 0x806
+                else:
+                    value = int(value,16)
             elif (field == 'nw_src') or \
                     (field == 'nw_dst'):
                 value = self.dottedQuadToNum(value)
             match[field] = value
         
-        text = str(self.infoDisplay.indexAt(QtCore.QPoint(0,0)).data().toString())
+        text = str(self.infoDisplay.model.index(0).data().toString())
         dpid = int(text[text.find("=")+1:text.find(")")],16)
         
+        strid = str(dpid)
+        while len(strid) < 12 :
+            strid = "0"+strid
+        self.querynode = strid
         self.send_flowtrace_request(dpid, match)
         
     def dottedQuadToNum(self, ip):
         "convert decimal dotted quad string to long integer"
         hexn = ''.join(["%02X" % long(i) for i in ip.split('.')])
-        #print "converted", ip, "to", long(hexn, 16)
         return long(hexn, 16)
     
     """Communication with the NOX"""   
@@ -122,13 +142,6 @@ class Flow_Tracer_View(View):
         # Put links that we'll highlight here
         links = []
         
-        # Add first link
-        print "path", p
-        minend=min(self.topologyView.nodes[p[1]].neighbors[p[0]], p[1])
-        maxend=max(self.topologyView.nodes[p[1]].neighbors[p[0]], p[1])
-        firstlink = minend+'-'+maxend
-        links.append(firstlink)
-        
         # Add last link
         minend=min(self.topologyView.nodes[p[len(p)-2]].neighbors[p[len(p)-1]],\
             p[len(p)-2])
@@ -138,13 +151,14 @@ class Flow_Tracer_View(View):
         links.append(lastlink)
         
         # Add intermediate links
-        p = p[1:len(p)-1]
-        for i in range(0,len(p)-1):
+        for i in range(0,len(p)-2):
             links.append( (min((p[i],p[i+1]))+'-'+max((p[i],p[i+1]))) )
         
         self.highlighted_path = links
         
-        self.topologyView.updateLinks()
+        # Redraw those links       
+        for l in self.highlighted_path:
+            self.topologyView.links[l].update()
         
     def showInfo(self):
         ''' Routing view information popup'''

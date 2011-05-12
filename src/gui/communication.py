@@ -185,7 +185,7 @@ class Listener(QtCore.QThread):
                 elif jsonmsg["type"] == "sample_routing":
                     self.p.routing_received_signal.emit(msg)
                 elif jsonmsg["type"] == "flowtracer":
-                    self.p.routing_received_signal.emit(msg)
+                    self.p.flowtracer_received_signal.emit(msg)
                 msg = ''
                 outstanding_lbraces = 0
                 end = False

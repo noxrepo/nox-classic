@@ -145,28 +145,22 @@ class Monitoring_View(View):
                 if "nw_dst_n_wild" in match:
                     msg += "nw_dst_n_wild: "+str(match['nw_dst_n_wild'])+"  "
                 if "nw_proto" in match:
-                    '''
                     if match['dl_type'] == 0x806:
                         if match['nw_proto'] == 0x1:
-                            msg += "nw_proto: (overwritten)arp_request  "
+                            msg += "nw_proto: (overwritten)ARP-Request  "
                         elif match['nw_proto'] == 0x2:
-                            msg += "nw_proto: (overwritten)arp_reply  "
+                            msg += "nw_proto: (overwritten)ARP-Reply  "
                     elif match['nw_proto'] == 0x1:
-                        msg += "nw_proto: icmp  "
+                        msg += "nw_proto: ICMP  "
                     else:
                         msg += "nw_proto: "+str(match['nw_proto'])+"  "
-                    '''
-                    msg += "nw_proto: "+str(match['nw_proto'])+"  "
                 if "dl_type" in match:
-                    '''
                     if match['dl_type'] == 0x800:
-                        msg += "dl_type: ip  "
+                        msg += "dl_type: IP  "
                     elif match['dl_type'] == 0x806:
-                        msg += "dl_type: arp  "
+                        msg += "dl_type: ARP  "
                     else:
                         msg += "dl_type: "+hex(match['dl_type'])+"  "
-                    '''
-                    msg += "dl_type: "+hex(match['dl_type'])+"  "
                 if "dl_vlan" in match:
                     msg += "dl_vlan: "+str(match['dl_vlan'])+"  "
                 if "dl_vlan_pcp" in match:
