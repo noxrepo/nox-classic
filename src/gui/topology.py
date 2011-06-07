@@ -15,7 +15,6 @@ import simplejson as json
 ### Add custom topology views here  (add them in topoWidget.__init__() below)
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 from views.monitoring import Monitoring_View
-from views.rad import RAD_View
 from views.spanningtree import STP_View
 from views.samplerouting import Sample_Routing_View
 from views.flowtracer import Flow_Tracer_View
@@ -574,13 +573,11 @@ class TopoWidget(QtGui.QWidget):
         ### Add custom topology views here
         """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
         self.monitoring_view = Monitoring_View(self)
-        self.rad_view = RAD_View(self)
         self.stp_view = STP_View(self)
         self.routing_view = Sample_Routing_View(self)
         self.flowtracer_view = Flow_Tracer_View(self)
         
         self.views[self.monitoring_view.name] = self.monitoring_view
-        self.views[self.rad_view.name] = self.rad_view
         self.views[self.stp_view.name] = self.stp_view
         self.views[self.routing_view.name] = self.routing_view
         self.views[self.flowtracer_view.name] = self.flowtracer_view
