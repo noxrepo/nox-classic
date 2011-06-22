@@ -62,7 +62,7 @@ def create_discovery_packet(dpid, portno, ttl_):
     cid = chassis_id()
 
     # nbo 
-    cid.fill(4, array.array('B', struct.pack('!Q',dpid))[2:8])
+    cid.fill(chassis_id.SUB_LOCAL, array.array('B', 'dpid:' + hex(long(dpid))[2:-1]))
     discovery_packet.add_tlv(cid)
 
     pid = port_id()
@@ -264,16 +264,17 @@ class discovery(Component):
             return
 
         # parse out chassis id 
-        if lldph.tlvs[0].subtype != chassis_id.SUB_MAC:
-            lg.error("lldp chassis ID subtype is not MAC, ignoring")
+        if lldph.tlvs[0].subtype != chassis_id.SUB_LOCAL:
+            lg.error("lldp chassis ID subtype is not 'local', ignoring")
             return
-        assert(len(lldph.tlvs[0].id) == 6)
-        cid = lldph.tlvs[0].id
-    
-        # convert 48bit cid (in nbo) to longlong
-        chassid = cid[5]       | cid[4] << 8  | \
-                  cid[3] << 16 | cid[2] << 24 |  \
-                  cid[1] << 32 | cid[0] << 40 
+        if not lldph.tlvs[0].id.tostring().startswith('dpid:'):
+            lg.error("lldp chassis ID is not a dpid, ignoring")
+            return
+        try:
+            chassid = int(lldph.tlvs[0].id.tostring()[5:], 16)
+        except:
+            lg.error("lldp chassis ID is not numeric', ignoring")
+            return
 
         # if chassid is from a switch we're not connected to, ignore
         if chassid not in self.dps:
