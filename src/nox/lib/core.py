@@ -216,20 +216,20 @@ class Component:
                 args_expected = 1
                 a = struct.pack("!HHI", action[0], 8, 0)
             elif action[0] == openflow.OFPAT_SET_DL_SRC \
-                     or action[0] == openflow.OFPAT_SET_DL_DST:
+                    or action[0] == openflow.OFPAT_SET_DL_DST:
                 eaddr = convert_to_eaddr(action[1])
                 if eaddr == None:
                     raise RuntimeError('invalid ethernet addr')
                 a = struct.pack("!HH6sHI", action[0], 16,
                                 eaddr.binary_str(), 0, 0)
             elif action[0] == openflow.OFPAT_SET_NW_SRC \
-                     or action[0] == openflow.OFPAT_SET_NW_DST:
+                    or action[0] == openflow.OFPAT_SET_NW_DST:
                 iaddr = convert_to_ipaddr(action[1])
                 if iaddr == None:
                     raise RuntimeError('invalid ip addr')
                 a = struct.pack("!HHI", action[0], 8, ipaddr(iaddr).addr)
             elif action[0] == openflow.OFPAT_SET_TP_SRC \
-                     or action[0] == openflow.OFPAT_SET_TP_DST:
+                    or action[0] == openflow.OFPAT_SET_TP_DST:
                 a = struct.pack("!HHHH", action[0], 8, action[1], 0)
             elif action[0] == openflow.OFPAT_SET_NW_TOS:
                 a = struct.pack("!HHBBBB", action[0], 8, action[1], 0, 0, 0)
@@ -242,11 +242,11 @@ class Component:
             if len(action) != args_expected:
                 raise RuntimeError('action %s expected %s arguments',
                                     action[0], args_expected)
- 
+
             action_str = action_str + a
 
-            return action_str
-        
+        return action_str
+
     def send_port_mod(self, dpid, portno, hwaddr, mask, config):    
         try:
             addr = create_eaddr(str(hwaddr)) 
