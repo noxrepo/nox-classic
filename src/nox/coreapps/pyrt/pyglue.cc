@@ -331,9 +331,9 @@ template <>
 PyObject*
 to_python(const Port& p)
 {
-    return Py_BuildValue((char*)"{s:h, s:l, s:l, s:l, s:l, s:l, s:l, s:l, s:s# s:s}", 
-            "port_no", p.port_no, "speed", p.speed, "config", p.config, 
-            "state", p.state, "curr", p.curr, "advertised", p.advertised, 
+    return Py_BuildValue((char*)"{s:h, s:I, s:I, s:I, s:I, s:I, s:I, s:I, s:s# s:s}",
+            "port_no", (unsigned)p.port_no, "speed", p.speed, "config", p.config,
+            "state", p.state, "curr", p.curr, "advertised", p.advertised,
             "supported", p.supported, "peer", p.peer,
             "hw_addr", p.hw_addr.octet, ethernetaddr::LEN,
             "name", p.name.c_str()
@@ -365,11 +365,11 @@ to_python(const Table_stats& ts)
     CONVERT_SWITCH_STAT(ts.matched_count,pyo_matched_count)
     CONVERT_CHECK(pyo_matched_count)
 
-    ret = Py_BuildValue((char*)"{s:i, s:s#, s:I, s:I, s:S, s:S}",
-            "table_id", ts.table_id, 
+    ret = Py_BuildValue((char*)"{s:I, s:s#, s:I, s:I, s:S, s:S}",
+            "table_id", ts.table_id,
             "name", ts.name.c_str(), ts.name.size(),
-            "max_entries",   ts.max_entries, 
-            "active_count",  ts.active_count, 
+            "max_entries", ts.max_entries,
+            "active_count", ts.active_count,
             "lookup_count", pyo_lookup_count,
             "matched_count", pyo_matched_count );
 error: 
@@ -394,8 +394,8 @@ to_python(const Queue_stats& qs)
     CONVERT_SWITCH_STAT(qs.tx_errors,pyo_tx_errors)
     CONVERT_CHECK(pyo_tx_errors)
 
-    ret =  Py_BuildValue((char*)"{s:l, s:l, s:S, s:S, s:S}",
-			   "port_no",      (int)qs.port_no,
+    ret =  Py_BuildValue((char*)"{s:I, s:I, s:S, s:S, s:S}",
+			   "port_no",      (unsigned)qs.port_no,
 			   "queue_id",     qs.queue_id,
 			   "tx_bytes",     pyo_tx_bytes,
 			   "tx_packets",   pyo_tx_packets,
@@ -453,19 +453,19 @@ to_python(const Port_stats& ts)
     CONVERT_SWITCH_STAT(ts.collisions,pyo_collisions)
     CONVERT_CHECK(pyo_collisions)
 
-    ret =  Py_BuildValue((char*)"{s:l, s:S, s:S, s:S, s:S, s:S, s:S, s:S, s:S, s:S, s:S, s:S, s:S}", 
-            "port_no",    (int)ts.port_no, 
-            "rx_packets",   pyo_rx_packets, 
-            "tx_packets",   pyo_tx_packets, 
-            "rx_bytes",     pyo_rx_bytes, 
-            "tx_bytes",     pyo_tx_bytes, 
-            "rx_dropped",   pyo_rx_dropped, 
-            "tx_dropped",   pyo_tx_dropped, 
-            "rx_errors",    pyo_rx_errors, 
-            "tx_errors",    pyo_tx_errors, 
-            "rx_frame_err", pyo_rx_frame_err, 
-            "rx_over_err",  pyo_rx_over_err, 
-            "rx_crc_err",   pyo_rx_crc_err, 
+    ret =  Py_BuildValue((char*)"{s:I, s:S, s:S, s:S, s:S, s:S, s:S, s:S, s:S, s:S, s:S, s:S, s:S}",
+            "port_no",      (unsigned)ts.port_no,
+            "rx_packets",   pyo_rx_packets,
+            "tx_packets",   pyo_tx_packets,
+            "rx_bytes",     pyo_rx_bytes,
+            "tx_bytes",     pyo_tx_bytes,
+            "rx_dropped",   pyo_rx_dropped,
+            "tx_dropped",   pyo_tx_dropped,
+            "rx_errors",    pyo_rx_errors,
+            "tx_errors",    pyo_tx_errors,
+            "rx_frame_err", pyo_rx_frame_err,
+            "rx_over_err",  pyo_rx_over_err,
+            "rx_crc_err",   pyo_rx_crc_err,
             "collisions",   pyo_collisions );
 
     // references are held by the dictionary, so 
