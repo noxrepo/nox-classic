@@ -32,6 +32,11 @@ AC_CONFIG_HEADER([config.h])
 
 AX_BOOST_BASE([1.34.1])
 
+AX_BOOST_SYSTEM
+if test "$ax_cv_boost_system" != "yes"; then
+   AC_MSG_ERROR([cannot find the Boost::System library])
+fi
+
 AX_BOOST_FILESYSTEM
 if test "$ax_cv_boost_filesystem" != "yes"; then
    AC_MSG_ERROR([cannot find the Boost::Filesystem library])
